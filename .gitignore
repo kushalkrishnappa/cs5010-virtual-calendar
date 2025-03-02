@@ -12,6 +12,7 @@ target/
 .idea/.gitignore
 .idea/misc.xml
 .idea/vcs.xml
+.idea/intellij-javadocs*
 *.iws
 *.iml
 *.ipr
