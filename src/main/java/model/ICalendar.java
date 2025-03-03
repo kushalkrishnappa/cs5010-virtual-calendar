@@ -31,12 +31,12 @@ public interface ICalendar {
       throws EventConflictException, IllegalArgumentException;
 
   // create event <eventName> on <dateStringTtimeString> repeats <weekdays> for <N> times
-  void createRecurringAllDayEvent(EventDTO eventDTO, Set<DayOfWeek> repeatDays, int occurrences)
+  void createRecurringAllDayEvent(EventDTO eventDTO, boolean autoDecline, Set<DayOfWeek> repeatDays, int occurrences)
       throws EventConflictException, IllegalArgumentException;
 
   // create event <eventName> on <dateStringTtimeString> repeats <weekdays>
   // until <dateStringTtimeString>
-  void createRecurringAllDayEvent(EventDTO eventDTO, Set<DayOfWeek> repeatDays,
+  void createRecurringAllDayEvent(EventDTO eventDTO, boolean autoDecline, Set<DayOfWeek> repeatDays,
       LocalDateTime endDate)
       throws EventConflictException, IllegalArgumentException;
 
