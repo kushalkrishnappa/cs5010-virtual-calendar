@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * ICalendar interface defines the methods for view of mvc architecture for the CalendarApp
+ * IModel interface defines the methods for view of mvc architecture for the CalendarApp
  * application.
  *
  * <p>It provides methods to create, edit, and retrieve events from the calendar.
@@ -18,7 +18,7 @@ import java.util.Set;
  * a given time.
  *
  */
-public interface ICalendar {
+public interface IModel {
 
   // create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
   void createEvent(EventDTO eventDTO, boolean autoDecline)
