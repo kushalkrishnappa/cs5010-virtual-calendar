@@ -4,21 +4,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
-import model.ICalendar;
+import model.IModel;
 import view.IView;
 
 public class CalendarController implements IController {
 
   IView view;
-  ICalendar model;
+  IModel model;
   Scanner scanner;
 
-  public CalendarController(ICalendar model, InputStream in) {
+  public CalendarController(IModel model, InputStream in) {
     this.model = model;
     this.scanner = new Scanner(in);
   }
 
-  public CalendarController(ICalendar model, String filePath) throws FileNotFoundException {
+  public CalendarController(IModel model, String filePath) throws FileNotFoundException {
     this.model = model;
     this.scanner = new Scanner(new File(filePath));
   }

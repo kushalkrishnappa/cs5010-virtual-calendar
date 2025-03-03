@@ -2,7 +2,7 @@ import controller.CalendarController;
 import controller.IController;
 import java.io.FileNotFoundException;
 import model.Calendar;
-import model.ICalendar;
+import model.IModel;
 import view.CommanLineInteractiveView;
 import view.HeadlessView;
 import view.IView;
@@ -24,7 +24,7 @@ public class CalendarApp {
     // create the model
     IView view;
     IController controller;
-    ICalendar model = new Calendar();
+    IModel model = new Calendar();
 
     if (args.length < 2) {
       System.err.println("Usage: java CalendarApp.java --mode [interactive | headless filepath]");

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-public class Calendar implements ICalendar {
+public class Calendar implements IModel {
 
   @Override
   public void createEvent(EventDTO eventDTO, boolean autoDecline)
