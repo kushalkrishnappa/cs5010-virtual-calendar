@@ -8,6 +8,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * ICalendar interface defines the methods for view of mvc architecture for the CalendarApp
+ * application.
+ *
+ * <p>It provides methods to create, edit, and retrieve events from the calendar.
+ *
+ * <p>It also provides methods to export the calendar to a CSV file and check if the user is busy at
+ * a given time.
+ *
+ */
 public interface ICalendar {
 
   // create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
@@ -31,7 +41,8 @@ public interface ICalendar {
       throws EventConflictException, IllegalArgumentException;
 
   // create event <eventName> on <dateStringTtimeString> repeats <weekdays> for <N> times
-  void createRecurringAllDayEvent(EventDTO eventDTO, boolean autoDecline, Set<DayOfWeek> repeatDays, int occurrences)
+  void createRecurringAllDayEvent(EventDTO eventDTO, boolean autoDecline, Set<DayOfWeek> repeatDays,
+      int occurrences)
       throws EventConflictException, IllegalArgumentException;
 
   // create event <eventName> on <dateStringTtimeString> repeats <weekdays>
@@ -46,7 +57,8 @@ public interface ICalendar {
   /**
    * @return the number of events edited
    */
-  <T> Integer editEvent(String subject, LocalDateTime start, LocalDateTime end, Property<T> property,
+  <T> Integer editEvent(String subject, LocalDateTime start, LocalDateTime end,
+      Property<T> property,
       T newValue)
       throws IllegalArgumentException;
 
