@@ -42,5 +42,5 @@ public enum DayOfWeek {
   /**
    * Represents Sunday.
    */
-  U
+  U;
 }

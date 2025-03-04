@@ -1,7 +1,5 @@
 package view;
 
-import controller.IController;
-
 /**
  * IView interface defines the methods for view of mvc architecture for the CalendarApp
  * application.
@@ -13,7 +11,7 @@ public interface IView {
    *
    * @param output the output to be displayed
    */
-  void displayOutput(String output);
+  void displayMessage(String output);
 
   /**
    * Display the error message to the user.
@@ -23,10 +21,9 @@ public interface IView {
   void displayError(String error);
 
   /**
-   * Add the controller to the view.
+   * Return the input stream used by this view.
    *
-   * @param controller the controller to be added
+   * @return the readable which the user is using
    */
-  void addController(IController controller);
-
+  Readable getInputStream();
 }
