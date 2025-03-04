@@ -31,6 +31,22 @@ public interface IEventRepository {
   boolean deleteEvent(String name, LocalDateTime startTime, LocalDateTime endTime);
 
   /**
+   * Update an event in the repository based on event name, start time, and end time.
+   *
+   * @param eventDTO The event to be updated
+   * @return true if event is updated successfully, false otherwise
+   */
+  boolean updateEvent(EventDTO eventDTO);
+
+  /**
+   * Update a list of events in the repository based on name, start time, and end time.
+   *
+   * @param eventDTOList List of events to be updated
+   * @return true if events are updated successfully, false otherwise
+   */
+  boolean updateEvents(List<EventDTO> eventDTOList);
+
+  /**
    * Retrieves an event in the repository based on the name, start time, and end time.
    *
    * @param name      The name of the event
@@ -39,7 +55,6 @@ public interface IEventRepository {
    * @return an event if it exists, empty otherwise
    */
   Optional<EventDTO> getEvent(String name, LocalDateTime startTime, LocalDateTime endTime);
-
 
   /**
    * Retrieves all events in the repository on given date.
@@ -74,45 +89,5 @@ public interface IEventRepository {
    * @return a list of events starting from given time with given name
    */
   List<EventDTO> getEventsStartingFrom(String name, LocalDateTime startTime);
-
-  /**
-   * Updates all events in the repository with the given name and property to the new value.
-   *
-   * @param name     The name of the event
-   * @param property The property to update
-   * @param newValue The new value of the property
-   * @param <T>      The type of the property
-   * @return the number of events updated
-   */
-  <T> int updateAllEvents(String name, Property<T> property, T newValue);
-
-  /**
-   * Updates all events in the repository starting from the given time with the given name and
-   * property to the new value.
-   *
-   * @param name      The name of the event
-   * @param startTime The start time of the event
-   * @param property  The property to update
-   * @param newValue  The new value of the property
-   * @param <T>       The type of the property
-   * @return the number of events updated
-   */
-  <T> int updateEventsStartingFrom(String name, LocalDateTime startTime, Property<T> property,
-      T newValue);
-
-  /**
-   * Updates an event in the repository with the given name, start time, and end time with the given
-   * property to the new value.
-   *
-   * @param name      The name of the event
-   * @param startTime The start time of the event
-   * @param endTime   The end time of the event
-   * @param property  The property to update
-   * @param newValue  The new value of the property
-   * @param <T>       The type of the property
-   * @return true if event property is updated successfully, false otherwise
-   */
-  <T> boolean updateEventProperty(String name, LocalDateTime startTime, LocalDateTime endTime,
-      Property<T> property, T newValue);
 
 }
