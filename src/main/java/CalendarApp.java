@@ -1,19 +1,22 @@
+import static controller.ControllerMode.HEADLESS;
+import static controller.ControllerMode.INTERACTIVE;
+
 import controller.CalendarController;
+import controller.ControllerMode;
 import controller.IController;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import model.Calendar;
 import model.IModel;
-import view.CommanLineInteractiveView;
-import view.HeadlessView;
+import view.CommandLineView;
 import view.IView;
 
 /**
  * CalendarApp is the main class for the Calendar application.
  */
 public class CalendarApp {
-
-  private static final String INTERACTIVE_MODE = "interactive";
-  private static final String HEADLESS_MODE = "headless";
 
   /**
    * The main method for the Calendar application.
@@ -39,33 +42,37 @@ public class CalendarApp {
     }
 
     // parse the command line arguments for mode type
-    String mode = args[1];
+    ControllerMode mode;
+    try {
+      mode = ControllerMode.getControllerMode(args[1]);
+    } catch (IllegalArgumentException e) {
+      System.err.println("Invalid mode: " + args[1]);
+      return;
+    }
     switch (mode) {
-      case INTERACTIVE_MODE:
-        controller = new CalendarController(model, System.in);
-        view = new CommanLineInteractiveView();
-        controller.addView(view);
+      case INTERACTIVE:
+        view = new CommandLineView(new InputStreamReader(System.in));
+        controller = new CalendarController(model, INTERACTIVE, view);
         break;
-      case HEADLESS_MODE:
+      case HEADLESS:
         if (args.length < 3) {
           System.err.println("Usage: java CalendarApp.java --mode headless filepath");
           return;
         }
         try {
-          controller = new CalendarController(model, args[2]);
+          view = new CommandLineView(new BufferedReader(new FileReader(args[2])));
+          controller = new CalendarController(model, HEADLESS, view);
         } catch (FileNotFoundException e) {
           System.err.println("File not found: " + args[2]);
           return;
         }
-        view = new HeadlessView();
-        controller.addView(view);
         break;
       default:
         System.err.println("Usage: java CalendarApp.java --mode [interactive | headless filepath]");
         return;
     }
 
-    controller.startProgram();
-
+    controller.run();
   }
+
 }
