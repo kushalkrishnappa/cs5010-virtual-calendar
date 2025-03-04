@@ -7,11 +7,13 @@ public class CommanLineInteractiveView implements IView {
   @Override
   public void displayOutput(String output) {
     // TODO: Implement this method
+    System.out.print(output + "\n>");
   }
 
   @Override
   public void displayError(String error) {
     // TODO: Implement this method
+    System.err.print(error + "\n>");
   }
 
   @Override
