@@ -7,8 +7,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Calendar implements IModel {
+
+  IEventRepository eventRepository;
+
+  public Calendar() {
+    this.eventRepository = new InMemoryEventRepository();
+  }
 
   @Override
   public void createEvent(EventDTO eventDTO, boolean autoDecline)
@@ -70,12 +77,12 @@ public class Calendar implements IModel {
 
   @Override
   public List<EventDTO> getEventsOnDate(LocalDate date) {
-    return List.of();
+    return eventRepository.getEventsOnDate(date);
   }
 
   @Override
   public List<EventDTO> getEventsInRange(LocalDateTime start, LocalDateTime end) {
-    return List.of();
+    return eventRepository.getEventsInRange(start, end);
   }
 
   @Override
@@ -85,6 +92,11 @@ public class Calendar implements IModel {
 
   @Override
   public Boolean isBusy(LocalDateTime dateTime) {
-    return null;
+    List<EventDTO> events = getEventsOnDate(dateTime.toLocalDate());
+    List<EventDTO> filteredEvents = events.stream().filter(
+            event -> event.getStartTime().isBefore(dateTime)
+                && event.getEndTime().isAfter(dateTime))
+        .collect(Collectors.toList());
+    return !filteredEvents.isEmpty();
   }
 }
