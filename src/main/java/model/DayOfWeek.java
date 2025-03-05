@@ -1,5 +1,8 @@
 package model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Represents the days of the week. Used for specifying recurring events in a calendar.
  *
@@ -43,4 +46,12 @@ public enum DayOfWeek {
    * Represents Sunday.
    */
   U;
+
+  public static Set<DayOfWeek> parseRepeatDays(String days) throws IllegalArgumentException {
+    Set<DayOfWeek> repeatDays = new HashSet<>();
+    for (char day : days.toCharArray()) {
+      repeatDays.add(DayOfWeek.valueOf(String.valueOf(day)));
+    }
+    return repeatDays;
+  }
 }

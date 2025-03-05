@@ -1,6 +1,3 @@
-import static controller.ControllerMode.HEADLESS;
-import static controller.ControllerMode.INTERACTIVE;
-
 import controller.CalendarController;
 import controller.ControllerMode;
 import controller.IController;
@@ -52,7 +49,6 @@ public class CalendarApp {
     switch (mode) {
       case INTERACTIVE:
         view = new CommandLineView(new InputStreamReader(System.in));
-        controller = new CalendarController(model, INTERACTIVE, view);
         break;
       case HEADLESS:
         if (args.length < 3) {
@@ -61,7 +57,6 @@ public class CalendarApp {
         }
         try {
           view = new CommandLineView(new BufferedReader(new FileReader(args[2])));
-          controller = new CalendarController(model, HEADLESS, view);
         } catch (FileNotFoundException e) {
           System.err.println("File not found: " + args[2]);
           return;
@@ -72,6 +67,7 @@ public class CalendarApp {
         return;
     }
 
+    controller = new CalendarController(model, view, mode);
     controller.run();
   }
 
