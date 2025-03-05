@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 
 /**
- * The interface representing the getter methods of an event DTO. This will enforce the required
+ * This interface represents the getter methods for the event DTO. This will enforce the required
  * attributes to be instantiated in the EventDTO class.
  */
 public interface IEventDTO {

@@ -1,12 +1,12 @@
 package model;
 
 import dto.EventDTO;
+import dto.RecurringEventDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 /**
  * IModel interface defines the methods for view of mvc architecture for the CalendarApp
@@ -14,70 +14,68 @@ import java.util.Set;
  *
  * <p>It provides methods to create, edit, and retrieve events from the calendar.
  *
- * <p>It also provides methods to export the calendar to a CSV file and check if the user is busy at
- * a given time.
- *
+ * <p>It also provides methods to export the calendar to a CSV file and check if the user is busy
+ * at a given time.
  */
 public interface IModel {
 
-  // create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
+  /**
+   * Creates an event in the calendar.
+   *
+   * <p> If it contains both start and end time, it creates an event with start and end time.
+   *
+   * <p> Command for creating an event: create event --autoDecline <eventName> from
+   * <dateStringTtimeString> to <dateStringTtimeString>
+   *
+   * <p> If it contains only start time, it creates an all day event.
+   *
+   * <p> Command for creating an all day event: create event --autoDecline <eventName> on
+   * <dateStringTtimeString>
+   *
+   * @param eventDTO    The event to be created
+   * @param autoDecline Whether the event should be auto declined
+   * @throws EventConflictException   If the event conflicts with an existing event
+   * @throws IllegalArgumentException If the event is invalid
+   */
   void createEvent(EventDTO eventDTO, boolean autoDecline)
       throws EventConflictException, IllegalArgumentException;
 
-  // create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
-  // repeats <weekdays> for <N> times
-  void createRecurringEvent(EventDTO eventDTO, boolean autoDecline, Set<DayOfWeek> repeatDays,
-      int occurrences)
+  /**
+   * Creates a recurring event in the calendar.
+   *
+   * <p> If it contains RecurringEventDTO both start and end time, it creates a recurring event
+   * with start and end. The event repeats on the specified weekdays for the specified number of
+   * occurrence or until date.
+   *
+   * <p> If the occurrence attribute is set in the RecurringEventsDTO object, the event repeats for
+   * the specified number of times. If the untilDate attribute is set in the RecurringDTO object,
+   * the event repeats until the specified date.
+   *
+   * <p> The RecurringEventDTO object cannot set both occurrences and untilDate. It can only set
+   * one
+   * of them. If both are set, the method will throw an IllegalArgumentException.
+   *
+   * @param recurringEventDTO The recurring event to be created
+   * @param autoDecline       Whether the event should be auto declined
+   * @throws EventConflictException   If the event conflicts with an existing event
+   * @throws IllegalArgumentException If the event is invalid
+   */
+  void createRecurringEvent(RecurringEventDTO recurringEventDTO, boolean autoDecline)
       throws EventConflictException, IllegalArgumentException;
-
-  // create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
-  // repeats <weekdays> until <dateStringTtimeString>
-  void createRecurringEvent(EventDTO eventDTO, boolean autoDecline, Set<DayOfWeek> repeatDays,
-      LocalDateTime endDate)
-      throws EventConflictException, IllegalArgumentException;
-
-  // create event --autoDecline <eventName> on <dateStringTtimeString>
-  void createAllDayEvent(EventDTO eventDTO, boolean autoDecline)
-      throws EventConflictException, IllegalArgumentException;
-
-  // create event <eventName> on <dateStringTtimeString> repeats <weekdays> for <N> times
-  void createRecurringAllDayEvent(EventDTO eventDTO, boolean autoDecline, Set<DayOfWeek> repeatDays,
-      int occurrences)
-      throws EventConflictException, IllegalArgumentException;
-
-  // create event <eventName> on <dateStringTtimeString> repeats <weekdays>
-  // until <dateStringTtimeString>
-  void createRecurringAllDayEvent(EventDTO eventDTO, boolean autoDecline, Set<DayOfWeek> repeatDays,
-      LocalDateTime endDate)
-      throws EventConflictException, IllegalArgumentException;
-
-  // edit event <property> <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
-  // with <NewPropertyValue>
 
   /**
-   * @return the number of events edited
+   * Edits an event in the calendar.
+   *
+   * @param name               name of the event
+   * @param startTime          start time of the event
+   * @param endTime            end time of the event
+   * @param parametersToUpdate EventDTO with fields set for the corresponding parameters to be
+   *                           updated
+   * @return The number of events edited
+   * @throws IllegalArgumentException if the edit request is invalid
    */
-  <T> Integer editEvent(String subject, LocalDateTime start, LocalDateTime end,
-      Property<T> property,
-      T newValue)
-      throws IllegalArgumentException;
-
-  // edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>
-
-  /**
-   * @return the number of events edited
-   */
-  <T> Integer editEventsStartingFrom(String subject, LocalDateTime start, Property<T> property,
-      T newValue)
-      throws IllegalArgumentException;
-
-  // edit events <property> <eventName> <NewPropertyValue>
-
-  /**
-   * @return the number of events edited
-   */
-  <T> Integer editAllEvents(String subject, Property<T> property, T newValue)
-      throws IllegalArgumentException;
+  Integer editEvent(String name, LocalDateTime startTime, LocalDateTime endTime,
+      EventDTO parametersToUpdate) throws IllegalArgumentException;
 
 
   // print events on <dateStringTtimeString>
@@ -86,9 +84,20 @@ public interface IModel {
   // print events from <dateStringTtimeString> to <dateStringTtimeString>
   List<EventDTO> getEventsInRange(LocalDateTime start, LocalDateTime end);
 
-  // export cal fileName.csv
+  /**
+   * Exports the calendar to a CSV file.
+   *
+   * @param fileName filename to export
+   * @return the file name
+   * @throws CalendarExportException if the export fails
+   */
   String exportToCSV(String fileName) throws CalendarExportException;
 
-  // show status on <dateStringTtimeString>
+  /**
+   * Checks if the user is busy at a given dateTime.
+   *
+   * @param dateTime the dateTime to check if the user is busy
+   * @return true if user is busy, false otherwise
+   */
   Boolean isBusy(LocalDateTime dateTime);
 }
