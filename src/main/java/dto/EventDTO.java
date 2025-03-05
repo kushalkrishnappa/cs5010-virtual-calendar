@@ -3,7 +3,7 @@ package dto;
 import java.time.LocalDateTime;
 
 /**
- * EventDTO class that implements IEventDTO and store information about an event.
+ * EventDTO class implements IEventDTO and store information about an event.
  */
 public class EventDTO implements IEventDTO {
 
@@ -15,7 +15,7 @@ public class EventDTO implements IEventDTO {
   private final Boolean isPublic;
 
   /**
-   * Private constructor for EventDTO. The object is created using the EventDTOBuilder class.
+   * Protected constructor for EventDTO. The object is created using the EventDTOBuilder class.
    *
    * @param subject The subject of the event
    * @param startTime The start time of the event
@@ -24,7 +24,7 @@ public class EventDTO implements IEventDTO {
    * @param location The location of the event
    * @param isPublic Whether the event is public or not
    */
-  private EventDTO(
+  protected EventDTO(
       String subject,
       LocalDateTime startTime,
       LocalDateTime endTime,
@@ -54,17 +54,17 @@ public class EventDTO implements IEventDTO {
    */
   public static class EventDTOBuilder {
 
-    private String subject;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private String description;
-    private String location;
-    private Boolean isPublic;
+    protected String subject;
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
+    protected String description;
+    protected String location;
+    protected Boolean isPublic;
 
     /**
      * Private empty constructor for EventDTOBuilder.
      */
-    private EventDTOBuilder() {
+    protected EventDTOBuilder() {
     }
 
     /**
