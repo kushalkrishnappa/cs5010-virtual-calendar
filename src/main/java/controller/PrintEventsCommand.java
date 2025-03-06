@@ -1,0 +1,74 @@
+package controller;
+
+import dto.EventDTO;
+import exception.ParseCommandException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Scanner;
+
+public class PrintEventsCommand extends Command {
+
+  private LocalDate onDate;
+  private LocalDateTime startTime;
+  private LocalDateTime endTime;
+  private Runnable command;
+  private List<EventDTO> eventsOnDate;
+
+  PrintEventsCommand(CalendarController calendarController, Scanner commandScanner) {
+    super(calendarController, commandScanner);
+  }
+
+  @Override
+  void parseCommand() throws ParseCommandException {
+    if (!commandScanner.next().equals("event")) {
+      throw new ParseCommandException("Invalid command format: print events...");
+    }
+
+    switch (commandScanner.next()) {
+      case "on":
+        printEventsOnDate();
+        break;
+      case "from":
+        printEventsInInterval();
+        break;
+      default:
+        throw new ParseCommandException("Invalid command format: print events (on|from)...");
+    }
+  }
+
+  private void printEventsOnDate() throws ParseCommandException {
+    try {
+      onDate = LocalDate.parse(commandScanner.next(), calendarController.dateFormatter);
+    } catch (DateTimeParseException e) {
+      throw new ParseCommandException("Invalid on date format");
+    }
+
+    command = () -> eventsOnDate = calendarController.getModel().getEventsOnDate(onDate);
+  }
+
+  private void printEventsInInterval() throws ParseCommandException {
+    startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+
+    if (!commandScanner.next().equals("to")) {
+      throw new ParseCommandException("Invalid command format: print events from "
+          + "<dateStringTtimeString> to...");
+    }
+
+    endTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+
+    command = () -> eventsOnDate = calendarController.getModel()
+        .getEventsInRange(startTime, endTime);
+  }
+
+  @Override
+  void promptResult() {
+    for (EventDTO event : eventsOnDate) {
+      calendarController.promptOutput(
+          event.getSubject() + " [" + event.getStartTime() + " - " + event.getEndTime() + "]\n"
+      );
+    }
+  }
+
+}

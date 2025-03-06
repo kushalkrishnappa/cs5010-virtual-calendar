@@ -24,4 +24,23 @@ public class EventProperties {
    */
   private EventProperties() {
   }
+
+  public static Property<?> parseProperty(String property) throws IllegalArgumentException {
+    switch (property) {
+      case "subject":
+        return SUBJECT;
+      case "startTime":
+        return START_TIME;
+      case "endTime":
+        return END_TIME;
+      case "description":
+        return DESCRIPTION;
+      case "location":
+        return LOCATION;
+      case "isPublic":
+        return IS_PUBLIC;
+      default:
+        throw new IllegalArgumentException("Invalid property: " + property);
+    }
+  }
 }

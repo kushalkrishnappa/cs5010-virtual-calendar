@@ -6,7 +6,7 @@ package model;
  *
  * @param <T> the type of the property
  */
-class Property<T> {
+public class Property<T> {
 
   private final String name;
   private final Class<T> type;
@@ -20,5 +20,18 @@ class Property<T> {
   Property(String name, Class<T> type) {
     this.name = name;
     this.type = type;
+  }
+
+  /**
+   * Gets the class object representing the type of the property.
+   *
+   * @return the class object representing the type of the property
+   */
+  public Class<T> getType() {
+    return type;
+  }
+
+  public String getName() {
+    return name;
   }
 }

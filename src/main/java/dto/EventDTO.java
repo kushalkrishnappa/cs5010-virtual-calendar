@@ -40,19 +40,9 @@ public class EventDTO implements IEventDTO {
   }
 
   /**
-   * Returns a new EventDTOBuilder object. It is used to build an EventDTO object with the required
-   * attributes recursively.
-   *
-   * @return eventDTOBuilder object
-   */
-  public static EventDTOBuilder getBuilder() {
-    return new EventDTOBuilder();
-  }
-
-  /**
    * EventDTOBuilder class that builds an EventDTO object.
    */
-  public static class EventDTOBuilder {
+  public static class Builder<T extends Builder> {
 
     protected String subject;
     protected LocalDateTime startTime;
@@ -61,32 +51,31 @@ public class EventDTO implements IEventDTO {
     protected String location;
     protected Boolean isPublic;
 
-    /**
-     * Private empty constructor for EventDTOBuilder.
-     */
-    protected EventDTOBuilder() {
+
+    protected T self() {
+      return (T) this;
     }
 
     /**
      * Sets the subject of the event.
      *
      * @param subject The subject of the event
-     * @return EventDTOBuilder object
+     * @return Builder object
      */
-    public EventDTOBuilder setSubject(String subject) {
+    public T setSubject(String subject) {
       this.subject = subject;
-      return this;
+      return self();
     }
 
     /**
      * Sets the start time of the event.
      *
      * @param startTime The start time of the event
-     * @return EventDTOBuilder object
+     * @return builder object
      */
-    public EventDTOBuilder setStartTime(LocalDateTime startTime) {
+    public T setStartTime(LocalDateTime startTime) {
       this.startTime = startTime;
-      return this;
+      return self();
     }
 
     /**
@@ -95,9 +84,9 @@ public class EventDTO implements IEventDTO {
      * @param endTime The end time of the event
      * @return EventDTOBuilder object
      */
-    public EventDTOBuilder setEndTime(LocalDateTime endTime) {
+    public T setEndTime(LocalDateTime endTime) {
       this.endTime = endTime;
-      return this;
+      return self();
     }
 
     /**
@@ -106,9 +95,9 @@ public class EventDTO implements IEventDTO {
      * @param description The description of the event
      * @return EventDTOBuilder object
      */
-    public EventDTOBuilder setDescription(String description) {
+    public T setDescription(String description) {
       this.description = description;
-      return this;
+      return self();
     }
 
     /**
@@ -117,9 +106,9 @@ public class EventDTO implements IEventDTO {
      * @param location The location of the event
      * @return EventDTOBuilder object
      */
-    public EventDTOBuilder setLocation(String location) {
+    public T setLocation(String location) {
       this.location = location;
-      return this;
+      return self();
     }
 
     /**
@@ -128,9 +117,9 @@ public class EventDTO implements IEventDTO {
      * @param isPublic Whether the event is public or not
      * @return EventDTOBuilder object
      */
-    public EventDTOBuilder setIsPublic(boolean isPublic) {
+    public T setIsPublic(boolean isPublic) {
       this.isPublic = isPublic;
-      return this;
+      return self();
     }
 
     /**

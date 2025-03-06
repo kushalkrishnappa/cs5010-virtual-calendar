@@ -1,6 +1,6 @@
 package dto;
 
-import java.time.DayOfWeek;
+import model.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.Set;
 

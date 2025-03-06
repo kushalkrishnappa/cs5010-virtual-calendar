@@ -1,4 +1,4 @@
-package controller.command;
+package exception;
 
 public class ParseCommandException extends Exception {
 
