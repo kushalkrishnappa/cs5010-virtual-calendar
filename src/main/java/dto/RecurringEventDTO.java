@@ -1,6 +1,6 @@
 package dto;
 
-import java.time.DayOfWeek;
+import model.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -34,31 +34,14 @@ public class RecurringEventDTO extends EventDTO implements IRecurringEventDTO {
   }
 
   /**
-   * Returns a new EventDTOBuilder object. It is used to build an EventDTO object with the required
-   * attributes recursively.
-   *
-   * @return eventDTOBuilder object
-   */
-  public static RecurringEventDTOBuilder getBuilder() {
-    return new RecurringEventDTOBuilder();
-  }
-
-  /**
    * EventDTOBuilder class that builds an EventDTO object.
    */
-  public static class RecurringEventDTOBuilder extends EventDTOBuilder {
+  public static class Builder<T extends Builder<T>> extends EventDTO.Builder<T> {
 
     private int occurrences;
     private Set<DayOfWeek> repeatDays;
-    private LocalDateTime endDate;
+    private LocalDateTime untilDate;
 
-    /**
-     * Protected constructor for RecurringEventDTOBuilder with super instantiation of
-     * EventDTOBuilder.
-     */
-    private RecurringEventDTOBuilder() {
-      super();
-    }
 
     /**
      * Sets the number of occurrences of the event.
@@ -66,9 +49,9 @@ public class RecurringEventDTO extends EventDTO implements IRecurringEventDTO {
      * @param occurrences The number of occurrences of the event
      * @return the EventDTOBuilder object
      */
-    public RecurringEventDTOBuilder setOccurrences(int occurrences) {
+    public T setOccurrences(int occurrences) {
       this.occurrences = occurrences;
-      return this;
+      return self();
     }
 
     /**
@@ -77,20 +60,20 @@ public class RecurringEventDTO extends EventDTO implements IRecurringEventDTO {
      * @param repeatDays The repeat days of the event
      * @return the EventDTOBuilder object
      */
-    public RecurringEventDTOBuilder setRepeatDays(Set<DayOfWeek> repeatDays) {
+    public T setRepeatDays(Set<DayOfWeek> repeatDays) {
       this.repeatDays = repeatDays;
-      return this;
+      return self();
     }
 
     /**
      * Sets the end date of the event.
      *
-     * @param endDate The end date of the event
+     * @param untilDate The end date of the event
      * @return the EventDTOBuilder object
      */
-    public RecurringEventDTOBuilder setEndDate(LocalDateTime endDate) {
-      this.endDate = endDate;
-      return this;
+    public T setUntilDate(LocalDateTime untilDate) {
+      this.untilDate = untilDate;
+      return self();
     }
 
     /**
@@ -108,7 +91,7 @@ public class RecurringEventDTO extends EventDTO implements IRecurringEventDTO {
           this.isPublic,
           this.occurrences,
           this.repeatDays,
-          this.endDate);
+          this.untilDate);
     }
   }
 

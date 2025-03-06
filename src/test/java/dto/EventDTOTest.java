@@ -17,7 +17,7 @@ public class EventDTOTest {
    */
   @Test
   public void testEventDTOBuilderDoesNotReturnNull() {
-    IEventDTO event = EventDTO.getBuilder().build();
+    IEventDTO event = (new EventDTO.Builder()).build();
     assertNotNull(event);
     assertEquals(EventDTO.class.toString(), event.getClass().toString());
   }
@@ -27,7 +27,7 @@ public class EventDTOTest {
    */
   @Test
   public void testGetBuilderWithoutAttributesReturnsEmptyEventDTO() {
-    IEventDTO emptyEvent = EventDTO.getBuilder().build();
+    IEventDTO emptyEvent = (new EventDTO.Builder()).build();
     assertNull(emptyEvent.getSubject());
     assertNull(emptyEvent.getStartTime());
     assertNull(emptyEvent.getEndTime());
@@ -41,7 +41,7 @@ public class EventDTOTest {
    */
   @Test
   public void testGetBuilderWithAttributesReturnsEventDTO() {
-    IEventDTO event = EventDTO.getBuilder()
+    IEventDTO event = (new EventDTO.Builder())
         .setSubject("Subject")
         .setStartTime(null)
         .setEndTime(null)
