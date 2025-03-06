@@ -41,21 +41,31 @@ public class PrintEventsCommand extends Command {
     try {
       onDate = LocalDate.parse(commandScanner.next(), calendarController.dateFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid on date format");
+      throw new ParseCommandException("Invalid onDate format: " + calendarController.dateFormatter);
     }
 
     command = () -> eventsOnDate = calendarController.getModel().getEventsOnDate(onDate);
   }
 
   private void printEventsInInterval() throws ParseCommandException {
-    startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    try {
+      startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    } catch (DateTimeParseException e) {
+      throw new ParseCommandException(
+          "Invalid startDateTime format: " + calendarController.dateFormatter);
+    }
 
     if (!commandScanner.next().equals("to")) {
       throw new ParseCommandException("Invalid command format: print events from "
           + "<dateStringTtimeString> to...");
     }
 
-    endTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    try {
+      endTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    } catch (DateTimeParseException e) {
+      throw new ParseCommandException(
+          "Invalid endDateTime format: " + calendarController.dateFormatter);
+    }
 
     command = () -> eventsOnDate = calendarController.getModel()
         .getEventsInRange(startTime, endTime);

@@ -59,7 +59,7 @@ class CreateEventCommand extends Command {
     try {
       startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid date format");
+      throw new ParseCommandException("Invalid date format: " + calendarController.dateFormatter);
     }
 
     if (!commandScanner.hasNext()) {
@@ -95,7 +95,7 @@ class CreateEventCommand extends Command {
     try {
       untilDate = LocalDateTime.parse(commandScanner.next(), calendarController.dateFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid untilTime format");
+      throw new ParseCommandException("Invalid untilTime format: "+ calendarController.dateFormatter);
     }
 
     command = () -> calendarController.getModel().createRecurringEvent(reccuringEventBuilder
@@ -129,7 +129,7 @@ class CreateEventCommand extends Command {
       }
       endTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid time format");
+      throw new ParseCommandException("Invalid dateTime format" + calendarController.dateTimeFormatter);
     }
 
     if (!commandScanner.hasNext()) {
@@ -165,7 +165,7 @@ class CreateEventCommand extends Command {
     try {
       untilDate = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid untilTime format");
+      throw new ParseCommandException("Invalid untilTime format: "+ calendarController.dateTimeFormatter);
     }
 
     command = () -> calendarController.getModel().createRecurringEvent(reccuringEventBuilder

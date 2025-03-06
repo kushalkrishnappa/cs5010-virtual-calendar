@@ -62,14 +62,24 @@ class EditEventCommand extends Command {
           "Invalid command format: edit event <property> <eventName> from...");
     }
 
-    startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    try {
+      startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    } catch (DateTimeParseException e) {
+      throw new ParseCommandException(
+          "Invalid startDateTime format: " + calendarController.dateFormatter);
+    }
 
     if (!commandScanner.next().equals("to")) {
       throw new ParseCommandException("Invalid command format: edit event <property> <eventName> "
           + "from <dateStringTtimeString> to...");
     }
 
-    endTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    try {
+      endTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    } catch (DateTimeParseException e) {
+      throw new ParseCommandException(
+          "Invalid endDateTime format: " + calendarController.dateFormatter);
+    }
 
     if (!commandScanner.next().equals("with")) {
       throw new ParseCommandException("Invalid command format: edit event <property> <eventName> "
@@ -98,7 +108,13 @@ class EditEventCommand extends Command {
     String next = commandScanner.next();
 
     if (next.equals("from")) {
-      startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+      try {
+        startTime = LocalDateTime.parse(commandScanner.next(),
+            calendarController.dateTimeFormatter);
+      } catch (DateTimeParseException e) {
+        throw new ParseCommandException(
+            "Invalid startDateTime format: " + calendarController.dateFormatter);
+      }
 
       if (!commandScanner.next().equals("with")) {
         throw new ParseCommandException(
@@ -118,12 +134,12 @@ class EditEventCommand extends Command {
 
     command = () -> updatedEvents = calendarController.getModel()
         .editEvent(eventName, startTime, endTime, eventBuilder
-                .setStartTime(startTime)
-                .build());
+            .setStartTime(startTime)
+            .build());
   }
 
   @Override
   void promptResult() {
-    calendarController.promptOutput("Edited "+updatedEvents+" event(s)\n");
+    calendarController.promptOutput("Edited " + updatedEvents + " event(s)\n");
   }
 }

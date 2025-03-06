@@ -2,6 +2,7 @@ package controller;
 
 import exception.ParseCommandException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 class ShowStatusCommand extends Command {
@@ -22,7 +23,11 @@ class ShowStatusCommand extends Command {
       throw new ParseCommandException("Invalid command format: show status on...");
     }
 
-    dateTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    try {
+      dateTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+    } catch (DateTimeParseException e) {
+      throw new ParseCommandException("Invalid dateTime format: " +calendarController.dateFormatter);
+    }
 
     command = () -> isBusy = calendarController.getModel().isBusy(dateTime);
   }
@@ -31,8 +36,7 @@ class ShowStatusCommand extends Command {
   void promptResult() {
     if (isBusy) {
       calendarController.promptOutput("Busy at " + dateTime);
-    }
-    else {
+    } else {
       calendarController.promptOutput("Available at " + dateTime);
     }
   }
