@@ -13,7 +13,6 @@ public class PrintEventsCommand extends Command {
   private LocalDate onDate;
   private LocalDateTime startTime;
   private LocalDateTime endTime;
-  private Runnable command;
   private List<EventDTO> eventsOnDate;
 
   PrintEventsCommand(CalendarController calendarController, Scanner commandScanner) {

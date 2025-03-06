@@ -21,7 +21,6 @@ class CreateEventCommand extends Command {
   private LocalDateTime untilDate;
   private int occurrences;
 
-  private Runnable command;
   private final EventDTO.Builder<?> eventBuilder;
   private final RecurringEventDTO.Builder<?> reccuringEventBuilder;
 

@@ -17,7 +17,6 @@ class EditEventCommand extends Command {
   private final Map<String, BiConsumer<Builder<?>, String>> propertySetters;
   BiConsumer<Builder<?>, String> propertySetter;
 
-  private Runnable command;
   private Integer updatedEvents;
 
 

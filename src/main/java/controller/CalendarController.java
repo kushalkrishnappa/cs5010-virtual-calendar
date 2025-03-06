@@ -70,39 +70,37 @@ public class CalendarController implements IController {
 
   private void executeCommand(Scanner lineScanner) {
     controller.Command command = null;
-    try {
-      switch (lineScanner.next()) {
-        case "create":
-          command = new CreateEventCommand(this, lineScanner);
-          break;
-        case "edit":
-          command = new EditEventCommand(this, lineScanner);
-          break;
-        case "print":
-          command = new PrintEventsCommand(this, lineScanner);
-          break;
-        case "export":
-          command = new ExportCalendarCommand(this, lineScanner);
-          break;
-        case "show":
-          command = new ShowStatusCommand(this, lineScanner);
-          break;
-        case "exit":
-          exitProgram();
-          break;
-        case "help":
-          break;
-        default:
-          promptError("Unknown command");
-          return;
-      }
-    } catch (NoSuchElementException e) { // thrown if scanner cannot find nextToken
-      promptError("Invalid command format");
-      return;
+    switch (lineScanner.next()) {
+      case "create":
+        command = new CreateEventCommand(this, lineScanner);
+        break;
+      case "edit":
+        command = new EditEventCommand(this, lineScanner);
+        break;
+      case "print":
+        command = new PrintEventsCommand(this, lineScanner);
+        break;
+      case "export":
+        command = new ExportCalendarCommand(this, lineScanner);
+        break;
+      case "show":
+        command = new ShowStatusCommand(this, lineScanner);
+        break;
+      case "exit":
+        exitProgram();
+        break;
+      case "help":
+        break;
+      default:
+        promptError("Unknown command");
+        return;
     }
 
     try {
       command.parseCommand();
+    } catch (NoSuchElementException e) { // thrown if scanner cannot find nextToken
+      promptError("Invalid command format");
+      return;
     } catch (ParseCommandException e) {
       promptError(e.getMessage());
       return;

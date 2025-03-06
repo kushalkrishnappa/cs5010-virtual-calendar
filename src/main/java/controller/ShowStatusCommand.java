@@ -4,7 +4,7 @@ import exception.ParseCommandException;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
-public class ShowStatusCommand extends Command {
+class ShowStatusCommand extends Command {
 
   private LocalDateTime dateTime;
   private Boolean isBusy;

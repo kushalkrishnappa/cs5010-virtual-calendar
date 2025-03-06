@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 class ExportCalendarCommand extends Command {
 
-  private Runnable command;
   private String filePath;
 
   public ExportCalendarCommand(CalendarController calendarController, Scanner commandScanner) {
