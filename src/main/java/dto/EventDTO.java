@@ -31,6 +31,9 @@ public class EventDTO implements IEventDTO {
       String description,
       String location,
       Boolean isPublic) {
+    if (subject == null || startTime == null) {
+      throw new IllegalArgumentException("Cannot be null");
+    }
     this.subject = subject;
     this.startTime = startTime;
     this.endTime = endTime;
