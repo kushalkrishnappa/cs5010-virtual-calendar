@@ -40,29 +40,6 @@ public interface IModel {
       throws EventConflictException, IllegalArgumentException;
 
   /**
-   * Creates a recurring event in the calendar.
-   *
-   * <p> If it contains RecurringEventDTO both start and end time, it creates a recurring event
-   * with start and end. The event repeats on the specified weekdays for the specified number of
-   * occurrence or until date.
-   *
-   * <p> If the occurrence attribute is set in the RecurringEventsDTO object, the event repeats for
-   * the specified number of times. If the untilDate attribute is set in the RecurringDTO object,
-   * the event repeats until the specified date.
-   *
-   * <p> The RecurringEventDTO object cannot set both occurrences and untilDate. It can only set
-   * one
-   * of them. If both are set, the method will throw an IllegalArgumentException.
-   *
-   * @param recurringEventDTO The recurring event to be created
-   * @param autoDecline       Whether the event should be auto declined
-   * @throws EventConflictException   If the event conflicts with an existing event
-   * @throws IllegalArgumentException If the event is invalid
-   */
-  void createRecurringEvent(RecurringEventDTO recurringEventDTO, boolean autoDecline)
-      throws EventConflictException, IllegalArgumentException;
-
-  /**
    * Edits an event in the calendar.
    *
    * @param name               name of the event
