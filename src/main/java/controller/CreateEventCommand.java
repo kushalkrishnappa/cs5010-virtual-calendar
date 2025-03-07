@@ -2,7 +2,6 @@ package controller;
 
 
 import dto.EventDTO;
-import dto.RecurringEventDTO;
 import exception.ParseCommandException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

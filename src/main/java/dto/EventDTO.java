@@ -13,24 +13,28 @@ public class EventDTO implements IEventDTO {
   private final String description;
   private final String location;
   private final Boolean isPublic;
+  private final Boolean isRecurring;
+  private final IRecurringDetailsDTO recurringDetails;
 
   /**
    * Protected constructor for EventDTO. The object is created using the EventDTOBuilder class.
    *
-   * @param subject The subject of the event
-   * @param startTime The start time of the event
-   * @param endTime The end time of the event
+   * @param subject     The subject of the event
+   * @param startTime   The start time of the event
+   * @param endTime     The end time of the event
    * @param description The description of the event
-   * @param location The location of the event
-   * @param isPublic Whether the event is public or not
+   * @param location    The location of the event
+   * @param isPublic    Whether the event is public or not
    */
-  protected EventDTO(
+  private EventDTO(
       String subject,
       LocalDateTime startTime,
       LocalDateTime endTime,
       String description,
       String location,
-      Boolean isPublic) {
+      Boolean isPublic,
+      Boolean isRecurring,
+      IRecurringDetailsDTO recurringDetails) {
     if (subject == null || startTime == null) {
       throw new IllegalArgumentException("Cannot be null");
     }
@@ -40,24 +44,27 @@ public class EventDTO implements IEventDTO {
     this.description = description;
     this.location = location;
     this.isPublic = isPublic;
+    this.isRecurring = isRecurring;
+    this.recurringDetails = recurringDetails;
+  }
+
+  public static EventDTOBuilder getBuilder() {
+    return new EventDTOBuilder();
   }
 
   /**
    * EventDTOBuilder class that builds an EventDTO object.
    */
-  public static class Builder<T extends Builder> {
+  public static class EventDTOBuilder {
 
-    protected String subject;
-    protected LocalDateTime startTime;
-    protected LocalDateTime endTime;
-    protected String description;
-    protected String location;
-    protected Boolean isPublic;
-
-
-    protected T self() {
-      return (T) this;
-    }
+    private String subject;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private String description;
+    private String location;
+    private Boolean isPublic;
+    private Boolean isRecurring;
+    private IRecurringDetailsDTO recurringDetails;
 
     /**
      * Sets the subject of the event.
@@ -65,9 +72,9 @@ public class EventDTO implements IEventDTO {
      * @param subject The subject of the event
      * @return Builder object
      */
-    public T setSubject(String subject) {
+    public EventDTOBuilder setSubject(String subject) {
       this.subject = subject;
-      return self();
+      return this;
     }
 
     /**
@@ -76,9 +83,9 @@ public class EventDTO implements IEventDTO {
      * @param startTime The start time of the event
      * @return builder object
      */
-    public T setStartTime(LocalDateTime startTime) {
+    public EventDTOBuilder setStartTime(LocalDateTime startTime) {
       this.startTime = startTime;
-      return self();
+      return this;
     }
 
     /**
@@ -87,9 +94,9 @@ public class EventDTO implements IEventDTO {
      * @param endTime The end time of the event
      * @return EventDTOBuilder object
      */
-    public T setEndTime(LocalDateTime endTime) {
+    public EventDTOBuilder setEndTime(LocalDateTime endTime) {
       this.endTime = endTime;
-      return self();
+      return this;
     }
 
     /**
@@ -98,9 +105,9 @@ public class EventDTO implements IEventDTO {
      * @param description The description of the event
      * @return EventDTOBuilder object
      */
-    public T setDescription(String description) {
+    public EventDTOBuilder setDescription(String description) {
       this.description = description;
-      return self();
+      return this;
     }
 
     /**
@@ -109,9 +116,9 @@ public class EventDTO implements IEventDTO {
      * @param location The location of the event
      * @return EventDTOBuilder object
      */
-    public T setLocation(String location) {
+    public EventDTOBuilder setLocation(String location) {
       this.location = location;
-      return self();
+      return this;
     }
 
     /**
@@ -120,9 +127,19 @@ public class EventDTO implements IEventDTO {
      * @param isPublic Whether the event is public or not
      * @return EventDTOBuilder object
      */
-    public T setIsPublic(boolean isPublic) {
+    public EventDTOBuilder setIsPublic(boolean isPublic) {
       this.isPublic = isPublic;
-      return self();
+      return this;
+    }
+
+    public EventDTOBuilder setIsRecurring(boolean isRecurring) {
+      this.isRecurring = isRecurring;
+      return this;
+    }
+
+    public EventDTOBuilder setRecurringDetails(IRecurringDetailsDTO recurringDetails) {
+      this.recurringDetails = recurringDetails;
+      return this;
     }
 
     /**
@@ -137,7 +154,9 @@ public class EventDTO implements IEventDTO {
           this.endTime,
           this.description,
           this.location,
-          this.isPublic
+          this.isPublic,
+          this.isRecurring,
+          this.recurringDetails
       );
     }
   }
@@ -170,5 +189,15 @@ public class EventDTO implements IEventDTO {
   @Override
   public Boolean isPublic() {
     return this.isPublic;
+  }
+
+  @Override
+  public Boolean isRecurring() {
+    return this.isRecurring;
+  }
+
+  @Override
+  public IRecurringDetailsDTO getRecurringDetails() {
+    return this.recurringDetails;
   }
 }

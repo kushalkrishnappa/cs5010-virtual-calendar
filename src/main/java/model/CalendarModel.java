@@ -1,7 +1,6 @@
 package model;
 
 import dto.EventDTO;
-import dto.RecurringEventDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import java.time.LocalDate;
