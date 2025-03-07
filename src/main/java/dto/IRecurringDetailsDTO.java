@@ -8,7 +8,7 @@ import java.util.Set;
  * This interface represents the getter methods for the recurring event DTO. This will enforce the
  * required attributes to be instantiated in the RecurringEventDTO class.
  */
-public interface IRecurringEventDTO {
+public interface IRecurringDetailsDTO {
 
   /**
    * Returns the number of occurrences of the recurring event.

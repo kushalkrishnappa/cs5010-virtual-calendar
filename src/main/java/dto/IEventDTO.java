@@ -50,4 +50,8 @@ public interface IEventDTO {
    * @return true if the event is public, false otherwise
    */
   Boolean isPublic();
+
+  Boolean isRecurring();
+
+  IRecurringDetailsDTO getRecurringDetails();
 }
