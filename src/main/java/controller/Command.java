@@ -13,7 +13,7 @@ abstract class Command {
 
   Command(CalendarController calendarController, Scanner commandScanner) {
     this.calendarController = calendarController;
-    this.commandScanner = commandScanner;
+    this.commandScanner = commandScanner.useDelimiter("\\s+");
   }
 
   abstract void parseCommand() throws ParseCommandException;

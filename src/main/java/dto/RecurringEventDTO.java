@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class RecurringEventDTO extends EventDTO implements IRecurringEventDTO {
 
-  private final int occurrences;
+  private final Integer occurrences;
   private final Set<DayOfWeek> repeatDays;
   private final LocalDateTime untilDate;
 
@@ -25,9 +25,14 @@ public class RecurringEventDTO extends EventDTO implements IRecurringEventDTO {
    * @param isPublic    Whether the event is public or not
    */
   private RecurringEventDTO(String subject, LocalDateTime startTime,
-      LocalDateTime endTime, String description, String location, Boolean isPublic, int occurrences,
+      LocalDateTime endTime, String description, String location, Boolean isPublic, Integer occurrences,
       Set<DayOfWeek> repeatDays, LocalDateTime untilDate) {
     super(subject, startTime, endTime, description, location, isPublic);
+    if (repeatDays != null
+    || (occurrences != null && untilDate == null)
+    || (untilDate != null && occurrences == null)) {
+      throw new IllegalArgumentException("Cannot set both occurrences and untilDate");
+    }
     this.occurrences = occurrences;
     this.repeatDays = repeatDays;
     this.untilDate = untilDate;
@@ -38,7 +43,7 @@ public class RecurringEventDTO extends EventDTO implements IRecurringEventDTO {
    */
   public static class Builder<T extends Builder<T>> extends EventDTO.Builder<T> {
 
-    private int occurrences;
+    private Integer occurrences;
     private Set<DayOfWeek> repeatDays;
     private LocalDateTime untilDate;
 

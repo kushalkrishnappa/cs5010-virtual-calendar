@@ -67,11 +67,11 @@ public interface IEventRepository {
   /**
    * Retrieves all events in the repository in the given time range.
    *
-   * @param start The start time of the events range
-   * @param end   The end time of the events range
+   * @param startTime The start time of the events range
+   * @param endTime   The end time of the events range
    * @return a list of events in the given time range
    */
-  List<EventDTO> getEventsInRange(LocalDateTime start, LocalDateTime end);
+  List<EventDTO> getEventsInRange(LocalDateTime startTime, LocalDateTime endTime);
 
   /**
    * Retrieves all events in the repository with the given name.

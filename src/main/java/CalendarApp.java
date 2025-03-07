@@ -5,7 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import model.Calendar;
+import model.CalendarModel;
 import model.IModel;
 import view.CommandLineView;
 import view.IView;
@@ -24,7 +24,7 @@ public class CalendarApp {
     // create the model
     IView view;
     IController controller;
-    IModel model = new Calendar();
+    IModel model = new CalendarModel();
 
     if (args.length < 2) {
       System.err.println("Usage: java CalendarApp.java --mode [interactive | headless filepath]");

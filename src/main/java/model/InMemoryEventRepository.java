@@ -3,14 +3,17 @@ package model;
 import dto.EventDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class InMemoryEventRepository implements IEventRepository{
+public class InMemoryEventRepository implements IEventRepository {
+
+  List<EventDTO> repository = new ArrayList<>();
 
   @Override
   public boolean insertEvent(EventDTO event) {
-    return false;
+    return repository.add(event);
   }
 
   @Override
@@ -35,7 +38,7 @@ public class InMemoryEventRepository implements IEventRepository{
 
   @Override
   public List<EventDTO> getEventsOnDate(LocalDate date) {
-    return List.of();
+    return repository;
   }
 
   @Override

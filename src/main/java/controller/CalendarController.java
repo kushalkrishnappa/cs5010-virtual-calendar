@@ -110,6 +110,7 @@ public class CalendarController implements IController {
       command.executeCommand();
     } catch (EventConflictException | CalendarExportException e) {
       promptError(e.getMessage());
+      return;
     }
 
     command.promptResult();

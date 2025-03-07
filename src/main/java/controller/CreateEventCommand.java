@@ -4,6 +4,7 @@ package controller;
 import dto.EventDTO;
 import dto.RecurringEventDTO;
 import exception.ParseCommandException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
@@ -57,8 +58,9 @@ class CreateEventCommand extends Command {
 
   private void handleCreateAllDayEvent() throws ParseCommandException {
     try {
-      startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateFormatter);
+      startTime = LocalDate.parse(commandScanner.next(), calendarController.dateFormatter).atStartOfDay();
     } catch (DateTimeParseException e) {
+      System.out.println(e);
       throw new ParseCommandException("Invalid date format: " + calendarController.dateFormatter);
     }
 

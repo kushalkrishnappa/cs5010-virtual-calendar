@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class PrintEventsCommand extends Command {
@@ -21,7 +22,7 @@ public class PrintEventsCommand extends Command {
 
   @Override
   void parseCommand() throws ParseCommandException {
-    if (!commandScanner.next().equals("event")) {
+    if (!commandScanner.next().equals("events")) {
       throw new ParseCommandException("Invalid command format: print events...");
     }
 
@@ -74,6 +75,10 @@ public class PrintEventsCommand extends Command {
   @Override
   void promptResult() {
     for (EventDTO event : eventsOnDate) {
+      if (Objects.isNull(event.getEndTime())) {
+        calendarController.promptOutput(event.getSubject() + " [All day]\n");
+        continue;
+      }
       calendarController.promptOutput(
           event.getSubject() + " [" + event.getStartTime() + " - " + event.getEndTime() + "]\n"
       );
