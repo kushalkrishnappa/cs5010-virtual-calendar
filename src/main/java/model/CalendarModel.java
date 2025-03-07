@@ -44,12 +44,6 @@ public class CalendarModel implements IModel {
     }
   }
 
-  @Override
-  public void createRecurringEvent(RecurringEventDTO recurringEventDTO, boolean autoDecline)
-      throws EventConflictException, IllegalArgumentException {
-    // check ig
-  }
-
   private boolean doesEventConflict(EventDTO newEvent) {
     // get all the events on the specific date
     List<EventDTO> events = eventRepository.getEventsOnDate(newEvent.getStartTime().toLocalDate());
