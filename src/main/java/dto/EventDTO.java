@@ -13,6 +13,7 @@ public class EventDTO {
   private final String description;
   private final String location;
   private final Boolean isPublic;
+  private final Boolean isAllDay;
   private final Boolean isRecurring;
   private final RecurringDetailsDTO recurringDetails;
 
@@ -25,6 +26,9 @@ public class EventDTO {
    * @param description The description of the event
    * @param location    The location of the event
    * @param isPublic    Whether the event is public or not
+   * @param isAllDay    Whether the event is all day or not
+   * @param isRecurring Whether the event is recurring or not
+   * @param recurringDetails The recurring details of the event
    */
   private EventDTO(
       String subject,
@@ -33,6 +37,7 @@ public class EventDTO {
       String description,
       String location,
       Boolean isPublic,
+      Boolean isAllDay,
       Boolean isRecurring,
       RecurringDetailsDTO recurringDetails) {
     if (subject == null || startTime == null) {
@@ -44,6 +49,7 @@ public class EventDTO {
     this.description = description;
     this.location = location;
     this.isPublic = isPublic;
+    this.isAllDay = isAllDay;
     this.isRecurring = isRecurring;
     this.recurringDetails = recurringDetails;
   }
@@ -63,6 +69,7 @@ public class EventDTO {
     private String description;
     private String location;
     private Boolean isPublic;
+    private Boolean isAllDay;
     private Boolean isRecurring;
     private RecurringDetailsDTO recurringDetails;
 
@@ -135,6 +142,11 @@ public class EventDTO {
       return this;
     }
 
+    public EventDTOBuilder setIsAllDay(boolean isAllDay) {
+      this.isAllDay = isAllDay;
+      return this;
+    }
+
     public EventDTOBuilder setIsRecurring(boolean isRecurring) {
       this.isRecurring = isRecurring;
       return this;
@@ -158,9 +170,9 @@ public class EventDTO {
           this.description,
           this.location,
           this.isPublic,
+          this.isAllDay,
           this.isRecurring,
-          this.recurringDetails
-      );
+          this.recurringDetails);
     }
   }
 
@@ -184,11 +196,15 @@ public class EventDTO {
     return this.location;
   }
 
-  public Boolean isPublic() {
+  public Boolean getIsPublic() {
     return this.isPublic;
   }
 
-  public Boolean isRecurring() {
+  public Boolean getAllDay() {
+    return this.isAllDay;
+  }
+
+  public Boolean getIsRecurring() {
     return this.isRecurring;
   }
 
