@@ -1,10 +1,9 @@
-package model;
+package repository;
 
 import dto.EventDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Represents a repository for events. This interface defines methods for accessing and managing
@@ -16,7 +15,6 @@ public interface IEventRepository {
    * Inserts an event into the repository.
    *
    * @param event The event to be stored in the repository
-   * @return true if event is stored successfully, false otherwise
    */
   boolean insertEvent(EventDTO event);
 
@@ -54,7 +52,9 @@ public interface IEventRepository {
    * @param endTime   The end time of the event
    * @return an event if it exists, empty otherwise
    */
-  Optional<EventDTO> getEvent(String name, LocalDateTime startTime, LocalDateTime endTime);
+  EventDTO getEvent(String name, LocalDateTime startTime, LocalDateTime endTime);
+
+  List<EventDTO> getAllEvents();
 
   /**
    * Retrieves all events in the repository on given date.
@@ -90,4 +90,7 @@ public interface IEventRepository {
    */
   List<EventDTO> getEventsStartingFrom(String name, LocalDateTime startTime);
 
+  List<EventDTO> getEventsAt(LocalDateTime dateTime);
+
+  List<EventDTO> searchOverlaps(LocalDateTime startTime, LocalDateTime endTime);
 }
