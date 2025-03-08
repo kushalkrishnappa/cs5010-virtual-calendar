@@ -1,23 +1,24 @@
 package controller;
 
+import controller.CalendarController.ControllerUtility;
+import exception.CalendarExportException;
+import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.util.Scanner;
+import model.IModel;
 
 class ExportCalendarCommand extends Command {
 
-  private String filePath;
-
-  public ExportCalendarCommand(CalendarController calendarController, Scanner commandScanner) {
-    super(calendarController, commandScanner);
-  }
+  private String outputFilePath;
+  private String filename;
 
   @Override
-  void parseCommand() throws ParseCommandException {
+  void parseCommand(Scanner commandScanner) throws ParseCommandException {
     if (!commandScanner.next().equals("cal")) {
       throw new ParseCommandException("Invalid command format: export cal...");
     }
 
-    String filename = commandScanner.next();
+    filename = commandScanner.next();
     if (!filename.endsWith(".csv")) {
       if (filename.contains(".")) {
         throw new ParseCommandException(
@@ -26,13 +27,15 @@ class ExportCalendarCommand extends Command {
       }
       filename = filename + ".csv";
     }
-
-    String finalFilename = filename;
-    command = () -> filePath = calendarController.getModel().exportToCSV(finalFilename);
   }
 
   @Override
-  void promptResult() {
-    calendarController.promptOutput("Calendar exported to file:\n" + filePath + "\n");
+  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
+    outputFilePath = model.exportToCSV(filename);
+  }
+
+  @Override
+  void promptResult(ControllerUtility controllerUtility) {
+    controllerUtility.promptOutput("Calendar exported to file:\n" + outputFilePath + "\n");
   }
 }

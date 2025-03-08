@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * EventDTO class implements IEventDTO and store information about an event.
  */
-public class EventDTO implements IEventDTO {
+public class EventDTO {
 
   private final String subject;
   private final LocalDateTime startTime;
@@ -14,7 +14,7 @@ public class EventDTO implements IEventDTO {
   private final String location;
   private final Boolean isPublic;
   private final Boolean isRecurring;
-  private final IRecurringDetailsDTO recurringDetails;
+  private final RecurringDetailsDTO recurringDetails;
 
   /**
    * Protected constructor for EventDTO. The object is created using the EventDTOBuilder class.
@@ -34,7 +34,7 @@ public class EventDTO implements IEventDTO {
       String location,
       Boolean isPublic,
       Boolean isRecurring,
-      IRecurringDetailsDTO recurringDetails) {
+      RecurringDetailsDTO recurringDetails) {
     if (subject == null || startTime == null) {
       throw new IllegalArgumentException("Cannot be null");
     }
@@ -64,7 +64,10 @@ public class EventDTO implements IEventDTO {
     private String location;
     private Boolean isPublic;
     private Boolean isRecurring;
-    private IRecurringDetailsDTO recurringDetails;
+    private RecurringDetailsDTO recurringDetails;
+
+    private EventDTOBuilder() {
+    }
 
     /**
      * Sets the subject of the event.
@@ -137,7 +140,7 @@ public class EventDTO implements IEventDTO {
       return this;
     }
 
-    public EventDTOBuilder setRecurringDetails(IRecurringDetailsDTO recurringDetails) {
+    public EventDTOBuilder setRecurringDetails(RecurringDetailsDTO recurringDetails) {
       this.recurringDetails = recurringDetails;
       return this;
     }
@@ -161,43 +164,35 @@ public class EventDTO implements IEventDTO {
     }
   }
 
-  @Override
   public String getSubject() {
     return this.subject;
   }
 
-  @Override
   public LocalDateTime getStartTime() {
     return this.startTime;
   }
 
-  @Override
   public LocalDateTime getEndTime() {
     return this.endTime;
   }
 
-  @Override
   public String getDescription() {
     return this.description;
   }
 
-  @Override
   public String getLocation() {
     return this.location;
   }
 
-  @Override
   public Boolean isPublic() {
     return this.isPublic;
   }
 
-  @Override
   public Boolean isRecurring() {
     return this.isRecurring;
   }
 
-  @Override
-  public IRecurringDetailsDTO getRecurringDetails() {
+  public RecurringDetailsDTO getRecurringDetails() {
     return this.recurringDetails;
   }
 }

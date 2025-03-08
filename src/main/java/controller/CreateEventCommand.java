@@ -1,7 +1,11 @@
 package controller;
 
 
+import controller.CalendarController.ControllerUtility;
 import dto.EventDTO;
+import dto.RecurringDetailsDTO;
+import exception.CalendarExportException;
+import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,29 +13,22 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.Set;
 import model.DayOfWeek;
+import model.IModel;
 
 class CreateEventCommand extends Command {
-
 
   private String eventName;
   private boolean autoDecline;
   private LocalDateTime startTime;
   private LocalDateTime endTime;
+
+  private boolean isRecurring;
   private Set<DayOfWeek> repeatDays;
   private LocalDateTime untilDate;
   private int occurrences;
 
-  private final EventDTO.Builder<?> eventBuilder;
-  private final RecurringEventDTO.Builder<?> reccuringEventBuilder;
-
-  CreateEventCommand(CalendarController calendarController, Scanner commandScanner) {
-    super(calendarController, commandScanner);
-    reccuringEventBuilder = new RecurringEventDTO.Builder();
-    eventBuilder = new EventDTO.Builder();
-  }
-
   @Override
-  void parseCommand() throws ParseCommandException {
+  void parseCommand(Scanner commandScanner) throws ParseCommandException {
     if (!commandScanner.next().equals("event")) {
       throw new ParseCommandException("Invalid command (not create event)");
     }
@@ -45,30 +42,42 @@ class CreateEventCommand extends Command {
     }
     switch (commandScanner.next()) {
       case "from":
-        handleCreateSpannedEvent();
+        handleCreateSpannedEvent(commandScanner);
         break;
       case "on":
-        handleCreateAllDayEvent();
+        handleCreateAllDayEvent(commandScanner);
         break;
       default:
         throw new ParseCommandException("Invalid format");
     }
   }
 
-  private void handleCreateAllDayEvent() throws ParseCommandException {
+  private void handleCreateAllDayEvent(Scanner commandScanner) throws ParseCommandException {
     try {
-      startTime = LocalDate.parse(commandScanner.next(), calendarController.dateFormatter).atStartOfDay();
+      startTime = LocalDate.parse(commandScanner.next(), CalendarController.dateFormatter)
+          .atStartOfDay();
     } catch (DateTimeParseException e) {
       System.out.println(e);
-      throw new ParseCommandException("Invalid date format: " + calendarController.dateFormatter);
+      throw new ParseCommandException("Invalid date format: " + CalendarController.dateFormatter);
     }
 
-    if (!commandScanner.hasNext()) {
-      command = () -> calendarController.getModel().createEvent(eventBuilder
-          .setSubject(eventName)
-          .setStartTime(startTime)
-          .build(), autoDecline);
+    if (parseRepeatDays(commandScanner)) {
       return;
+    }
+
+    switch (commandScanner.next()) {
+      case "for":
+        handleCreateAllDayNTimesEvent(commandScanner);
+        break;
+      case "until":
+        handleCreateAllDayUntilEvent(commandScanner);
+        break;
+    }
+  }
+
+  private boolean parseRepeatDays(Scanner commandScanner) throws ParseCommandException {
+    if (!commandScanner.hasNext()) {
+      return true;
     }
 
     if (!commandScanner.next().equals("repeats")) {
@@ -80,121 +89,95 @@ class CreateEventCommand extends Command {
     } catch (IllegalArgumentException e) {
       throw new ParseCommandException("Repeat days is not specified correctly");
     }
-
-    switch (commandScanner.next()) {
-      case "for":
-        handleCreateAllDayNTimesEvent();
-        break;
-      case "until":
-        handleCreateAllDayUntilEvent();
-        break;
-    }
+    return false;
   }
 
-  private void handleCreateAllDayUntilEvent()
+  private void handleCreateAllDayUntilEvent(Scanner commandScanner)
       throws ParseCommandException {
     try {
-      untilDate = LocalDateTime.parse(commandScanner.next(), calendarController.dateFormatter);
+      untilDate = LocalDateTime.parse(commandScanner.next(), CalendarController.dateFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid untilTime format: "+ calendarController.dateFormatter);
+      throw new ParseCommandException(
+          "Invalid untilTime format: " + CalendarController.dateFormatter);
     }
-
-    command = () -> calendarController.getModel().createRecurringEvent(reccuringEventBuilder
-        .setSubject(eventName)
-        .setStartTime(startTime)
-        .setRepeatDays(repeatDays)
-        .setUntilDate(untilDate)
-        .build(), autoDecline);
+    isRecurring = true;
   }
 
-  private void handleCreateAllDayNTimesEvent()
+  private void handleCreateAllDayNTimesEvent(Scanner commandScanner)
       throws ParseCommandException {
     occurrences = Integer.parseInt(commandScanner.next());
     if (!commandScanner.next().equals("times")) {
       throw new ParseCommandException("Invalid format (not <N> times)");
     }
-
-    command = () -> calendarController.getModel().createRecurringEvent(reccuringEventBuilder
-        .setSubject(eventName)
-        .setStartTime(startTime)
-        .setRepeatDays(repeatDays)
-        .setOccurrences(occurrences)
-        .build(), autoDecline);
+    isRecurring = true;
   }
 
-  private void handleCreateSpannedEvent() throws ParseCommandException {
+  private void handleCreateSpannedEvent(Scanner commandScanner) throws ParseCommandException {
     try {
-      startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+      startTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
       if (!commandScanner.next().equals("to")) {
         throw new ParseCommandException("Invalid format");
       }
-      endTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+      endTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid dateTime format" + calendarController.dateTimeFormatter);
+      throw new ParseCommandException(
+          "Invalid dateTime format" + CalendarController.dateTimeFormatter);
     }
 
-    if (!commandScanner.hasNext()) {
-      command = () -> calendarController.getModel().createEvent(eventBuilder
-          .setSubject(eventName)
-          .setStartTime(startTime)
-          .setEndTime(endTime)
-          .build(), autoDecline);
+    if (parseRepeatDays(commandScanner)) {
       return;
-    }
-
-    if (!commandScanner.next().equals("repeats")) {
-      throw new ParseCommandException("Invalid format (not repeats)");
-    }
-
-    try {
-      repeatDays = DayOfWeek.parseRepeatDays(commandScanner.next());
-    } catch (IllegalArgumentException e) {
-      throw new ParseCommandException("Repeat days is not specified correctly");
     }
 
     switch (commandScanner.next()) {
       case "for":
-        handleCreateSpannedNTimesEvent();
+        handleCreateSpannedNTimesEvent(commandScanner);
         break;
       case "until":
-        handleCreateSpannedUntilEvent();
+        handleCreateSpannedUntilEvent(commandScanner);
         break;
     }
   }
 
-  private void handleCreateSpannedUntilEvent() throws ParseCommandException {
+  private void handleCreateSpannedUntilEvent(Scanner commandScanner) throws ParseCommandException {
     try {
-      untilDate = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+      untilDate = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid untilTime format: "+ calendarController.dateTimeFormatter);
+      throw new ParseCommandException(
+          "Invalid untilTime format: " + CalendarController.dateTimeFormatter);
     }
-
-    command = () -> calendarController.getModel().createRecurringEvent(reccuringEventBuilder
-        .setSubject(eventName)
-        .setStartTime(startTime)
-        .setEndTime(endTime)
-        .setRepeatDays(repeatDays)
-        .setUntilDate(untilDate)
-        .build(), autoDecline);
+    isRecurring = true;
   }
 
-  private void handleCreateSpannedNTimesEvent() throws ParseCommandException {
+  private void handleCreateSpannedNTimesEvent(Scanner commandScanner) throws ParseCommandException {
     occurrences = Integer.parseInt(commandScanner.next());
     if (!commandScanner.next().equals("times")) {
       throw new ParseCommandException("Invalid format (not <N> times)");
     }
-
-    command = () -> calendarController.getModel().createRecurringEvent(reccuringEventBuilder
-        .setSubject(eventName)
-        .setStartTime(startTime)
-        .setEndTime(endTime)
-        .setRepeatDays(repeatDays)
-        .setOccurrences(occurrences)
-        .build(), autoDecline);
+    isRecurring = true;
   }
 
   @Override
-  void promptResult() {
-    calendarController.promptOutput("Successfully created event " + eventName + "\n");
+  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
+    model.createEvent(
+        EventDTO.getBuilder()
+            .setSubject(eventName)
+            .setStartTime(startTime)
+            .setEndTime(endTime)
+            .setIsRecurring(isRecurring)
+            .setRecurringDetails(
+                RecurringDetailsDTO.getBuilder()
+                    .setRepeatDays(repeatDays)
+                    .setUntilDate(untilDate)
+                    .setOccurrences(occurrences)
+                    .build()
+            )
+            .build(),
+        autoDecline
+    );
+  }
+
+  @Override
+  void promptResult(ControllerUtility controllerUtility) {
+    controllerUtility.promptOutput("Successfully created event " + eventName + "\n");
   }
 }

@@ -1,6 +1,9 @@
 package controller;
 
+import controller.CalendarController.ControllerUtility;
 import dto.EventDTO;
+import exception.CalendarExportException;
+import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -8,6 +11,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import model.IModel;
 
 public class PrintEventsCommand extends Command {
 
@@ -16,73 +20,73 @@ public class PrintEventsCommand extends Command {
   private LocalDateTime endTime;
   private List<EventDTO> eventsOnDate;
 
-  PrintEventsCommand(CalendarController calendarController, Scanner commandScanner) {
-    super(calendarController, commandScanner);
-  }
-
   @Override
-  void parseCommand() throws ParseCommandException {
+  void parseCommand(Scanner commandScanner) throws ParseCommandException {
     if (!commandScanner.next().equals("events")) {
       throw new ParseCommandException("Invalid command format: print events...");
     }
 
     switch (commandScanner.next()) {
       case "on":
-        printEventsOnDate();
+        printEventsOnDate(commandScanner);
         break;
       case "from":
-        printEventsInInterval();
+        printEventsInInterval(commandScanner);
         break;
       default:
         throw new ParseCommandException("Invalid command format: print events (on|from)...");
     }
   }
 
-  private void printEventsOnDate() throws ParseCommandException {
+  private void printEventsOnDate(Scanner commandScanner) throws ParseCommandException {
     try {
-      onDate = LocalDate.parse(commandScanner.next(), calendarController.dateFormatter);
+      onDate = LocalDate.parse(commandScanner.next(), CalendarController.dateFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid onDate format: " + calendarController.dateFormatter);
+      throw new ParseCommandException("Invalid onDate format: " + CalendarController.dateFormatter);
     }
 
-    command = () -> eventsOnDate = calendarController.getModel().getEventsOnDate(onDate);
   }
 
-  private void printEventsInInterval() throws ParseCommandException {
+  private void printEventsInInterval(Scanner commandScanner) throws ParseCommandException {
     try {
-      startTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+      startTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid startDateTime format: " + calendarController.dateFormatter);
+          "Invalid startDateTime format: " + CalendarController.dateFormatter);
     }
 
     if (!commandScanner.next().equals("to")) {
-      throw new ParseCommandException("Invalid command format: print events from "
-          + "<dateStringTtimeString> to...");
+      throw new ParseCommandException(
+          "Invalid command format: print events from " + "<dateStringTtimeString> to...");
     }
 
     try {
-      endTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+      endTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid endDateTime format: " + calendarController.dateFormatter);
+          "Invalid endDateTime format: " + CalendarController.dateFormatter);
     }
 
-    command = () -> eventsOnDate = calendarController.getModel()
-        .getEventsInRange(startTime, endTime);
   }
 
   @Override
-  void promptResult() {
-    for (EventDTO event : eventsOnDate) {
-      if (Objects.isNull(event.getEndTime())) {
-        calendarController.promptOutput(event.getSubject() + " [All day]\n");
-        continue;
-      }
-      calendarController.promptOutput(
-          event.getSubject() + " [" + event.getStartTime() + " - " + event.getEndTime() + "]\n"
-      );
+  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
+    if (!Objects.isNull(onDate)) {
+      eventsOnDate = model.getEventsOnDate(onDate);
+    } else {
+      eventsOnDate = model.getEventsInRange(startTime, endTime);
     }
   }
 
+  @Override
+  void promptResult(ControllerUtility controllerUtility) {
+    for (EventDTO event : eventsOnDate) {
+      if (Objects.isNull(event.getEndTime())) {
+        controllerUtility.promptOutput(event.getSubject() + " [All day]\n");
+        continue;
+      }
+      controllerUtility.promptOutput(
+          event.getSubject() + " [" + event.getStartTime() + " - " + event.getEndTime() + "]\n");
+    }
+  }
 }
