@@ -3,10 +3,15 @@ package model;
 import dto.EventDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
+import repository.IEventRepository;
+import repository.InMemoryEventRepository;
 
 /**
  * This class represents the model for the CalendarApp application. It implements the IModel
@@ -21,6 +26,11 @@ public class CalendarModel implements IModel {
 
   IEventRepository eventRepository;
 
+  private static final DateTimeFormatter calenderExportDateFormatter = DateTimeFormatter.ofPattern(
+      "MM/dd/yyyy");
+  private static final DateTimeFormatter calenderExportTimeFormatter = DateTimeFormatter.ofPattern(
+      "hh:mm a");
+
   public CalendarModel() {
     this.eventRepository = new InMemoryEventRepository();
   }
@@ -30,9 +40,7 @@ public class CalendarModel implements IModel {
       throws EventConflictException, IllegalArgumentException {
     // if autodecline is set, check for conflicts and throw exception if there is a conflict
     if (autoDecline) {
-      if (doesEventConflict(eventDTO)) {
-        throw new EventConflictException("Event conflicts with existing event");
-      }
+      // TODO: check for conflict
     }
     // check what kind of event to create
     if (eventDTO.getStartTime() != null && eventDTO.getEndTime() != null) {
@@ -42,44 +50,6 @@ public class CalendarModel implements IModel {
     } else {
       throw new IllegalArgumentException("Invalid event");
     }
-  }
-
-  private boolean doesEventConflict(EventDTO newEvent) {
-    // get all the events on the specific date
-    List<EventDTO> events = eventRepository.getEventsOnDate(newEvent.getStartTime().toLocalDate());
-    // iterate the events and check if the user is busy
-    for (EventDTO storedEvent : events) {
-      if (// condition 1: if the storedEvent is all day event return true
-          isALlDayEvent(storedEvent)
-          // condition 2: if the new event start time overlaps with stored event return true
-          || doesNewEventStartTimeOverlap(newEvent, storedEvent)
-          // condition 3: if the new event end time overlaps with stored event return true
-          || doesNewEventEndTimeOverlap(newEvent, storedEvent)
-          // condition 4: if the new event mask with stored event return true
-          || doesNewEventMask(newEvent, storedEvent)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private static boolean isALlDayEvent(EventDTO storedEvent) {
-    return Objects.isNull(storedEvent.getEndTime());
-  }
-
-  private static boolean doesNewEventStartTimeOverlap(EventDTO newEvent, EventDTO storedEvent) {
-    return newEvent.getStartTime().isBefore(storedEvent.getEndTime()) && newEvent.getEndTime()
-        .isAfter(storedEvent.getStartTime());
-  }
-
-  private static boolean doesNewEventEndTimeOverlap(EventDTO newEvent, EventDTO storedEvent) {
-    return newEvent.getEndTime().isAfter(storedEvent.getStartTime()) && newEvent.getStartTime()
-        .isBefore(storedEvent.getEndTime());
-  }
-
-  private static boolean doesNewEventMask(EventDTO newEvent, EventDTO storedEvent) {
-    return newEvent.getStartTime().isBefore(storedEvent.getStartTime()) && newEvent.getEndTime()
-        .isAfter(storedEvent.getEndTime());
   }
 
   @Override
@@ -102,24 +72,86 @@ public class CalendarModel implements IModel {
 
   @Override
   public String exportToCSV(String fileName) throws CalendarExportException {
-    // TODO: Implement this method
-    return "";
+    // Get all events
+    List<EventDTO> events = eventRepository.getAllEvents();
+
+    // If there are no events, throw an CalendarExportException
+    if (events.isEmpty()) {
+      throw new CalendarExportException("No events to export");
+    }
+
+    // Define file path - if the file name does not end with .csv, add it
+    String csvFilePath = fileName.endsWith(".csv") ? fileName : fileName + ".csv";
+
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFilePath))) {
+      // Write the header
+      writer.write(getCSVHeader());
+      writer.newLine();
+
+      // Write each event as a row in CSV
+      for (EventDTO event : events) {
+        writer.write(String.join(",",
+            // Subject
+            escapeCSV(event.getSubject()),
+            // Start Date
+            event.getStartTime() != null ? event.getStartTime().format(calenderExportDateFormatter)
+                : "",
+            // Start Time
+            event.getStartTime() != null && !event.getAllDay() ? event.getStartTime()
+                .format(calenderExportTimeFormatter) : "",
+            // End Date
+            event.getEndTime() != null ? event.getEndTime().format(calenderExportDateFormatter)
+                : "",
+            // End Time
+            event.getEndTime() != null && !event.getAllDay() ? event.getEndTime()
+                .format(calenderExportTimeFormatter) : "",
+            // All Day Event
+            event.getAllDay() ? "True" : "False",
+            // Description
+            escapeCSV(event.getDescription()),
+            // Location
+            escapeCSV(event.getLocation()),
+            // Private
+            event.getIsPublic() ? "False" : "True"
+        ));
+        writer.newLine();
+      }
+      return csvFilePath;
+    } catch (IOException e) {
+      throw new CalendarExportException("Error exporting to CSV");
+    }
+  }
+
+  private static String getCSVHeader() {
+    return "Subject,"
+        + "Start Date,"
+        + "Start Time,"
+        + "End Date,"
+        + "End Time,"
+        + "All Day Event,"
+        + "Description,"
+        + "Location,"
+        + "Private";
+  }
+
+  private static String escapeCSV(String value) {
+    // if the value is null or empty, return empty string
+    if (value == null || value.isEmpty()) {
+      return "";
+    }
+    // Replace each double quote with two double quotes to escape it correctly
+    value = value.replace("\"", "\"\"");
+    value = value.replace("\n", "");
+    // Enclose the entire value in double quotes
+    return "\"" + value + "\"";
   }
 
   @Override
   public Boolean isBusy(LocalDateTime dateTime) {
-    // get all the events on the specific date
-    List<EventDTO> events = eventRepository.getEventsOnDate(dateTime.toLocalDate());
-    // iterate the events and check if the user is busy
-    for (EventDTO event : events) {
-      if (isALlDayEvent(event)
-          || event.getStartTime().isEqual(dateTime)
-          || event.getEndTime().isEqual(dateTime)
-          || (event.getStartTime().isBefore(dateTime)
-          && event.getEndTime().isAfter(dateTime))) {
-        return true;
-      }
+    List<EventDTO> eventsAtSpecifiedTime = eventRepository.getEventsAt(dateTime);
+    for (EventDTO event : eventsAtSpecifiedTime) {
+      System.out.println(event.getSubject());
     }
-    return false;
+    return !eventsAtSpecifiedTime.isEmpty();
   }
 }
