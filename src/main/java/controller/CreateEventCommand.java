@@ -25,6 +25,7 @@ class CreateEventCommand extends Command {
   private LocalDateTime endTime;
 
   private boolean isRecurring;
+  private boolean isAllDay;
   private Set<DayOfWeek> repeatDays;
   private LocalDateTime untilDate;
   private int occurrences;
@@ -73,6 +74,7 @@ class CreateEventCommand extends Command {
   }
 
   private void handleCreateAllDayEvent(Scanner commandScanner) throws ParseCommandException {
+    isAllDay = true;
     String startTime = commandScanner.next();
 
     if (parseRepeatDays(commandScanner)) {
@@ -212,6 +214,7 @@ class CreateEventCommand extends Command {
             .setSubject(eventName)
             .setStartTime(startTime)
             .setEndTime(endTime)
+            .setIsAllDay(isAllDay)
             .setIsRecurring(isRecurring)
             .setRecurringDetails(
                 isRecurring ?

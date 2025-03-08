@@ -31,7 +31,7 @@ class ShowStatusCommand extends Command {
         throw new ParseCommandException(
             "Invalid dateTime format: " + CalendarController.dateFormatter);
       }
-    } catch (NoSuchElementException e){
+    } catch (NoSuchElementException e) {
       throw new ParseCommandException("Invalid command format: show status on <dateTime>");
     }
   }

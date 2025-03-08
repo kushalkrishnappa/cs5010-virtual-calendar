@@ -7,6 +7,7 @@ import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -87,13 +88,31 @@ public class PrintEventsCommand extends Command {
 
   @Override
   void promptResult(ControllerUtility controllerUtility) {
+    // [startDate] [startTime - EndTime] [NotRecurring] name location
+    // [startDate] [ ALL DAY EVENT] [Recurring]  name location
+    StringBuilder eventOutput = new StringBuilder();
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     for (EventDTO event : eventsOnDate) {
-      if (Objects.isNull(event.getEndTime())) {
-        controllerUtility.promptOutput(event.getSubject() + " [All day]\n");
-        continue;
+      eventOutput.setLength(0);
+      eventOutput.append('[')
+          .append(event.getStartTime().format(dateFormatter))
+          .append("] ");
+      if (event.getAllDay()) {
+        eventOutput.append(String.format("%-38s[ALL DAY EVENT]"));
+      } else {
+        eventOutput.append('[')
+            .append(event.getStartTime().format(dateTimeFormatter))
+            .append(" - ")
+            .append(event.getEndTime().format(dateTimeFormatter))
+            .append("] ");
       }
-      controllerUtility.promptOutput(
-          event.getSubject() + " [" + event.getStartTime() + " - " + event.getEndTime() + "]\n");
+      eventOutput.append(event.getIsRecurring() ? "[Recurring]     " : "[Not Recurring] ")
+          .append(event.getSubject())
+          .append(" ")
+          .append(Objects.nonNull(event.getLocation()) ? event.getLocation() : "")
+          .append('\n');
+      controllerUtility.promptOutput(eventOutput.toString());
     }
   }
 }
