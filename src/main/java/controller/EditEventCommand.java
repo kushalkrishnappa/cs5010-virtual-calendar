@@ -148,12 +148,8 @@ class EditEventCommand extends Command {
           + "from <dateStringTtimeString> to <dateStringTtimeString> with ...");
     }
 
-    try {
-      eventDTOPropertySetter.accept(eventBuilder, commandScanner.next());
-      recurringDetailsDTOPropertySetter.accept(recurringDetailsDTOBuilder, commandScanner.next());
-    } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid update Date format provided");
-    }
+    String next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
+    parseNewPropertyValue(next);
   }
 
   private void editRecurringEvents(Scanner commandScanner) throws ParseCommandException {
@@ -192,12 +188,16 @@ class EditEventCommand extends Command {
       next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
     }
 
+    parseNewPropertyValue(next);
+  }
+
+  private void parseNewPropertyValue(String next) throws ParseCommandException {
     if (next.startsWith("\"") && next.endsWith("\"")) {
       next = next.substring(1, next.length() - 1);
     }
     try {
       eventDTOPropertySetter.accept(eventBuilder, next);
-      recurringDetailsDTOPropertySetter.accept(recurringDetailsDTOBuilder, commandScanner.next());
+      recurringDetailsDTOPropertySetter.accept(recurringDetailsDTOBuilder, next);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException("Invalid update Date format provided");
     }
