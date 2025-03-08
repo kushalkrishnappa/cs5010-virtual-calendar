@@ -4,7 +4,6 @@ import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.format.DateTimeFormatter;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 import model.IModel;
@@ -53,6 +52,10 @@ public class CalendarController implements IController {
       executeCommand(lineScanner);
       promptUserInput();
     }
+    // headless mode should have *exit* as last command
+    if(mode == ControllerMode.HEADLESS){
+      promptError("exit command was not specified in the passed file");
+    }
   }
 
   private void promptUserInput() {
@@ -85,9 +88,6 @@ public class CalendarController implements IController {
 
     try {
       command.parseCommand(lineScanner);
-    } catch (NoSuchElementException e) { // thrown if scanner cannot find nextToken
-      promptError("Invalid command format");
-      return;
     } catch (ParseCommandException e) {
       promptError(e.getMessage());
       return;
@@ -124,6 +124,7 @@ public class CalendarController implements IController {
   }
 
   private void exitProgram() {
+    view.displayMessage("Bye...");
     System.exit(0);
   }
 

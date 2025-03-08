@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 import model.IModel;
@@ -22,19 +23,25 @@ public class PrintEventsCommand extends Command {
 
   @Override
   void parseCommand(Scanner commandScanner) throws ParseCommandException {
-    if (!commandScanner.next().equals("events")) {
-      throw new ParseCommandException("Invalid command format: print events...");
-    }
+    try {
+      if (!commandScanner.next().equals("events")) {
+        throw new ParseCommandException("Invalid command format: print events ...");
+      }
 
-    switch (commandScanner.next()) {
-      case "on":
-        printEventsOnDate(commandScanner);
-        break;
-      case "from":
-        printEventsInInterval(commandScanner);
-        break;
-      default:
-        throw new ParseCommandException("Invalid command format: print events (on|from)...");
+      switch (commandScanner.next()) {
+        case "on":
+          printEventsOnDate(commandScanner);
+          break;
+        case "from":
+          printEventsInInterval(commandScanner);
+          break;
+        default:
+          throw new ParseCommandException("Invalid command format: print events (on|from) ...");
+      }
+    } catch (NoSuchElementException e) {
+      throw new ParseCommandException(
+          "Invalid command format: print events "
+              + "(on <dateTime>|from <startDateTime> to <endDateTime>)");
     }
   }
 
@@ -57,7 +64,7 @@ public class PrintEventsCommand extends Command {
 
     if (!commandScanner.next().equals("to")) {
       throw new ParseCommandException(
-          "Invalid command format: print events from " + "<dateStringTtimeString> to...");
+          "Invalid command format: print events from " + "<dateStringTtimeString> to ...");
     }
 
     try {

@@ -6,6 +6,7 @@ import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import model.IModel;
 
@@ -16,17 +17,22 @@ class ShowStatusCommand extends Command {
 
   @Override
   void parseCommand(Scanner commandScanner) throws ParseCommandException {
-    if (!commandScanner.next().equals("status")) {
-      throw new ParseCommandException("Invalid command format: show status...");
-    }
-    if (!commandScanner.next().equals("on")) {
-      throw new ParseCommandException("Invalid command format: show status on...");
-    }
-
     try {
-      dateTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
-    } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid dateTime format: " +CalendarController.dateFormatter);
+      if (!commandScanner.next().equals("status")) {
+        throw new ParseCommandException("Invalid command format: show status ...");
+      }
+      if (!commandScanner.next().equals("on")) {
+        throw new ParseCommandException("Invalid command format: show status on ...");
+      }
+
+      try {
+        dateTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
+      } catch (DateTimeParseException e) {
+        throw new ParseCommandException(
+            "Invalid dateTime format: " + CalendarController.dateFormatter);
+      }
+    } catch (NoSuchElementException e){
+      throw new ParseCommandException("Invalid command format: show status on <dateTime>");
     }
   }
 

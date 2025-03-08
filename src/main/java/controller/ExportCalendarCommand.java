@@ -4,6 +4,7 @@ import controller.CalendarController.ControllerUtility;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import model.IModel;
 
@@ -14,18 +15,22 @@ class ExportCalendarCommand extends Command {
 
   @Override
   void parseCommand(Scanner commandScanner) throws ParseCommandException {
-    if (!commandScanner.next().equals("cal")) {
-      throw new ParseCommandException("Invalid command format: export cal...");
-    }
-
-    filename = commandScanner.next();
-    if (!filename.endsWith(".csv")) {
-      if (filename.contains(".")) {
-        throw new ParseCommandException(
-            "Filename must end with .csv or specified without extension. Found: " +
-                filename.substring(filename.lastIndexOf(".")));
+    try {
+      if (!commandScanner.next().equals("cal")) {
+        throw new ParseCommandException("Invalid command format: export cal ...");
       }
-      filename = filename + ".csv";
+
+      filename = commandScanner.next();
+      if (!filename.endsWith(".csv")) {
+        if (filename.contains(".")) {
+          throw new ParseCommandException(
+              "Filename must end with .csv or specified without extension. Found: " +
+                  filename.substring(filename.lastIndexOf(".")));
+        }
+        filename = filename + ".csv";
+      }
+    } catch (NoSuchElementException e){
+      throw new ParseCommandException("Invalid command format: export cal <filename(.csv)>");
     }
   }
 
