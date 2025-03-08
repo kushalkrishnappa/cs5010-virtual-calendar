@@ -6,7 +6,8 @@ import exception.EventConflictException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import repository.IEventRepository;
+import repository.InMemoryEventRepository;
 
 /**
  * This class represents the model for the CalendarApp application. It implements the IModel
@@ -68,18 +69,10 @@ public class CalendarModel implements IModel {
 
   @Override
   public Boolean isBusy(LocalDateTime dateTime) {
-    // get all the events on the specific date
-    List<EventDTO> events = eventRepository.getEventsOnDate(dateTime.toLocalDate());
-    // iterate the events and check if the user is busy
-    for (EventDTO event : events) {
-      if (isALlDayEvent(event)
-          || event.getStartTime().isEqual(dateTime)
-          || event.getEndTime().isEqual(dateTime)
-          || (event.getStartTime().isBefore(dateTime)
-          && event.getEndTime().isAfter(dateTime))) {
-        return true;
-      }
+    List<EventDTO> eventsAtSpecifiedTime = eventRepository.getEventsAt(dateTime);
+    for (EventDTO event : eventsAtSpecifiedTime) {
+      System.out.println(event.getSubject());
     }
-    return false;
+    return !eventsAtSpecifiedTime.isEmpty();
   }
 }
