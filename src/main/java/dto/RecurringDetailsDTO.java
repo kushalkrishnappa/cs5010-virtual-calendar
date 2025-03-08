@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import model.DayOfWeek;
 
-public class RecurringDetailsDTO implements IRecurringDetailsDTO {
+public class RecurringDetailsDTO {
 
   private final Integer occurrences;
   private final Set<DayOfWeek> repeatDays;
@@ -23,7 +23,8 @@ public class RecurringDetailsDTO implements IRecurringDetailsDTO {
     return new RecurringDetailsDTOBuilder();
   }
 
-  public static class RecurringDetailsDTOBuilder{
+  public static class RecurringDetailsDTOBuilder {
+
     private Integer occurrences;
     private Set<DayOfWeek> repeatDays;
     private LocalDateTime untilDate;
@@ -51,17 +52,14 @@ public class RecurringDetailsDTO implements IRecurringDetailsDTO {
     }
   }
 
-  @Override
   public int getOccurrences() {
     return this.occurrences;
   }
 
-  @Override
   public Set<DayOfWeek> getRepeatDays() {
     return this.repeatDays;
   }
 
-  @Override
   public LocalDateTime getUntilDate() {
     return this.untilDate;
   }

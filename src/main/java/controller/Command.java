@@ -1,26 +1,14 @@
 package controller;
 
+import controller.CalendarController.ControllerUtility;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.util.Scanner;
+import model.IModel;
 
 abstract class Command {
-
-  protected final CalendarController calendarController;
-  protected final Scanner commandScanner;
-  protected Runnable command;
-
-  Command(CalendarController calendarController, Scanner commandScanner) {
-    this.calendarController = calendarController;
-    this.commandScanner = commandScanner.useDelimiter("\\s+");
-  }
-
-  abstract void parseCommand() throws ParseCommandException;
-
-  void executeCommand() throws CalendarExportException, EventConflictException {
-    command.run();
-  }
-
-  abstract void promptResult();
+  abstract void parseCommand(Scanner commandScanner) throws ParseCommandException;
+  abstract void executeCommand(IModel model) throws CalendarExportException, EventConflictException;
+  abstract void promptResult(ControllerUtility controllerUtility);
 }

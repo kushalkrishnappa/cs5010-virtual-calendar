@@ -15,15 +15,25 @@ public class CalendarController implements IController {
   private final ControllerMode mode;
   private final IView view;
   private final IModel model;
-  final DateTimeFormatter dateTimeFormatter;
-  final DateTimeFormatter dateFormatter;
+  static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
+      "yyyy-MM-dd'T'HH:mm");
+  static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  final ControllerUtility controllerUtility;
+
+  class ControllerUtility {
+
+    void promptOutput(String message) {
+      if (mode == ControllerMode.INTERACTIVE) {
+        view.displayMessage(message);
+      }
+    }
+  }
 
   public CalendarController(IModel model, IView view, ControllerMode mode) {
     this.model = model;
     this.view = view;
     this.mode = mode;
-    dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-    dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    controllerUtility = new ControllerUtility();
   }
 
   @Override
@@ -58,46 +68,23 @@ public class CalendarController implements IController {
     }
   }
 
-  IModel getModel() {
-    return this.model;
-  }
-
-  void promptOutput(String message) {
-    if (mode == ControllerMode.INTERACTIVE) {
-      view.displayMessage(message);
-    }
-  }
 
   private void executeCommand(Scanner lineScanner) {
-    controller.Command command = null;
-    switch (lineScanner.next()) {
-      case "create":
-        command = new CreateEventCommand(this, lineScanner);
-        break;
-      case "edit":
-        command = new EditEventCommand(this, lineScanner);
-        break;
-      case "print":
-        command = new PrintEventsCommand(this, lineScanner);
-        break;
-      case "export":
-        command = new ExportCalendarCommand(this, lineScanner);
-        break;
-      case "show":
-        command = new ShowStatusCommand(this, lineScanner);
-        break;
-      case "exit":
-        exitProgram();
-        break;
-      case "help":
-        break;
-      default:
-        promptError("Unknown command");
-        return;
+    controller.Command command;
+
+    String firstToken = lineScanner.next();
+    if (firstToken.equals("exit")) {
+      exitProgram();
+    }
+
+    command = getCommand(firstToken);
+    if (command == null) {
+      promptError("Unknown command");
+      return;
     }
 
     try {
-      command.parseCommand();
+      command.parseCommand(lineScanner);
     } catch (NoSuchElementException e) { // thrown if scanner cannot find nextToken
       promptError("Invalid command format");
       return;
@@ -107,13 +94,33 @@ public class CalendarController implements IController {
     }
 
     try {
-      command.executeCommand();
+      command.executeCommand(model);
     } catch (EventConflictException | CalendarExportException e) {
       promptError(e.getMessage());
       return;
     }
 
-    command.promptResult();
+    command.promptResult(controllerUtility);
+  }
+
+  private Command getCommand(String firstToken) {
+    switch (firstToken) {
+      case "create":
+        return new CreateEventCommand();
+      case "edit":
+        return new EditEventCommand();
+      case "print":
+        return new PrintEventsCommand();
+      case "export":
+        return new ExportCalendarCommand();
+      case "show":
+        return new ShowStatusCommand();
+//      case "help":
+//        break;
+      default:
+        return null;
+
+    }
   }
 
   private void exitProgram() {

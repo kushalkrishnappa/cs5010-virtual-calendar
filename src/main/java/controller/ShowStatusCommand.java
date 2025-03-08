@@ -1,21 +1,21 @@
 package controller;
 
+import controller.CalendarController.ControllerUtility;
+import exception.CalendarExportException;
+import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
+import model.IModel;
 
 class ShowStatusCommand extends Command {
 
   private LocalDateTime dateTime;
   private Boolean isBusy;
 
-  ShowStatusCommand(CalendarController calendarController, Scanner commandScanner) {
-    super(calendarController, commandScanner);
-  }
-
   @Override
-  void parseCommand() throws ParseCommandException {
+  void parseCommand(Scanner commandScanner) throws ParseCommandException {
     if (!commandScanner.next().equals("status")) {
       throw new ParseCommandException("Invalid command format: show status...");
     }
@@ -24,20 +24,23 @@ class ShowStatusCommand extends Command {
     }
 
     try {
-      dateTime = LocalDateTime.parse(commandScanner.next(), calendarController.dateTimeFormatter);
+      dateTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid dateTime format: " +calendarController.dateFormatter);
+      throw new ParseCommandException("Invalid dateTime format: " +CalendarController.dateFormatter);
     }
-
-    command = () -> isBusy = calendarController.getModel().isBusy(dateTime);
   }
 
   @Override
-  void promptResult() {
+  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
+    isBusy = model.isBusy(dateTime);
+  }
+
+  @Override
+  void promptResult(ControllerUtility controllerUtility) {
     if (isBusy) {
-      calendarController.promptOutput("Busy at " + dateTime);
+      controllerUtility.promptOutput("Busy at " + dateTime);
     } else {
-      calendarController.promptOutput("Available at " + dateTime);
+      controllerUtility.promptOutput("Available at " + dateTime);
     }
   }
 }
