@@ -49,7 +49,7 @@ public enum CalendarDayOfWeek {
    */
   U(DayOfWeek.SUNDAY);
 
-  private DayOfWeek dayOfWeek;
+  private final DayOfWeek dayOfWeek;
 
   CalendarDayOfWeek(DayOfWeek dayOfWeek) {
     this.dayOfWeek = dayOfWeek;

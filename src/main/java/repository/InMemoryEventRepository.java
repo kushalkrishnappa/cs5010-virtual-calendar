@@ -3,6 +3,7 @@ package repository;
 import dto.EventDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class InMemoryEventRepository implements IEventRepository {
@@ -58,12 +59,13 @@ public class InMemoryEventRepository implements IEventRepository {
 
   @Override
   public List<EventDTO> getEventsOnDate(LocalDate date) {
-    return List.of();
+    return repository
+        .searchOverlapping(date.atStartOfDay(), LocalDateTime.of(date, LocalTime.MAX));
   }
 
   @Override
   public List<EventDTO> getEventsInRange(LocalDateTime start, LocalDateTime end) {
-    return List.of();
+    return searchOverlaps(start, end);
   }
 
   @Override

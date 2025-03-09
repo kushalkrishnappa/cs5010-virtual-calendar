@@ -1,8 +1,10 @@
 package model;
 
 import dto.EventDTO;
+import dto.EventDTO.EventDTOBuilder;
 import exception.CalendarExportException;
 import exception.EventConflictException;
+import exception.InvalidDateTimeRangeException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import repository.IEventRepository;
 import repository.InMemoryEventRepository;
 
@@ -31,6 +34,11 @@ public class CalendarModel implements IModel {
 
   IEventRepository eventRepository;
 
+  enum mode {
+    CREATE,
+    EDIT;
+  }
+
   private static final DateTimeFormatter calenderExportDateFormatter = DateTimeFormatter.ofPattern(
       "MM/dd/yyyy");
   private static final DateTimeFormatter calenderExportTimeFormatter = DateTimeFormatter.ofPattern(
@@ -40,50 +48,41 @@ public class CalendarModel implements IModel {
     this.eventRepository = new InMemoryEventRepository();
   }
 
-  public static void main(String[] args) {
-    CalendarModel model = new CalendarModel();
-    EventDTO event1 = EventDTO.getBuilder()
-        .setSubject("event1\n\n\n,     -     &^#8  \"")
-        .setStartTime(LocalDateTime.parse("2025-03-11T10:00:00"))
-        .setEndTime(LocalDateTime.parse("2025-03-11T11:00:00"))
-        .setIsAllDay(false)
-        .setIsPublic(true)
-        .build();
-
-    EventDTO event2 = EventDTO.getBuilder()
-        .setSubject("event2,\"my time\"\n")
-        .setStartTime(LocalDateTime.parse("2025-03-10T10:00:00"))
-        .setEndTime(LocalDateTime.parse("2025-03-10T12:00:00"))
-        .setIsAllDay(false)
-        .setIsPublic(true)
-        .build();
-
-    EventDTO allDayEvent = EventDTO.getBuilder()
-        .setSubject("all day event")
-        .setStartTime(LocalDateTime.parse("2025-03-12T00:00:00"))
-        .setEndTime(LocalDateTime.parse("2025-03-13T00:00:00"))
-        .setIsAllDay(true)
-        .setIsPublic(true)
-        .build();
-
-    model.eventRepository.insertEvent(event1);
-    model.eventRepository.insertEvent(event2);
-    model.eventRepository.insertEvent(allDayEvent);
-
-    System.out.println(model.exportToCSV("/Users/kushalkrishnappa/Desktop/calendar1.csv"));
-
-    System.out.println(model.isBusy(LocalDateTime.parse("2025-03-11T23:59:59")));
-  }
-
   @Override
   public void createEvent(EventDTO eventDTO, boolean autoDecline) {
     // check if it is a recurring event, check for conflicts inherently
     // check if it is an all day event, check for conflicts inherently
     // alas if autoDecline is set, check for conflicts (spanned events only)
-    if ((eventDTO.getIsRecurring() && hasConflict(eventDTO.getStartTime(), eventDTO.getEndTime()))
-        || (eventDTO.getIsAllDay() && hasConflict(eventDTO.getStartTime(), eventDTO.getEndTime()))
-        || (autoDecline && hasConflict(eventDTO.getStartTime(), eventDTO.getEndTime()))) {
-      throw new IllegalArgumentException("Event has conflict");
+//    if ((eventDTO.getIsRecurring() && hasConflict(eventDTO.getStartTime(), eventDTO.getEndTime()))
+//        || (eventDTO.getIsAllDay() && hasConflict(eventDTO.getStartTime(), eventDTO.getEndTime()))
+//        || (autoDecline && hasConflict(eventDTO.getStartTime(), eventDTO.getEndTime()))) {
+//      throw new IllegalArgumentException("Event has conflict");
+//    }
+
+    if (eventDTO.getStartTime() == null) {
+      throw new InvalidDateTimeRangeException("Start time cannot be null");
+    }
+    eventDTO = EventDTO.getBuilder()
+        .setSubject(eventDTO.getSubject())
+        .setDescription(eventDTO.getDescription())
+        .setLocation(eventDTO.getLocation())
+        .setIsPublic(Objects.requireNonNullElse(eventDTO.getIsPublic(), false))
+        .setIsAllDay(Objects.isNull(eventDTO.getEndTime()))
+        .setStartTime(Objects.isNull(eventDTO.getEndTime())
+            ? eventDTO.getStartTime().toLocalDate().atStartOfDay()
+            : eventDTO.getStartTime())
+        .setEndTime(Objects.requireNonNullElse(eventDTO.getEndTime(),
+            eventDTO.getStartTime().toLocalDate().atStartOfDay().plusDays(1)))
+        .setIsRecurring(eventDTO.getIsRecurring())
+        .setRecurringDetails(eventDTO.getRecurringDetails())
+        .build();
+
+    if (eventDTO.getIsAllDay() && eventDTO.getIsRecurring()
+        && hasConflict(eventDTO.getStartTime(), eventDTO.getEndTime())) {
+      throw new EventConflictException("All day recurring events has conflict");
+    } else if (autoDecline
+        && hasConflict(eventDTO.getStartTime(), eventDTO.getEndTime())) {
+      throw new EventConflictException("Auto-declined events has conflict");
     }
 
     if (eventDTO.getIsAllDay()) {
@@ -92,17 +91,17 @@ public class CalendarModel implements IModel {
         return;
       }
       // all day recurring event
-      eventDTO = EventDTO.getBuilder()
-          .setSubject(eventDTO.getSubject())
-          .setStartTime(eventDTO.getStartTime().toLocalDate().atStartOfDay())
-          .setEndTime(eventDTO.getStartTime().plusDays(1))
-          .setDescription(eventDTO.getDescription())
-          .setLocation(eventDTO.getLocation())
-          .setIsPublic(eventDTO.getIsPublic())
-          .setIsAllDay(true)
-          .setIsRecurring(eventDTO.getIsRecurring())
-          .setRecurringDetails(eventDTO.getRecurringDetails())
-          .build();
+//      eventDTO = EventDTO.getBuilder()
+//          .setSubject(eventDTO.getSubject())
+//          .setStartTime(eventDTO.getStartTime().toLocalDate().atStartOfDay())
+//          .setEndTime(eventDTO.getStartTime().plusDays(1))
+//          .setDescription(eventDTO.getDescription())
+//          .setLocation(eventDTO.getLocation())
+//          .setIsPublic(eventDTO.getIsPublic())
+//          .setIsAllDay(true)
+//          .setIsRecurring(eventDTO.getIsRecurring())
+//          .setRecurringDetails(eventDTO.getRecurringDetails())
+//          .build();
     } else {
       // spanned event
       if (!eventDTO.getIsRecurring()) {
@@ -116,11 +115,15 @@ public class CalendarModel implements IModel {
       }
     }
     // recurring all day or spanned event
-    generateRecurrence(eventDTO);
+    List<EventDTO> eventDTOs = generateRecurrence(eventDTO);
+//    eventDTOs.forEach(eventRepository::insertEvent);
 
+    for (EventDTO event : eventDTOs) {
+      eventRepository.insertEvent(event);
+    }
   }
 
-  private void generateRecurrence(EventDTO eventDTO) {
+  private List<EventDTO> generateRecurrence(EventDTO eventDTO) {
     if (Objects.isNull(eventDTO.getRecurringDetails().getRepeatDays())) {
       throw new IllegalArgumentException("Recurring event must have repeat days");
     }
@@ -148,6 +151,7 @@ public class CalendarModel implements IModel {
           endTime);
     }
 
+    List<EventDTO> eventDTOs = new ArrayList<>();
     for (List<LocalDateTime> dateTimeRange : recurringDateTimeRange) {
       EventDTO recurringEvent = EventDTO.getBuilder()
           .setSubject(eventDTO.getSubject())
@@ -156,13 +160,13 @@ public class CalendarModel implements IModel {
           .setDescription(eventDTO.getDescription())
           .setLocation(eventDTO.getLocation())
           .setIsPublic(eventDTO.getIsPublic())
-          .setIsAllDay(true)
+          .setIsAllDay(eventDTO.getIsAllDay())
           .setIsRecurring(true)
           .setRecurringDetails(eventDTO.getRecurringDetails())
           .build();
-      eventRepository.insertEvent(recurringEvent);
+      eventDTOs.add(recurringEvent);
     }
-
+    return eventDTOs;
   }
 
   private void loopUntilDate(EventDTO eventDTO, LocalDateTime startTime,
@@ -184,6 +188,7 @@ public class CalendarModel implements IModel {
         checkConflictAndAdd(currentDateTime, recurringDateTimeRange, endTime,
             eventDTO.getIsAllDay());
       }
+      currentDayOfWeek = currentDayOfWeek.plus(1);
     }
   }
 
@@ -199,6 +204,7 @@ public class CalendarModel implements IModel {
       currentDateTime = currentDateTime.with(TemporalAdjusters.nextOrSame(currentDayOfWeek));
 
       checkConflictAndAdd(currentDateTime, recurringDateTimeRange, endTime, eventDTO.getIsAllDay());
+      currentDayOfWeek = currentDayOfWeek.plus(1);
     }
   }
 
@@ -211,21 +217,7 @@ public class CalendarModel implements IModel {
   private void createAllDayEvent(EventDTO eventDTO) {
     // create a single all day event
     // check if the endDate is null and set to start of next day
-    if (eventDTO.getEndTime() == null) {
-      // create a new event with the same details but with the end time set to start of next day
-      EventDTO allDayEvent = EventDTO.getBuilder()
-          .setSubject(eventDTO.getSubject())
-          .setStartTime(eventDTO.getStartTime().toLocalDate().atStartOfDay())
-          .setEndTime(eventDTO.getStartTime().plusDays(1))
-          .setDescription(eventDTO.getDescription())
-          .setLocation(eventDTO.getLocation())
-          .setIsPublic(eventDTO.getIsPublic())
-          .setIsAllDay(true)
-          .setIsRecurring(eventDTO.getIsRecurring())
-          .setRecurringDetails(eventDTO.getRecurringDetails())
-          .build();
-      eventRepository.insertEvent(allDayEvent);
-    }
+      eventRepository.insertEvent(eventDTO);
   }
 
 
@@ -237,32 +229,237 @@ public class CalendarModel implements IModel {
       }
       recurringDateTimeRange.add(List.of(currentDateTime, currentDateTime.plusDays(1)));
     } else {
-      if (hasConflict(currentDateTime, currentDateTime.with(endTime.toLocalTime()))) {
-        throw new EventConflictException("Recurring all day event with occurrences has conflict");
-      }
       recurringDateTimeRange.add(
           List.of(currentDateTime, currentDateTime.with(endTime.toLocalTime())));
     }
   }
 
   private void validateStartAndEndTimes(EventDTO eventDTO) {
-    if (eventDTO.getStartTime() == null) {
-      throw new IllegalArgumentException("Start time cannot be null");
-    }
-    if (eventDTO.getEndTime() == null) {
-      throw new IllegalArgumentException("End time cannot be null");
-    }
     if (eventDTO.getStartTime().isAfter(eventDTO.getEndTime())) {
-      throw new IllegalArgumentException("Start time cannot be after end time");
+      throw new InvalidDateTimeRangeException("Start time cannot be after end time");
     }
   }
 
   @Override
-  public Integer editEvent(String name, LocalDateTime startTime, LocalDateTime endTime,
+  public Integer editEvent(String eventName, LocalDateTime startTime, LocalDateTime endTime,
       EventDTO parametersToUpdate) throws IllegalArgumentException {
-    // TODO: Implement this method
-    return 0;
+    if (Objects.isNull(parametersToUpdate)) {
+      throw new IllegalArgumentException("Parameters to update cannot be null");
+    }
+    if (Objects.isNull(endTime)) {
+      return editEventsWithName(eventName, startTime, parametersToUpdate);
+    }
+    return editEventWithKey(eventName, startTime, endTime, parametersToUpdate);
   }
+
+  private Integer editEventWithKey(String eventName, LocalDateTime startTime, LocalDateTime endTime,
+      EventDTO parametersToUpdate) {
+    int eventsUpdated = 0;
+    EventDTO existingEvent = eventRepository.getEvent(eventName, startTime, endTime);
+    if (Objects.isNull(existingEvent)) {
+      throw new IllegalArgumentException("Event with name " + eventName + " not found");
+    }
+
+    // existingEvent to update found
+    // simple field updates (no conflict check)
+    EventDTOBuilder updatedEventBuilder = EventDTO.getBuilder()
+        .setSubject(existingEvent.getSubject())
+        .setStartTime(existingEvent.getStartTime())
+        .setEndTime(existingEvent.getEndTime())
+        .setIsAllDay(existingEvent.getIsAllDay())
+        .setIsRecurring(existingEvent.getIsRecurring())
+        .setRecurringDetails(existingEvent.getRecurringDetails())
+        .setDescription(
+            Objects.requireNonNullElse(parametersToUpdate.getDescription(),
+                existingEvent.getDescription()))
+        .setLocation(
+            Objects.requireNonNullElse(parametersToUpdate.getLocation(),
+                existingEvent.getLocation()))
+        .setIsPublic(
+            Objects.requireNonNullElse(parametersToUpdate.getIsPublic(),
+                existingEvent.getIsPublic()));
+
+    // changing key fields (conflict checks)
+    if (isKeyFieldsUpdated(parametersToUpdate)) {
+      String updateSubject = Objects.requireNonNullElse(parametersToUpdate.getSubject(),
+          existingEvent.getSubject());
+      LocalDateTime updateStart = Objects.requireNonNullElse(parametersToUpdate.getStartTime(),
+          existingEvent.getStartTime());
+      LocalDateTime updateEnd = Objects.requireNonNullElse(parametersToUpdate.getEndTime(),
+          existingEvent.getEndTime());
+
+      // check conflict
+      EventDTO conflictEvent = eventRepository.getEvent(updateSubject, updateStart, updateEnd);
+      if (Objects.nonNull(conflictEvent)) {
+        throw new EventConflictException(
+            "Update key parameters conflict with existing event");
+      }
+      updatedEventBuilder
+          .setSubject(updateSubject)
+          .setStartTime(updateStart)
+          .setEndTime(updateEnd);
+
+      // if it was previously an all day event
+      if (existingEvent.getIsAllDay()
+          && Objects.isNull(parametersToUpdate.getSubject())) {
+        updatedEventBuilder.setIsAllDay(false);
+      } else {
+        updatedEventBuilder.setIsAllDay(existingEvent.getIsAllDay());
+      }
+
+    }
+
+    // changing recurring details
+    if (parametersToUpdate.getIsRecurring()) {
+      if (existingEvent.getIsRecurring()) {
+        throw new IllegalArgumentException(
+            "Recurrence details cannot be updated for existing recurring event "
+                + "(Conflict in updating this and following event OR all events in recurrence)");
+      } else {
+        // not an existing recurring event
+        eventRepository.deleteEvent(
+            existingEvent.getSubject(),
+            existingEvent.getStartTime(),
+            existingEvent.getEndTime());
+        try {
+          createEvent(updatedEventBuilder
+              .setIsRecurring(true)
+              .setRecurringDetails(parametersToUpdate.getRecurringDetails())
+              .build(), true);
+          eventsUpdated = Objects.requireNonNullElse(
+              parametersToUpdate.getRecurringDetails().getOccurrences(),
+              1);
+        } catch (EventConflictException | IllegalArgumentException e) {
+          eventRepository.insertEvent(existingEvent);
+          throw new EventConflictException("New Recurring events conflict with existing event");
+        }
+      }
+    } else {
+      // spanned or all day event (conflict checked)
+      eventRepository.deleteEvent(
+          existingEvent.getSubject(),
+          existingEvent.getStartTime(),
+          existingEvent.getEndTime()
+      );
+      eventRepository.insertEvent(updatedEventBuilder.build());
+      eventsUpdated = 1;
+    }
+
+    return eventsUpdated;
+  }
+
+  private static boolean isKeyFieldsUpdated(EventDTO parametersToUpdate) {
+    return Objects.nonNull(parametersToUpdate.getSubject())
+        || Objects.nonNull(parametersToUpdate.getStartTime())
+        || Objects.nonNull(parametersToUpdate.getEndTime());
+  }
+
+  private Integer editEventsWithName(String eventName, LocalDateTime startTime,
+      EventDTO parametersToUpdate) {
+    // find events to update
+    List<EventDTO> eventsByName;
+    eventsByName = eventRepository.getEventsByName(eventName);
+    if (Objects.nonNull(startTime)) {
+      eventsByName = eventsByName.stream()
+          .filter(event -> !startTime.isBefore(event.getStartTime())
+              && !event.getIsRecurring())
+          .collect(Collectors.toList());
+    }
+    if (eventsByName.isEmpty()) {
+      throw new IllegalArgumentException("Event with name " + eventName + " not found");
+    }
+
+    // generate updated events while checking for conflicts
+    List<EventDTO> eventsToUpdate = new ArrayList<>();
+
+    // if recurrence details is not set
+    if (Objects.isNull(parametersToUpdate.getIsRecurring())
+        || !parametersToUpdate.getIsRecurring()) {
+      for (EventDTO existingEvent : eventsByName) {
+        EventDTOBuilder updatedEventBuilder = EventDTO.getBuilder()
+            .setSubject(existingEvent.getSubject())
+            .setStartTime(existingEvent.getStartTime())
+            .setEndTime(existingEvent.getEndTime())
+            .setIsAllDay(existingEvent.getIsAllDay())
+            .setIsRecurring(existingEvent.getIsRecurring())
+            .setRecurringDetails(existingEvent.getRecurringDetails())
+            .setDescription(
+                Objects.requireNonNullElse(parametersToUpdate.getDescription(),
+                    existingEvent.getDescription()))
+            .setLocation(
+                Objects.requireNonNullElse(parametersToUpdate.getLocation(),
+                    existingEvent.getLocation()))
+            .setIsPublic(
+                Objects.requireNonNullElse(parametersToUpdate.getIsPublic(),
+                    existingEvent.getIsPublic()));
+        // if key values are updated?
+        if (isKeyFieldsUpdated(parametersToUpdate)) {
+          String updateSubject = Objects.requireNonNullElse(parametersToUpdate.getSubject(),
+              existingEvent.getSubject());
+          LocalDateTime updateStart = Objects.requireNonNullElse(parametersToUpdate.getStartTime(),
+              existingEvent.getStartTime());
+          LocalDateTime updateEnd = Objects.requireNonNullElse(parametersToUpdate.getEndTime(),
+              existingEvent.getEndTime());
+
+          // check conflict
+          EventDTO conflictEvent = eventRepository.getEvent(updateSubject, updateStart, updateEnd);
+          if (Objects.nonNull(conflictEvent)) {
+            throw new EventConflictException(
+                "Update key parameters conflict with existing event");
+          }
+
+          updatedEventBuilder
+              .setSubject(updateSubject)
+              .setStartTime(updateStart)
+              .setEndTime(updateEnd);
+
+          // if it was previously an all day event
+          if (existingEvent.getIsAllDay()
+              && Objects.isNull(parametersToUpdate.getSubject())) {
+            updatedEventBuilder.setIsAllDay(false);
+          } else {
+            updatedEventBuilder.setIsAllDay(existingEvent.getIsAllDay());
+          }
+
+        }
+
+        eventsToUpdate.add(updatedEventBuilder.build());
+        eventsByName.forEach(event -> eventRepository.deleteEvent(
+            event.getSubject(), event.getStartTime(), event.getEndTime()));
+        eventsToUpdate.forEach(eventRepository::insertEvent);
+      }
+    } else {
+      // recurrence details is set
+      EventDTO firstEventInSeries = EventDTO.getBuilder()
+          .setSubject(eventName)
+          .setStartTime(eventsByName.get(0).getStartTime())
+          .setEndTime(eventsByName.get(0).getEndTime())
+          .setIsAllDay(eventsByName.get(0).getIsAllDay())
+          .setIsRecurring(true)
+          .setRecurringDetails(parametersToUpdate.getRecurringDetails())
+          .setDescription(
+              Objects.requireNonNullElse(parametersToUpdate.getDescription(),
+                  parametersToUpdate.getDescription()))
+          .setLocation(
+              Objects.requireNonNullElse(parametersToUpdate.getLocation(),
+                  parametersToUpdate.getLocation()))
+          .setIsPublic(
+              Objects.requireNonNullElse(parametersToUpdate.getIsPublic(),
+                  parametersToUpdate.getIsPublic()))
+          .build();
+      eventsByName.forEach(event -> eventRepository.deleteEvent(
+          event.getSubject(), event.getStartTime(), event.getEndTime()));
+      try {
+        eventsToUpdate = generateRecurrence(firstEventInSeries);
+      } catch (EventConflictException | IllegalArgumentException e) {
+        eventsByName.forEach(eventRepository::insertEvent);
+        throw new EventConflictException("New Recurring event conflict with existing event");
+      }
+      eventsToUpdate.forEach(eventRepository::insertEvent);
+    }
+    return eventsToUpdate.size();
+  }
+
 
   @Override
   public List<EventDTO> getEventsOnDate(LocalDate date) {

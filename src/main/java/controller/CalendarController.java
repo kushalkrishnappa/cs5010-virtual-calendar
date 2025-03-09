@@ -2,6 +2,7 @@ package controller;
 
 import exception.CalendarExportException;
 import exception.EventConflictException;
+import exception.InvalidDateTimeRangeException;
 import exception.ParseCommandException;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -53,7 +54,7 @@ public class CalendarController implements IController {
       promptUserInput();
     }
     // headless mode should have *exit* as last command
-    if(mode == ControllerMode.HEADLESS){
+    if (mode == ControllerMode.HEADLESS) {
       promptError("exit command was not specified in the passed file");
     }
   }
@@ -95,7 +96,8 @@ public class CalendarController implements IController {
 
     try {
       command.executeCommand(model);
-    } catch (EventConflictException | CalendarExportException e) {
+    } catch (EventConflictException | CalendarExportException | InvalidDateTimeRangeException |
+             IllegalArgumentException e) {
       promptError(e.getMessage());
       return;
     }

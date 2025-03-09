@@ -29,7 +29,7 @@ class ShowStatusCommand extends Command {
         dateTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
       } catch (DateTimeParseException e) {
         throw new ParseCommandException(
-            "Invalid dateTime format: " + CalendarController.dateFormatter);
+            "Invalid dateTime format: " + CalendarController.dateTimeFormatter);
       }
     } catch (NoSuchElementException e) {
       throw new ParseCommandException("Invalid command format: show status on <dateTime>");
@@ -44,9 +44,9 @@ class ShowStatusCommand extends Command {
   @Override
   void promptResult(ControllerUtility controllerUtility) {
     if (isBusy) {
-      controllerUtility.promptOutput("Busy at " + dateTime);
+      controllerUtility.promptOutput("Busy at " + dateTime + "\n");
     } else {
-      controllerUtility.promptOutput("Available at " + dateTime);
+      controllerUtility.promptOutput("Available at " + dateTime + "\n");
     }
   }
 }

@@ -98,8 +98,8 @@ public class PrintEventsCommand extends Command {
       eventOutput.append('[')
           .append(event.getStartTime().format(dateFormatter))
           .append("] ");
-      if (event.getAllDay()) {
-        eventOutput.append(String.format("%-38s[ALL DAY EVENT]"));
+      if (event.getIsAllDay()) {
+        eventOutput.append(String.format("%-38s","[ALL DAY EVENT]"));
       } else {
         eventOutput.append('[')
             .append(event.getStartTime().format(dateTimeFormatter))

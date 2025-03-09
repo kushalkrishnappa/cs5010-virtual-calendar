@@ -162,7 +162,6 @@ class EditEventCommand extends Command {
         && Objects.isNull(recurringDetailsDTOPropertySetter)) {
       throw new ParseCommandException("Invalid property name");
     }
-
     eventName = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
     if (eventName.startsWith("\"") && eventName.endsWith("\"")) {
       eventName = eventName.substring(1, eventName.length() - 1);
@@ -206,12 +205,18 @@ class EditEventCommand extends Command {
   @Override
   void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
     updatedEvents = model.editEvent(eventName, startTime, endTime, eventBuilder
-        .setRecurringDetails(recurringDetailsDTOBuilder.build())
+        .setRecurringDetails(
+            Objects.nonNull(recurringDetailsDTOPropertySetter) ?
+                recurringDetailsDTOBuilder.build()
+                : null)
+        .setIsRecurring(Objects.nonNull(recurringDetailsDTOPropertySetter))
         .build());
   }
 
   @Override
   void promptResult(ControllerUtility controllerUtility) {
-    controllerUtility.promptOutput("Edited " + updatedEvents + " event(s)\n");
+    if (updatedEvents > 0) {
+      controllerUtility.promptOutput("Successfully updated event(s)\n");
+    }
   }
 }
