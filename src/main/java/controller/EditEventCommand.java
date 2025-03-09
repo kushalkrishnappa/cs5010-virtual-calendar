@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.BiConsumer;
-import model.DayOfWeek;
+import model.CalendarDayOfWeek;
 import model.IModel;
 
 class EditEventCommand extends Command {
@@ -51,7 +51,7 @@ class EditEventCommand extends Command {
         ));
     setters.put("repeatDays",
         (builder, value) -> builder.setRepeatDays(
-            DayOfWeek.parseRepeatDays(value)
+            CalendarDayOfWeek.parseRepeatDays(value)
         ));
     setters.put("untilDateTime",
         (builder, value) -> builder.setUntilDate(
