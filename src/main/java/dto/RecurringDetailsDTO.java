@@ -2,17 +2,17 @@ package dto;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import model.DayOfWeek;
+import model.CalendarDayOfWeek;
 
 public class RecurringDetailsDTO {
 
   private final Integer occurrences;
-  private final Set<DayOfWeek> repeatDays;
+  private final Set<CalendarDayOfWeek> repeatDays;
   private final LocalDateTime untilDate;
 
   private RecurringDetailsDTO(
       Integer occurrences,
-      Set<DayOfWeek> repeatDays,
+      Set<CalendarDayOfWeek> repeatDays,
       LocalDateTime untilDate) {
     this.occurrences = occurrences;
     this.repeatDays = repeatDays;
@@ -26,10 +26,13 @@ public class RecurringDetailsDTO {
   public static class RecurringDetailsDTOBuilder {
 
     private Integer occurrences;
-    private Set<DayOfWeek> repeatDays;
+    private Set<CalendarDayOfWeek> repeatDays;
     private LocalDateTime untilDate;
 
     private RecurringDetailsDTOBuilder() {
+      this.occurrences = null;
+      this.repeatDays = null;
+      this.untilDate = null;
     }
 
     public RecurringDetailsDTOBuilder setOccurrences(int occurrences) {
@@ -37,7 +40,7 @@ public class RecurringDetailsDTO {
       return this;
     }
 
-    public RecurringDetailsDTOBuilder setRepeatDays(Set<DayOfWeek> repeatDays) {
+    public RecurringDetailsDTOBuilder setRepeatDays(Set<CalendarDayOfWeek> repeatDays) {
       this.repeatDays = repeatDays;
       return this;
     }
@@ -52,11 +55,11 @@ public class RecurringDetailsDTO {
     }
   }
 
-  public int getOccurrences() {
+  public Integer getOccurrences() {
     return this.occurrences;
   }
 
-  public Set<DayOfWeek> getRepeatDays() {
+  public Set<CalendarDayOfWeek> getRepeatDays() {
     return this.repeatDays;
   }
 
