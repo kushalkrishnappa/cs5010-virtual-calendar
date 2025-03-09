@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
-import model.DayOfWeek;
+import model.CalendarDayOfWeek;
 import model.IModel;
 
 class CreateEventCommand extends Command {
@@ -26,7 +26,7 @@ class CreateEventCommand extends Command {
 
   private boolean isRecurring;
   private boolean isAllDay;
-  private Set<DayOfWeek> repeatDays;
+  private Set<CalendarDayOfWeek> repeatDays;
   private LocalDateTime untilDate;
   private int occurrences;
 
@@ -120,7 +120,7 @@ class CreateEventCommand extends Command {
     }
 
     try {
-      repeatDays = DayOfWeek.parseRepeatDays(commandScanner.next());
+      repeatDays = CalendarDayOfWeek.parseRepeatDays(commandScanner.next());
     } catch (IllegalArgumentException e) {
       throw new ParseCommandException("Invalid week days specification: Expected combination of "
           + "MTWRFSU");
