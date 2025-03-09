@@ -74,6 +74,15 @@ public class EventDTO {
     private RecurringDetailsDTO recurringDetails;
 
     private EventDTOBuilder() {
+      this.subject = null;
+      this.startTime = null;
+      this.endTime = null;
+      this.description = null;
+      this.location = null;
+      this.isPublic = null;
+      this.isAllDay = null;
+      this.isRecurring = null;
+      this.recurringDetails = null;
     }
 
     /**
@@ -200,7 +209,7 @@ public class EventDTO {
     return this.isPublic;
   }
 
-  public Boolean getAllDay() {
+  public Boolean getIsAllDay() {
     return this.isAllDay;
   }
 
