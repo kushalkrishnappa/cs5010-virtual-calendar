@@ -6,6 +6,7 @@ import dto.EventDTO;
 import dto.RecurringDetailsDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
+import exception.InvalidDateTimeRangeException;
 import exception.ParseCommandException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,16 +21,27 @@ import model.IModel;
 class CreateEventCommand extends Command {
 
   private String eventName;
-  private boolean autoDecline;
+  private Boolean autoDecline;
   private LocalDateTime startTime;
   private LocalDateTime endTime;
 
-  private boolean isRecurring;
-  private boolean isAllDay;
+  private Boolean isRecurring;
+  private Boolean isAllDay;
   private Set<CalendarDayOfWeek> repeatDays;
   private LocalDateTime untilDate;
-  private int occurrences;
+  private Integer occurrences;
 
+  CreateEventCommand(){
+    eventName = null;
+    autoDecline = false;
+    startTime = null;
+    endTime = null;
+    isRecurring = false;
+    isAllDay = false;
+    repeatDays = null;
+    untilDate = null;
+    occurrences = null;
+  }
   @Override
   void parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
@@ -131,7 +143,8 @@ class CreateEventCommand extends Command {
   private void handleCreateAllDayUntilEvent(Scanner commandScanner)
       throws ParseCommandException {
     try {
-      untilDate = LocalDateTime.parse(commandScanner.next(), CalendarController.dateFormatter);
+      untilDate = LocalDate.parse(commandScanner.next(), CalendarController.dateFormatter)
+          .atStartOfDay();
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
           "Invalid untilTime format: " + CalendarController.dateFormatter);
@@ -208,7 +221,8 @@ class CreateEventCommand extends Command {
   }
 
   @Override
-  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
+  void executeCommand(IModel model)
+      throws CalendarExportException, EventConflictException, InvalidDateTimeRangeException {
     model.createEvent(
         EventDTO.getBuilder()
             .setSubject(eventName)

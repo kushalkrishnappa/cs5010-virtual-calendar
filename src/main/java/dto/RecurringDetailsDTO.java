@@ -35,7 +35,7 @@ public class RecurringDetailsDTO {
       this.untilDate = null;
     }
 
-    public RecurringDetailsDTOBuilder setOccurrences(int occurrences) {
+    public RecurringDetailsDTOBuilder setOccurrences(Integer occurrences) {
       this.occurrences = occurrences;
       return this;
     }

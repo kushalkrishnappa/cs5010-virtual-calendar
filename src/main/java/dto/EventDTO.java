@@ -146,17 +146,17 @@ public class EventDTO {
      * @param isPublic Whether the event is public or not
      * @return EventDTOBuilder object
      */
-    public EventDTOBuilder setIsPublic(boolean isPublic) {
+    public EventDTOBuilder setIsPublic(Boolean isPublic) {
       this.isPublic = isPublic;
       return this;
     }
 
-    public EventDTOBuilder setIsAllDay(boolean isAllDay) {
+    public EventDTOBuilder setIsAllDay(Boolean isAllDay) {
       this.isAllDay = isAllDay;
       return this;
     }
 
-    public EventDTOBuilder setIsRecurring(boolean isRecurring) {
+    public EventDTOBuilder setIsRecurring(Boolean isRecurring) {
       this.isRecurring = isRecurring;
       return this;
     }

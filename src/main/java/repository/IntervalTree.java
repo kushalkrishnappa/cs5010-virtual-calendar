@@ -67,6 +67,20 @@ public class IntervalTree {
       return;
     }
 
+
+    // If the left child is not null and the maxEnd of the left child is after the start time
+    if (node.left == null || node.left.maxEnd.isBefore(startTime)) {
+      searchOverlappingWithinNode(node, startTime, endTime, result);
+      searchOverlapping(node.right, startTime, endTime, result);
+    } else {
+      searchOverlapping(node.left, startTime, endTime, result);
+      searchOverlappingWithinNode(node, startTime, endTime, result);
+      searchOverlapping(node.right, startTime, endTime, result);
+    }
+  }
+
+  private static void searchOverlappingWithinNode(Node node, LocalDateTime startTime, LocalDateTime endTime,
+      List<EventDTO> result) {
     // Compare the node itself for overlapping
     if (node.startTime.isBefore(endTime) && node.endTime.isAfter(startTime)
         || node.startTime.isEqual(startTime)) {
@@ -75,13 +89,6 @@ public class IntervalTree {
               && event.getEndTime().isAfter(startTime)
               || node.startTime.isEqual(startTime))
       ).forEach(result::add);
-    }
-
-    // If the left child is not null and the maxEnd of the left child is after the start time
-    if (node.left != null && node.left.maxEnd.isBefore(startTime)) {
-      searchOverlapping(node.right, startTime, endTime, result);
-    } else {
-      searchOverlapping(node.left, startTime, endTime, result);
     }
   }
 
@@ -218,8 +225,7 @@ public class IntervalTree {
       }
       reComputeMaxEnd(node);
 
-    }
-    else if (node.startTime.isBefore(startTime)) {
+    } else if (node.startTime.isBefore(startTime)) {
       return delete(node.right, subject, startTime, endTime, isDeleted);
     } else {
       return delete(node.left, subject, startTime, endTime, isDeleted);
@@ -232,8 +238,8 @@ public class IntervalTree {
     node.maxEnd = node.events.stream().map(EventDTO::getEndTime)
         .max(LocalDateTime::compareTo).orElse(null);
 
-    if(!Objects.isNull(node.maxEnd)) {
-      if (node.left != null && node.maxEnd.isBefore(node.left.maxEnd)){
+    if (!Objects.isNull(node.maxEnd)) {
+      if (node.left != null && node.maxEnd.isBefore(node.left.maxEnd)) {
         node.maxEnd = node.left.maxEnd;
       }
       if (node.right != null && node.maxEnd.isBefore(node.right.maxEnd)) {
