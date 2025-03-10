@@ -102,9 +102,10 @@ class EditEventCommand extends Command {
   }
 
   private void editSpannedEvent(Scanner commandScanner) throws ParseCommandException {
-    eventDTOPropertySetter = eventDTOPropertySetters.get(commandScanner.next());
+    String propertyName = commandScanner.next();
+    eventDTOPropertySetter = eventDTOPropertySetters.get(propertyName);
     recurringDetailsDTOPropertySetter = recurringDetailsDTOPropertySetters.get(
-        commandScanner.next());
+        propertyName);
 
     if (Objects.isNull(eventDTOPropertySetter)
         && Objects.isNull(recurringDetailsDTOPropertySetter)) {
@@ -154,9 +155,10 @@ class EditEventCommand extends Command {
 
   private void editRecurringEvents(Scanner commandScanner) throws ParseCommandException {
     eventBuilder.setIsRecurring(true);
-    eventDTOPropertySetter = eventDTOPropertySetters.get(commandScanner.next());
+    String propertyName = commandScanner.next();
+    eventDTOPropertySetter = eventDTOPropertySetters.get(propertyName);
     recurringDetailsDTOPropertySetter = recurringDetailsDTOPropertySetters.get(
-        commandScanner.next());
+        propertyName);
 
     if (Objects.isNull(eventDTOPropertySetter)
         && Objects.isNull(recurringDetailsDTOPropertySetter)) {
@@ -185,6 +187,13 @@ class EditEventCommand extends Command {
       }
 
       next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
+    } else {
+      if (!next.equals("with")) {
+        throw new ParseCommandException(
+            "Invalid command format: edit events <property> <eventName> "
+                + "with ...");
+      }
+      next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
     }
 
     parseNewPropertyValue(next);
@@ -195,8 +204,12 @@ class EditEventCommand extends Command {
       next = next.substring(1, next.length() - 1);
     }
     try {
-      eventDTOPropertySetter.accept(eventBuilder, next);
-      recurringDetailsDTOPropertySetter.accept(recurringDetailsDTOBuilder, next);
+      if (Objects.nonNull(eventDTOPropertySetter)) {
+        eventDTOPropertySetter.accept(eventBuilder, next);
+      }
+      if (Objects.nonNull(recurringDetailsDTOPropertySetter)) {
+        recurringDetailsDTOPropertySetter.accept(recurringDetailsDTOBuilder, next);
+      }
     } catch (DateTimeParseException e) {
       throw new ParseCommandException("Invalid update Date format provided");
     }

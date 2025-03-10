@@ -40,9 +40,9 @@ public class EventDTO {
       Boolean isAllDay,
       Boolean isRecurring,
       RecurringDetailsDTO recurringDetails) {
-    if (subject == null || startTime == null) {
-      throw new IllegalArgumentException("Cannot be null");
-    }
+//    if (subject == null || startTime == null) {
+//      throw new IllegalArgumentException("Cannot be null");
+//    }
     this.subject = subject;
     this.startTime = startTime;
     this.endTime = endTime;

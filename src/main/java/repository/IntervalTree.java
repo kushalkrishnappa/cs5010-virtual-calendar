@@ -226,9 +226,9 @@ public class IntervalTree {
       reComputeMaxEnd(node);
 
     } else if (node.startTime.isBefore(startTime)) {
-      return delete(node.right, subject, startTime, endTime, isDeleted);
+      node.right = delete(node.right, subject, startTime, endTime, isDeleted);
     } else {
-      return delete(node.left, subject, startTime, endTime, isDeleted);
+      node.left = delete(node.left, subject, startTime, endTime, isDeleted);
     }
     return node;
   }
