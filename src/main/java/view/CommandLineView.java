@@ -27,7 +27,11 @@ public class CommandLineView implements IView {
 
   @Override
   public void displayError(String error) {
-    System.out.println(error);
+    try {
+      outputStream.append(error);
+    } catch (IOException e) {
+      throw new DisplayException("Error displaying error: " + error);
+    }
   }
 
   @Override
