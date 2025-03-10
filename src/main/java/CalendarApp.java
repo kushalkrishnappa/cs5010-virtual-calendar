@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import model.CalendarModel;
 import model.IModel;
 import view.CommandLineView;
@@ -48,7 +49,7 @@ public class CalendarApp {
     }
     switch (mode) {
       case INTERACTIVE:
-        view = new CommandLineView(new InputStreamReader(System.in));
+        view = new CommandLineView(new InputStreamReader(System.in), new PrintStream(System.out));
         break;
       case HEADLESS:
         if (args.length < 3) {
@@ -56,7 +57,8 @@ public class CalendarApp {
           return;
         }
         try {
-          view = new CommandLineView(new BufferedReader(new FileReader(args[2])));
+          view = new CommandLineView(new BufferedReader(new FileReader(args[2])),
+              new PrintStream(System.out));
         } catch (FileNotFoundException e) {
           System.err.println("File not found: " + args[2]);
           return;
