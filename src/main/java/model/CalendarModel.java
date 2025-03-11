@@ -2,6 +2,7 @@ package model;
 
 import dto.EventDTO;
 import dto.EventDTO.EventDTOBuilder;
+import dto.RecurringDetailsDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.InvalidDateTimeRangeException;
@@ -34,15 +35,11 @@ public class CalendarModel implements IModel {
 
   IEventRepository eventRepository;
 
-  enum mode {
-    CREATE,
-    EDIT;
-  }
-
   private static final DateTimeFormatter calenderExportDateFormatter = DateTimeFormatter.ofPattern(
       "MM/dd/yyyy");
   private static final DateTimeFormatter calenderExportTimeFormatter = DateTimeFormatter.ofPattern(
       "hh:mm a");
+  private boolean isEditRequest;
 
   public CalendarModel() {
     this.eventRepository = new InMemoryEventRepository();
@@ -217,14 +214,14 @@ public class CalendarModel implements IModel {
   private void createAllDayEvent(EventDTO eventDTO) {
     // create a single all day event
     // check if the endDate is null and set to start of next day
-      eventRepository.insertEvent(eventDTO);
+    eventRepository.insertEvent(eventDTO);
   }
 
 
   private void checkConflictAndAdd(LocalDateTime currentDateTime,
       List<List<LocalDateTime>> recurringDateTimeRange, LocalDateTime endTime, Boolean isAllDay) {
     if (isAllDay) {
-      if (hasConflict(currentDateTime, currentDateTime.plusDays(1))) {
+      if (hasConflict(currentDateTime, currentDateTime.plusDays(1)) && !isEditRequest) {
         throw new EventConflictException("Recurring all day event with occurrences has conflict");
       }
       recurringDateTimeRange.add(List.of(currentDateTime, currentDateTime.plusDays(1)));
@@ -242,13 +239,15 @@ public class CalendarModel implements IModel {
 
   @Override
   public Integer editEvent(String eventName, LocalDateTime startTime, LocalDateTime endTime,
-      EventDTO parametersToUpdate) throws IllegalArgumentException {
+      EventDTO parametersToUpdate) throws EventConflictException, IllegalArgumentException {
+    isEditRequest = true;
     if (Objects.isNull(parametersToUpdate)) {
       throw new IllegalArgumentException("Parameters to update cannot be null");
     }
     if (Objects.isNull(endTime)) {
       return editEventsWithName(eventName, startTime, parametersToUpdate);
     }
+    isEditRequest = false;
     return editEventWithKey(eventName, startTime, endTime, parametersToUpdate);
   }
 
@@ -270,14 +269,17 @@ public class CalendarModel implements IModel {
         .setIsRecurring(existingEvent.getIsRecurring())
         .setRecurringDetails(existingEvent.getRecurringDetails())
         .setDescription(
-            Objects.requireNonNullElse(parametersToUpdate.getDescription(),
-                existingEvent.getDescription()))
+            Objects.nonNull(parametersToUpdate.getDescription()) ?
+                parametersToUpdate.getDescription() :
+                existingEvent.getDescription())
         .setLocation(
-            Objects.requireNonNullElse(parametersToUpdate.getLocation(),
-                existingEvent.getLocation()))
+            Objects.nonNull(parametersToUpdate.getLocation()) ?
+                parametersToUpdate.getLocation() :
+                existingEvent.getLocation())
         .setIsPublic(
-            Objects.requireNonNullElse(parametersToUpdate.getIsPublic(),
-                existingEvent.getIsPublic()));
+            Objects.nonNull(parametersToUpdate.getIsPublic()) ?
+                parametersToUpdate.getIsPublic() :
+                existingEvent.getIsPublic());
 
     // changing key fields (conflict checks)
     if (isKeyFieldsUpdated(parametersToUpdate)) {
@@ -301,6 +303,7 @@ public class CalendarModel implements IModel {
 
       // if it was previously an all day event
       if (existingEvent.getIsAllDay()
+          // and start or end time is requested to be updated
           && Objects.isNull(parametersToUpdate.getSubject())) {
         updatedEventBuilder.setIsAllDay(false);
       } else {
@@ -324,7 +327,34 @@ public class CalendarModel implements IModel {
         try {
           createEvent(updatedEventBuilder
               .setIsRecurring(true)
-              .setRecurringDetails(parametersToUpdate.getRecurringDetails())
+              .setRecurringDetails(
+                  RecurringDetailsDTO.getBuilder()
+                      .setRepeatDays(
+                          Objects.nonNull(parametersToUpdate.getRecurringDetails().getRepeatDays())
+                              ?
+                              parametersToUpdate.getRecurringDetails().getRepeatDays() :
+                              Objects.nonNull(
+                                  parametersToUpdate.getRecurringDetails().getUntilDate()) ?
+                                  null :
+                                  existingEvent.getRecurringDetails().getRepeatDays()
+                      )
+                      .setOccurrences(
+                          Objects.nonNull(parametersToUpdate.getRecurringDetails().getOccurrences())
+                              ?
+                              parametersToUpdate.getRecurringDetails().getOccurrences() :
+                              existingEvent.getRecurringDetails().getOccurrences()
+                      )
+                      .setUntilDate(
+                          Objects.nonNull(parametersToUpdate.getRecurringDetails().getUntilDate()) ?
+                              parametersToUpdate.getRecurringDetails().getUntilDate() :
+                              Objects.nonNull(
+                                  parametersToUpdate.getRecurringDetails().getOccurrences())
+                                  ?
+                                  null :
+                                  existingEvent.getRecurringDetails().getUntilDate()
+                      )
+                      .build()
+              )
               .build(), true);
           eventsUpdated = Objects.requireNonNullElse(
               parametersToUpdate.getRecurringDetails().getOccurrences(),
@@ -361,13 +391,16 @@ public class CalendarModel implements IModel {
     eventsByName = eventRepository.getEventsByName(eventName);
     if (Objects.nonNull(startTime)) {
       eventsByName = eventsByName.stream()
-          .filter(event -> !startTime.isBefore(event.getStartTime())
-              && !event.getIsRecurring())
+          .filter(event -> startTime.isBefore(event.getStartTime())
+              && event.getIsRecurring())
           .collect(Collectors.toList());
     }
     if (eventsByName.isEmpty()) {
       throw new IllegalArgumentException("Event with name " + eventName + " not found");
     }
+
+    EventDTO firstEventHitSinceStartTime = eventsByName.get(0);
+    eventsByName = getEventsInHitSeries(firstEventHitSinceStartTime, eventsByName);
 
     // generate updated events while checking for conflicts
     List<EventDTO> eventsToUpdate = new ArrayList<>();
@@ -384,14 +417,17 @@ public class CalendarModel implements IModel {
             .setIsRecurring(existingEvent.getIsRecurring())
             .setRecurringDetails(existingEvent.getRecurringDetails())
             .setDescription(
-                Objects.requireNonNullElse(parametersToUpdate.getDescription(),
-                    existingEvent.getDescription()))
+                Objects.nonNull(parametersToUpdate.getDescription()) ?
+                    parametersToUpdate.getDescription() :
+                    existingEvent.getDescription())
             .setLocation(
-                Objects.requireNonNullElse(parametersToUpdate.getLocation(),
-                    existingEvent.getLocation()))
+                Objects.nonNull(parametersToUpdate.getLocation()) ?
+                    parametersToUpdate.getLocation() :
+                    existingEvent.getLocation())
             .setIsPublic(
-                Objects.requireNonNullElse(parametersToUpdate.getIsPublic(),
-                    existingEvent.getIsPublic()));
+                Objects.nonNull(parametersToUpdate.getIsPublic()) ?
+                    parametersToUpdate.getIsPublic() :
+                    existingEvent.getIsPublic());
         // if key values are updated?
         if (isKeyFieldsUpdated(parametersToUpdate)) {
           String updateSubject = Objects.requireNonNullElse(parametersToUpdate.getSubject(),
@@ -403,7 +439,7 @@ public class CalendarModel implements IModel {
 
           // check conflict
           EventDTO conflictEvent = eventRepository.getEvent(updateSubject, updateStart, updateEnd);
-          if (Objects.nonNull(conflictEvent)) {
+          if (Objects.nonNull(conflictEvent) && isNotToBeUpdated(conflictEvent, eventsByName)) {
             throw new EventConflictException(
                 "Update key parameters conflict with existing event");
           }
@@ -424,40 +460,97 @@ public class CalendarModel implements IModel {
         }
 
         eventsToUpdate.add(updatedEventBuilder.build());
-        eventsByName.forEach(event -> eventRepository.deleteEvent(
-            event.getSubject(), event.getStartTime(), event.getEndTime()));
-        eventsToUpdate.forEach(eventRepository::insertEvent);
       }
+      eventsByName.forEach(event -> eventRepository.deleteEvent(
+          event.getSubject(), event.getStartTime(), event.getEndTime()));
+      eventsToUpdate.forEach(eventRepository::insertEvent);
     } else {
-      // recurrence details is set
-      EventDTO firstEventInSeries = EventDTO.getBuilder()
+      // TODO: anirudh recurrence details is set
+      EventDTO newRecurEvent = EventDTO.getBuilder()
           .setSubject(eventName)
           .setStartTime(eventsByName.get(0).getStartTime())
           .setEndTime(eventsByName.get(0).getEndTime())
           .setIsAllDay(eventsByName.get(0).getIsAllDay())
           .setIsRecurring(true)
-          .setRecurringDetails(parametersToUpdate.getRecurringDetails())
+          .setRecurringDetails(
+              RecurringDetailsDTO.getBuilder()
+                  .setRepeatDays(
+                      Objects.nonNull(parametersToUpdate.getRecurringDetails().getRepeatDays()) ?
+                          parametersToUpdate.getRecurringDetails().getRepeatDays() :
+                          Objects.nonNull(parametersToUpdate.getRecurringDetails().getUntilDate()) ?
+                              null :
+                              eventsByName.get(0).getRecurringDetails().getRepeatDays()
+                  )
+                  .setOccurrences(
+                      Objects.nonNull(parametersToUpdate.getRecurringDetails().getOccurrences()) ?
+                          parametersToUpdate.getRecurringDetails().getOccurrences() :
+                          eventsByName.get(0).getRecurringDetails().getOccurrences()
+                  )
+                  .setUntilDate(
+                      Objects.nonNull(parametersToUpdate.getRecurringDetails().getUntilDate()) ?
+                          parametersToUpdate.getRecurringDetails().getUntilDate() :
+                          Objects.nonNull(parametersToUpdate.getRecurringDetails().getOccurrences())
+                              ?
+                              null :
+                              eventsByName.get(0).getRecurringDetails().getUntilDate()
+                  )
+                  .build())
           .setDescription(
-              Objects.requireNonNullElse(parametersToUpdate.getDescription(),
-                  parametersToUpdate.getDescription()))
+              Objects.nonNull(parametersToUpdate.getDescription()) ?
+                  parametersToUpdate.getDescription() :
+                  eventsByName.get(0).getDescription())
           .setLocation(
-              Objects.requireNonNullElse(parametersToUpdate.getLocation(),
-                  parametersToUpdate.getLocation()))
+              Objects.nonNull(parametersToUpdate.getLocation()) ?
+                  parametersToUpdate.getLocation() :
+                  eventsByName.get(0).getLocation())
           .setIsPublic(
-              Objects.requireNonNullElse(parametersToUpdate.getIsPublic(),
-                  parametersToUpdate.getIsPublic()))
+              Objects.nonNull(parametersToUpdate.getIsPublic()) ?
+                  parametersToUpdate.getIsPublic() :
+                  eventsByName.get(0).getIsPublic())
           .build();
+
+      List<EventDTO> newEventsToAdd = generateRecurrence(newRecurEvent);
+      for (EventDTO newEvent : newEventsToAdd) {
+        EventDTO conflictEvent = eventRepository.getEvent(newEvent.getSubject(),
+            newEvent.getStartTime(), newEvent.getEndTime());
+        if (Objects.nonNull(conflictEvent) && isNotToBeUpdated(conflictEvent, eventsByName)) {
+          throw new EventConflictException(
+              "Update key parameters conflict with existing event");
+        }
+        eventsToUpdate.add(newEvent);
+      }
       eventsByName.forEach(event -> eventRepository.deleteEvent(
           event.getSubject(), event.getStartTime(), event.getEndTime()));
-      try {
-        eventsToUpdate = generateRecurrence(firstEventInSeries);
-      } catch (EventConflictException | IllegalArgumentException e) {
-        eventsByName.forEach(eventRepository::insertEvent);
-        throw new EventConflictException("New Recurring event conflict with existing event");
-      }
       eventsToUpdate.forEach(eventRepository::insertEvent);
     }
     return eventsToUpdate.size();
+  }
+
+  private boolean isNotToBeUpdated(EventDTO conflictEvent, List<EventDTO> eventsToUpdate) {
+    for (EventDTO existingEvent : eventsToUpdate) {
+      if (conflictEvent.getSubject().equals(existingEvent.getSubject())
+          && conflictEvent.getStartTime().equals(existingEvent.getStartTime())
+          && conflictEvent.getEndTime().equals(existingEvent.getEndTime())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private List<EventDTO> getEventsInHitSeries(EventDTO firstHitEvent, List<EventDTO> eventsByName) {
+    List<EventDTO> events = generateRecurrence(firstHitEvent);
+    return eventsByName.stream().filter(
+        event -> {
+          for (EventDTO existingEvent : events) {
+            if (existingEvent.getSubject().equals(event.getSubject())
+                && existingEvent.getStartTime().equals(event.getStartTime())
+                && existingEvent.getEndTime().equals(event.getEndTime())) {
+              return true;
+            }
+          }
+          return false;
+        }
+    ).collect(Collectors.toList());
   }
 
 

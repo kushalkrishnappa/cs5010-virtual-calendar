@@ -31,7 +31,7 @@ class CreateEventCommand extends Command {
   private LocalDateTime untilDate;
   private Integer occurrences;
 
-  CreateEventCommand(){
+  CreateEventCommand() {
     eventName = null;
     autoDecline = false;
     startTime = null;
@@ -42,6 +42,7 @@ class CreateEventCommand extends Command {
     untilDate = null;
     occurrences = null;
   }
+
   @Override
   void parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
@@ -75,7 +76,7 @@ class CreateEventCommand extends Command {
           break;
         default:
           throw new ParseCommandException(
-              "Invalid command format: create event [--autoDecline] <eventName> (from|on) ...]");
+              "Invalid command format: create event [--autoDecline] <eventName> (from|on) ...");
       }
     } catch (NoSuchElementException e) {
       throw new ParseCommandException(
@@ -94,7 +95,7 @@ class CreateEventCommand extends Command {
         this.startTime = LocalDateTime.parse(startTime, CalendarController.dateTimeFormatter);
       } catch (DateTimeParseException e) {
         throw new ParseCommandException(
-            "Invalid Start Date format: expecting " + CalendarController.dateTimeFormatter);
+            "Invalid Start Date format: expecting " + CalendarController.dateTimeFormat);
       }
       return;
     }
@@ -103,7 +104,7 @@ class CreateEventCommand extends Command {
       this.startTime = LocalDate.parse(startTime, CalendarController.dateFormatter)
           .atStartOfDay();
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid date format: " + CalendarController.dateFormatter);
+      throw new ParseCommandException("Invalid date format: " + CalendarController.dateFormat);
     }
 
     switch (commandScanner.next()) {
@@ -147,7 +148,7 @@ class CreateEventCommand extends Command {
           .atStartOfDay();
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid untilTime format: " + CalendarController.dateFormatter);
+          "Invalid untilTime format: " + CalendarController.dateFormat);
     }
     isRecurring = true;
   }
@@ -155,6 +156,9 @@ class CreateEventCommand extends Command {
   private void handleCreateAllDayNTimesEvent(Scanner commandScanner)
       throws ParseCommandException {
     occurrences = Integer.parseInt(commandScanner.next());
+    if (Objects.nonNull(occurrences) && occurrences <= 0) {
+      throw new ParseCommandException("Occurrences must be positive");
+    }
     if (!commandScanner.next().equals("times")) {
       throw new ParseCommandException(
           "Invalid command format: create event <eventName> on <dateString> "
@@ -168,7 +172,7 @@ class CreateEventCommand extends Command {
       startTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid startDateTime format: " + CalendarController.dateTimeFormatter);
+          "Invalid startDateTime format: " + CalendarController.dateTimeFormat);
     }
     if (!commandScanner.next().equals("to")) {
       throw new ParseCommandException(
@@ -179,7 +183,7 @@ class CreateEventCommand extends Command {
       endTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid endDateTime format: " + CalendarController.dateTimeFormatter);
+          "Invalid endDateTime format: " + CalendarController.dateTimeFormat);
     }
 
     if (parseRepeatDays(commandScanner)) {
@@ -205,13 +209,16 @@ class CreateEventCommand extends Command {
       untilDate = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid untilTime format: " + CalendarController.dateTimeFormatter);
+          "Invalid untilTime format: " + CalendarController.dateTimeFormat);
     }
     isRecurring = true;
   }
 
   private void handleCreateSpannedNTimesEvent(Scanner commandScanner) throws ParseCommandException {
     occurrences = Integer.parseInt(commandScanner.next());
+    if (Objects.nonNull(occurrences) && occurrences <= 0) {
+      throw new ParseCommandException("Occurrences must be positive");
+    }
     if (!commandScanner.next().equals("times")) {
       throw new ParseCommandException(
           "Invalid command format: create event [--autoDecline] <eventName> from "

@@ -13,6 +13,11 @@ class ExportCalendarCommand extends Command {
   private String outputFilePath;
   private String filename;
 
+  ExportCalendarCommand() {
+    outputFilePath = null;
+    filename = null;
+  }
+
   @Override
   void parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
@@ -29,7 +34,7 @@ class ExportCalendarCommand extends Command {
         }
         filename = filename + ".csv";
       }
-    } catch (NoSuchElementException e){
+    } catch (NoSuchElementException e) {
       throw new ParseCommandException("Invalid command format: export cal <filename(.csv)>");
     }
   }

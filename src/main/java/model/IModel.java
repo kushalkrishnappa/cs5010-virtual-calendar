@@ -51,7 +51,7 @@ public interface IModel {
    * @throws IllegalArgumentException if the edit request is invalid
    */
   Integer editEvent(String name, LocalDateTime startTime, LocalDateTime endTime,
-      EventDTO parametersToUpdate) throws IllegalArgumentException;
+      EventDTO parametersToUpdate) throws EventConflictException, IllegalArgumentException;
 
 
   // print events on <dateStringTtimeString>

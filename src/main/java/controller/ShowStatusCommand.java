@@ -15,6 +15,11 @@ class ShowStatusCommand extends Command {
   private LocalDateTime dateTime;
   private Boolean isBusy;
 
+  ShowStatusCommand() {
+    dateTime = null;
+    isBusy = null;
+  }
+
   @Override
   void parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
@@ -29,7 +34,7 @@ class ShowStatusCommand extends Command {
         dateTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
       } catch (DateTimeParseException e) {
         throw new ParseCommandException(
-            "Invalid dateTime format: " + CalendarController.dateTimeFormatter);
+            "Invalid dateTime format: " + CalendarController.dateTimeFormat);
       }
     } catch (NoSuchElementException e) {
       throw new ParseCommandException("Invalid command format: show status on <dateTime>");

@@ -22,6 +22,13 @@ public class PrintEventsCommand extends Command {
   private LocalDateTime endTime;
   private List<EventDTO> eventsOnDate;
 
+  PrintEventsCommand() {
+    onDate = null;
+    startTime = null;
+    endTime = null;
+    eventsOnDate = null;
+  }
+
   @Override
   void parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
@@ -50,7 +57,7 @@ public class PrintEventsCommand extends Command {
     try {
       onDate = LocalDate.parse(commandScanner.next(), CalendarController.dateFormatter);
     } catch (DateTimeParseException e) {
-      throw new ParseCommandException("Invalid onDate format: " + CalendarController.dateFormatter);
+      throw new ParseCommandException("Invalid onDate format: " + CalendarController.dateFormat);
     }
 
   }
@@ -60,7 +67,7 @@ public class PrintEventsCommand extends Command {
       startTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid startDateTime format: " + CalendarController.dateFormatter);
+          "Invalid startDateTime format: " + CalendarController.dateTimeFormat);
     }
 
     if (!commandScanner.next().equals("to")) {
@@ -72,7 +79,7 @@ public class PrintEventsCommand extends Command {
       endTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid endDateTime format: " + CalendarController.dateFormatter);
+          "Invalid endDateTime format: " + CalendarController.dateTimeFormat);
     }
 
   }
@@ -99,7 +106,7 @@ public class PrintEventsCommand extends Command {
           .append(event.getStartTime().format(dateFormatter))
           .append("] ");
       if (event.getIsAllDay()) {
-        eventOutput.append(String.format("%-38s","[ALL DAY EVENT]"));
+        eventOutput.append(String.format("%-38s", "[ALL DAY EVENT]"));
       } else {
         eventOutput.append('[')
             .append(event.getStartTime().format(dateTimeFormatter))
