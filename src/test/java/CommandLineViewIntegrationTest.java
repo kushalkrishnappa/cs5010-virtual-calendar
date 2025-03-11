@@ -10,6 +10,7 @@ import java.io.PipedOutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import model.CalendarModel;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import view.CommandLineView;
@@ -53,7 +54,7 @@ public class CommandLineViewIntegrationTest {
           previousLength = output.length();
         }
         try {
-          Thread.sleep(10); // Small sleep to avoid busy-waiting.
+          Thread.sleep(5); // Small sleep to avoid busy-waiting.
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           return;
@@ -86,5 +87,8 @@ public class CommandLineViewIntegrationTest {
     assertTrue(output.toString().contains("Successfully created event event1"));
   }
 
-
+  @After
+  public void tearDown() throws IOException, InterruptedException {
+    pipedInput.write("exit\n".getBytes());
+  }
 }
