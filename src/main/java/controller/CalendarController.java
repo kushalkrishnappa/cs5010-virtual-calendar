@@ -22,6 +22,7 @@ public class CalendarController implements IController {
       dateTimeFormat);
 
   final ControllerUtility controllerUtility;
+  private boolean exitFlag;
 
   class ControllerUtility {
 
@@ -37,6 +38,7 @@ public class CalendarController implements IController {
     this.view = view;
     this.mode = mode;
     controllerUtility = new ControllerUtility();
+    exitFlag = false;
   }
 
   @Override
@@ -54,6 +56,9 @@ public class CalendarController implements IController {
         continue;
       }
       executeCommand(lineScanner);
+      if (exitFlag) {
+        return;
+      }
       promptUserInput();
     }
     // headless mode should have *exit* as last command
@@ -130,7 +135,7 @@ public class CalendarController implements IController {
 
   private void exitProgram() {
     view.displayMessage("Bye...");
-    System.exit(0);
+    exitFlag= true;
   }
 
 }
