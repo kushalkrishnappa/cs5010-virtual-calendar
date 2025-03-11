@@ -36,13 +36,16 @@ class EditEventCommand extends Command {
   private Integer updatedEvents;
 
   EditEventCommand() {
+    eventName = null;
+    startTime = null;
+    endTime = null;
     eventDTOPropertySetters = createPropertySetters();
     eventBuilder = EventDTO.getBuilder();
     recurringDetailsDTOPropertySetters = createRecurringDetailsPropertySetters();
     recurringDetailsDTOBuilder = RecurringDetailsDTO.getBuilder();
   }
 
-  private Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>>
+  private final Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>>
   createRecurringDetailsPropertySetters() {
     Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>> setters = new HashMap<>();
     setters.put("occurrences",
@@ -60,7 +63,7 @@ class EditEventCommand extends Command {
     return setters;
   }
 
-  private Map<String, BiConsumer<EventDTOBuilder, String>> createPropertySetters() {
+  private final Map<String, BiConsumer<EventDTOBuilder, String>> createPropertySetters() {
     Map<String, BiConsumer<EventDTOBuilder, String>> setters = new HashMap<>();
     setters.put("name",
         (builder, value) -> builder.setSubject(value));
@@ -115,10 +118,7 @@ class EditEventCommand extends Command {
       eventBuilder.setIsRecurring(true);
     }
 
-    eventName = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
-    if (eventName.startsWith("\"") && eventName.endsWith("\"")) {
-      eventName = eventName.substring(1, eventName.length() - 1);
-    }
+    eventName = parseOptionalQuoted(commandScanner);
 
     if (!commandScanner.next().equals("from")) {
       throw new ParseCommandException(
@@ -129,7 +129,7 @@ class EditEventCommand extends Command {
       startTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid startDateTime format: " + CalendarController.dateFormatter);
+          "Invalid startDateTime format: " + CalendarController.dateTimeFormat);
     }
 
     if (!commandScanner.next().equals("to")) {
@@ -141,7 +141,7 @@ class EditEventCommand extends Command {
       endTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
     } catch (DateTimeParseException e) {
       throw new ParseCommandException(
-          "Invalid endDateTime format: " + CalendarController.dateFormatter);
+          "Invalid endDateTime format: " + CalendarController.dateTimeFormat);
     }
 
     if (!commandScanner.next().equals("with")) {
@@ -151,6 +151,14 @@ class EditEventCommand extends Command {
 
     String next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
     parseNewPropertyValue(next);
+  }
+
+  private String parseOptionalQuoted(Scanner commandScanner) throws ParseCommandException {
+    String token = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
+    if (token == null) {
+      throw new ParseCommandException("Expected token");
+    }
+    return token.startsWith("\"") ? token.substring(1, token.length() - 1) : token;
   }
 
   private void editRecurringEvents(Scanner commandScanner) throws ParseCommandException {
@@ -164,12 +172,9 @@ class EditEventCommand extends Command {
         && Objects.isNull(recurringDetailsDTOPropertySetter)) {
       throw new ParseCommandException("Invalid property name");
     }
-    eventName = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
-    if (eventName.startsWith("\"") && eventName.endsWith("\"")) {
-      eventName = eventName.substring(1, eventName.length() - 1);
-    }
+    eventName = parseOptionalQuoted(commandScanner);
 
-    String next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
+    String next = commandScanner.next();
 
     if (next.equals("from")) {
       try {
@@ -177,7 +182,7 @@ class EditEventCommand extends Command {
             CalendarController.dateTimeFormatter);
       } catch (DateTimeParseException e) {
         throw new ParseCommandException(
-            "Invalid startDateTime format: " + CalendarController.dateFormatter);
+            "Invalid startDateTime format: " + CalendarController.dateTimeFormat);
       }
 
       if (!commandScanner.next().equals("with")) {
@@ -186,17 +191,14 @@ class EditEventCommand extends Command {
                 + "from <dateStringTtimeString> with ...");
       }
 
-      next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
     } else {
       if (!next.equals("with")) {
         throw new ParseCommandException(
             "Invalid command format: edit events <property> <eventName> "
                 + "with ...");
       }
-      next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
     }
-
-    parseNewPropertyValue(next);
+    parseNewPropertyValue(parseOptionalQuoted(commandScanner));
   }
 
   private void parseNewPropertyValue(String next) throws ParseCommandException {

@@ -15,9 +15,12 @@ public class CalendarController implements IController {
   private final ControllerMode mode;
   private final IView view;
   private final IModel model;
+  static final String dateFormat = "yyyy-MM-dd";
+  static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
+  static final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
   static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
-      "yyyy-MM-dd'T'HH:mm");
-  static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      dateTimeFormat);
+
   final ControllerUtility controllerUtility;
 
   class ControllerUtility {

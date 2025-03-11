@@ -67,7 +67,6 @@ public class IntervalTree {
       return;
     }
 
-
     // If the left child is not null and the maxEnd of the left child is after the start time
     if (node.left == null || node.left.maxEnd.isBefore(startTime)) {
       searchOverlappingWithinNode(node, startTime, endTime, result);
@@ -79,8 +78,8 @@ public class IntervalTree {
     }
   }
 
-  private static void searchOverlappingWithinNode(Node node, LocalDateTime startTime, LocalDateTime endTime,
-      List<EventDTO> result) {
+  private static void searchOverlappingWithinNode(Node node, LocalDateTime startTime,
+      LocalDateTime endTime, List<EventDTO> result) {
     // Compare the node itself for overlapping
     if (node.startTime.isBefore(endTime) && node.endTime.isAfter(startTime)
         || node.startTime.isEqual(startTime)) {

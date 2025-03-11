@@ -59,7 +59,7 @@ public class CommandLineViewIntegrationTest {
           return;
         }
       }
-      if(output.length() > 0){
+      if (output.length() > 0) {
         outputSignal.add("outputAvailable");
       }
 
@@ -71,7 +71,7 @@ public class CommandLineViewIntegrationTest {
   }
 
   @Test
-  public void test() throws IOException, InterruptedException {
+  public void testCreateEventWithStartTimeBeforeEndTime() throws IOException, InterruptedException {
     pipedInput.write(
         "create event --autoDecline event1 from 2025-04-01T12:00 to 2025-04-01T01:00\n".getBytes());
     outputSignal.take();
@@ -79,7 +79,7 @@ public class CommandLineViewIntegrationTest {
   }
 
   @Test
-  public void test2() throws IOException, InterruptedException {
+  public void testCreateEvent() throws IOException, InterruptedException {
     pipedInput.write(
         "create event --autoDecline event1 from 2025-04-01T12:00 to 2025-04-01T13:00\n".getBytes());
     outputSignal.take();

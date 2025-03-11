@@ -239,7 +239,7 @@ public class CalendarModel implements IModel {
 
   @Override
   public Integer editEvent(String eventName, LocalDateTime startTime, LocalDateTime endTime,
-      EventDTO parametersToUpdate) throws IllegalArgumentException {
+      EventDTO parametersToUpdate) throws EventConflictException, IllegalArgumentException {
     isEditRequest = true;
     if (Objects.isNull(parametersToUpdate)) {
       throw new IllegalArgumentException("Parameters to update cannot be null");
