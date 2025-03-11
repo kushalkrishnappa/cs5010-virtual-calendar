@@ -5,8 +5,11 @@ import exception.EventConflictException;
 import exception.InvalidDateTimeRangeException;
 import exception.ParseCommandException;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.function.Supplier;
 import model.IModel;
 import view.IView;
 
@@ -89,16 +92,16 @@ public class CalendarController implements IController {
       exitProgram();
     }
 
-    command = getCommand(firstToken);
+    command = CommandFactory.createCommand(firstToken);
     if (command == null) {
-      promptError("Unknown command");
+      promptError("Unknown command\n");
       return;
     }
 
     try {
       command.parseCommand(lineScanner);
     } catch (ParseCommandException e) {
-      promptError(e.getMessage());
+      promptError(e.getMessage()+"\n");
       return;
     }
 
@@ -113,23 +116,25 @@ public class CalendarController implements IController {
     command.promptResult(controllerUtility);
   }
 
-  private Command getCommand(String firstToken) {
-    switch (firstToken) {
-      case "create":
-        return new CreateEventCommand();
-      case "edit":
-        return new EditEventCommand();
-      case "print":
-        return new PrintEventsCommand();
-      case "export":
-        return new ExportCalendarCommand();
-      case "show":
-        return new ShowStatusCommand();
-//      case "help":
-//        break;
-      default:
-        return null;
 
+  private static class CommandFactory {
+
+    private static final Map<String, Supplier<Command>> commandMap = new HashMap<>();
+
+    static {
+      commandMap.put("create", CreateEventCommand::new);
+      commandMap.put("edit", EditEventCommand::new);
+      commandMap.put("print", PrintEventsCommand::new);
+      commandMap.put("export", ExportCalendarCommand::new);
+      commandMap.put("show", ShowStatusCommand::new);
+    }
+
+    static Command createCommand(String firstToken) {
+      Supplier<Command> commandSupplier = commandMap.get(firstToken);
+      if (commandSupplier != null) {
+        return commandSupplier.get();
+      }
+      return null;
     }
   }
 
