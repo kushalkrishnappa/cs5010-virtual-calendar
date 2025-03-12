@@ -1,6 +1,7 @@
 package dto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 import model.CalendarDayOfWeek;
 
@@ -65,5 +66,21 @@ public class RecurringDetailsDTO {
 
   public LocalDateTime getUntilDate() {
     return this.untilDate;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof RecurringDetailsDTO)) {
+      return false;
+    }
+    RecurringDetailsDTO that = (RecurringDetailsDTO) o;
+    return Objects.equals(occurrences, that.occurrences)
+        && Objects.equals(repeatDays, that.repeatDays)
+        && Objects.equals(untilDate, that.untilDate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(occurrences, repeatDays, untilDate);
   }
 }

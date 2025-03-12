@@ -1,6 +1,7 @@
 package dto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * EventDTO class implements IEventDTO and store information about an event.
@@ -219,5 +220,28 @@ public class EventDTO {
 
   public RecurringDetailsDTO getRecurringDetails() {
     return this.recurringDetails;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof EventDTO)) {
+      return false;
+    }
+    EventDTO eventDTO = (EventDTO) o;
+    return Objects.equals(subject, eventDTO.subject)
+        && Objects.equals(startTime, eventDTO.startTime)
+        && Objects.equals(endTime, eventDTO.endTime)
+        && Objects.equals(description, eventDTO.description)
+        && Objects.equals(location, eventDTO.location)
+        && Objects.equals(isPublic, eventDTO.isPublic)
+        && Objects.equals(isAllDay, eventDTO.isAllDay)
+        && Objects.equals(isRecurring, eventDTO.isRecurring)
+        && Objects.equals(recurringDetails, eventDTO.recurringDetails);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(subject, startTime, endTime, description, location, isPublic, isAllDay,
+        isRecurring, recurringDetails);
   }
 }
