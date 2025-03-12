@@ -90,9 +90,10 @@ class CreateEventCommand extends Command {
     isAllDay = true;
     String startTime = commandScanner.next();
 
-    if (parseRepeatDays(commandScanner)) {
+    if (notParseRepeatDays(commandScanner)) {
       try {
-        this.startTime = LocalDateTime.parse(startTime, CalendarController.dateTimeFormatter);
+        this.startTime = LocalDateTime.parse(startTime, CalendarController.dateTimeFormatter)
+            .toLocalDate().atStartOfDay();
       } catch (DateTimeParseException e) {
         throw new ParseCommandException(
             "Invalid Start Date format: expecting " + CalendarController.dateTimeFormat);
@@ -109,7 +110,7 @@ class CreateEventCommand extends Command {
 
     switch (commandScanner.next()) {
       case "for":
-        handleCreateAllDayNTimesEvent(commandScanner);
+        handleCreateNTimesEvent(commandScanner);
         break;
       case "until":
         handleCreateAllDayUntilEvent(commandScanner);
@@ -121,7 +122,7 @@ class CreateEventCommand extends Command {
     }
   }
 
-  private boolean parseRepeatDays(Scanner commandScanner) throws ParseCommandException {
+  private boolean notParseRepeatDays(Scanner commandScanner) throws ParseCommandException {
     if (!commandScanner.hasNext()) {
       return true;
     }
@@ -153,16 +154,26 @@ class CreateEventCommand extends Command {
     isRecurring = true;
   }
 
-  private void handleCreateAllDayNTimesEvent(Scanner commandScanner)
+  private void handleCreateNTimesEvent(Scanner commandScanner)
       throws ParseCommandException {
-    occurrences = Integer.parseInt(commandScanner.next());
-    if (Objects.nonNull(occurrences) && occurrences <= 0) {
+    try {
+      occurrences = Integer.parseInt(commandScanner.next());
+    } catch (NumberFormatException e) {
+      throw new ParseCommandException("Invalid occurrences format: Expected integer");
+    }
+    if (occurrences <= 0) {
       throw new ParseCommandException("Occurrences must be positive");
     }
     if (!commandScanner.next().equals("times")) {
-      throw new ParseCommandException(
-          "Invalid command format: create event <eventName> on <dateString> "
-              + "repeats <weekdays> for <occurrences> times");
+      if (isAllDay) {
+        throw new ParseCommandException(
+            "Invalid command format: create event <eventName> on <dateString> "
+                + "repeats <weekdays> for <occurrences> times");
+      } else {
+        throw new ParseCommandException(
+            "Invalid command format: create event [--autoDecline] <eventName> from "
+                + "<startDateTime> to <dateDateTime> repeats <weekdays> for <N> times");
+      }
     }
     isRecurring = true;
   }
@@ -186,13 +197,13 @@ class CreateEventCommand extends Command {
           "Invalid endDateTime format: " + CalendarController.dateTimeFormat);
     }
 
-    if (parseRepeatDays(commandScanner)) {
+    if (notParseRepeatDays(commandScanner)) {
       return;
     }
 
     switch (commandScanner.next()) {
       case "for":
-        handleCreateSpannedNTimesEvent(commandScanner);
+        handleCreateNTimesEvent(commandScanner);
         break;
       case "until":
         handleCreateSpannedUntilEvent(commandScanner);
@@ -200,7 +211,7 @@ class CreateEventCommand extends Command {
       default:
         throw new ParseCommandException(
             "Invalid command format: create event [--autoDecline] <eventName> from "
-                + "<startDateTime> to <dateDateTime> ...");
+                + "<startDateTime> to <dateDateTime> repeats <weekdays> (for|until) ... ");
     }
   }
 
@@ -214,18 +225,6 @@ class CreateEventCommand extends Command {
     isRecurring = true;
   }
 
-  private void handleCreateSpannedNTimesEvent(Scanner commandScanner) throws ParseCommandException {
-    occurrences = Integer.parseInt(commandScanner.next());
-    if (Objects.nonNull(occurrences) && occurrences <= 0) {
-      throw new ParseCommandException("Occurrences must be positive");
-    }
-    if (!commandScanner.next().equals("times")) {
-      throw new ParseCommandException(
-          "Invalid command format: create event [--autoDecline] <eventName> from "
-              + "<startDateTime> to <dateDateTime> repeats <weekdays> for <N> times");
-    }
-    isRecurring = true;
-  }
 
   @Override
   void executeCommand(IModel model)

@@ -72,7 +72,7 @@ public class PrintEventsCommand extends Command {
 
     if (!commandScanner.next().equals("to")) {
       throw new ParseCommandException(
-          "Invalid command format: print events from " + "<dateStringTtimeString> to ...");
+          "Invalid command format: print events from <dateStringTtimeString> to ...");
     }
 
     try {
