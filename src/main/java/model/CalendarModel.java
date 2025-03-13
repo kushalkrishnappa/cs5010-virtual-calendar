@@ -83,14 +83,11 @@ public class CalendarModel implements IModel {
         throw new IllegalArgumentException("Recurring spanned event cannot span more than a day");
       }
 
-      // recurring all day or spanned event
-      List<EventDTO> eventDTOs = generateRecurrence(eventDTO);
-      eventDTOs.forEach(eventRepository::insertEvent);
-    }
 
-//    for (EventDTO event : eventDTOs) {
-//      eventRepository.insertEvent(event);
-//    }
+    }
+    // recurring all day or spanned event
+    List<EventDTO> eventDTOs = generateRecurrence(eventDTO);
+    eventDTOs.forEach(eventRepository::insertEvent);
   }
 
   private static EventDTO createValidEventDTO(EventDTO eventDTO) {
@@ -172,6 +169,7 @@ public class CalendarModel implements IModel {
             eventDTO.getIsAllDay());
       }
       currentDateTime = currentDateTime.plusDays(1);
+      currentDayOfWeek = currentDayOfWeek.plus(1);
     }
   }
 
@@ -187,6 +185,7 @@ public class CalendarModel implements IModel {
 
       checkConflictAndAdd(currentDateTime, recurringDateTimeRange, endTime, eventDTO.getIsAllDay());
       currentDateTime = currentDateTime.plusDays(1);
+      currentDayOfWeek = currentDayOfWeek.plus(1);
     }
   }
 
