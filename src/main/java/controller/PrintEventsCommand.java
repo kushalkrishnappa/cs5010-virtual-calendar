@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Scanner;
 import model.IModel;
 
-public class PrintEventsCommand extends Command {
+class PrintEventsCommand extends Command {
 
   private LocalDate onDate;
   private LocalDateTime startTime;
