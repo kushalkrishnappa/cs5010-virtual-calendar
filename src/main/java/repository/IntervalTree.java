@@ -8,24 +8,6 @@ import java.util.Objects;
 
 public class IntervalTree {
 
-  private static class Node {
-
-    List<EventDTO> events;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
-    LocalDateTime maxEnd;
-    Node left, right;
-
-    Node(EventDTO event) {
-      this.events = new ArrayList<>();
-      this.events.add(event);
-      this.startTime = event.getStartTime();
-      this.endTime = event.getEndTime();
-      this.maxEnd = event.getEndTime();
-      this.left = this.right = null;
-    }
-  }
-
   private Node root;
 
   public Boolean insert(EventDTO event) {

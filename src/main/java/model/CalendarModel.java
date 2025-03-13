@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -169,7 +170,7 @@ public class CalendarModel implements IModel {
         checkConflictAndAdd(currentDateTime, recurringDateTimeRange, endTime,
             eventDTO.getIsAllDay());
       }
-      currentDayOfWeek = currentDayOfWeek.plus(1);
+      currentDateTime = currentDateTime.plusDays(1);
     }
   }
 
@@ -184,7 +185,7 @@ public class CalendarModel implements IModel {
       currentDateTime = currentDateTime.with(TemporalAdjusters.nextOrSame(currentDayOfWeek));
 
       checkConflictAndAdd(currentDateTime, recurringDateTimeRange, endTime, eventDTO.getIsAllDay());
-      currentDayOfWeek = currentDayOfWeek.plus(1);
+      currentDateTime = currentDateTime.plusDays(1);
     }
   }
 
@@ -210,7 +211,7 @@ public class CalendarModel implements IModel {
       recurringDateTimeRange.add(List.of(currentDateTime, currentDateTime.plusDays(1)));
     } else {
       recurringDateTimeRange.add(
-          List.of(currentDateTime, currentDateTime.with(endTime.toLocalTime())));
+          Arrays.asList(currentDateTime, currentDateTime.with(endTime.toLocalTime())));
     }
   }
 
