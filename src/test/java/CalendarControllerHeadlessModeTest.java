@@ -35,4 +35,16 @@ public class CalendarControllerHeadlessModeTest {
     assertEquals("",
         mockView.displayMessage.toString());
   }
+
+  @Test
+  public void exitCommandNotSpecifiedInFile() {
+    mockModel.setIsBusyReturn=true;
+    MockView mockView = new MockView("show status on 2025-10-21T12:00\n");
+    controller = new CalendarController(mockModel, mockView, ControllerMode.HEADLESS);
+    controller.run();
+    assertEquals("exit command was not specified in the passed file\n",
+        mockView.displayErrorMessage.toString());
+    assertEquals("",
+        mockView.displayMessage.toString());
+  }
 }
