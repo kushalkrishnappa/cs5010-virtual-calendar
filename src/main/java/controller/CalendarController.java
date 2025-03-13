@@ -90,6 +90,7 @@ public class CalendarController implements IController {
     String firstToken = lineScanner.next();
     if (firstToken.equals("exit")) {
       exitProgram();
+      return;
     }
 
     command = CommandFactory.createCommand(firstToken);
@@ -139,7 +140,7 @@ public class CalendarController implements IController {
   }
 
   private void exitProgram() {
-    view.displayMessage("Bye...");
+    view.displayMessage("Bye...\n");
     exitFlag= true;
   }
 
