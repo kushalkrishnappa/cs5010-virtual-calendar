@@ -66,7 +66,7 @@ public class CalendarController implements IController {
     }
     // headless mode should have *exit* as last command
     if (mode == ControllerMode.HEADLESS) {
-      promptError("exit command was not specified in the passed file");
+      promptError("exit command was not specified in the passed file\n");
     }
   }
 
@@ -102,7 +102,7 @@ public class CalendarController implements IController {
     try {
       command.parseCommand(lineScanner);
     } catch (ParseCommandException e) {
-      promptError(e.getMessage()+"\n");
+      promptError(e.getMessage() + "\n");
       return;
     }
 
@@ -140,8 +140,10 @@ public class CalendarController implements IController {
   }
 
   private void exitProgram() {
-    view.displayMessage("Bye...\n");
-    exitFlag= true;
+    if (mode == ControllerMode.INTERACTIVE) {
+      view.displayMessage("Bye...\n");
+    }
+    exitFlag = true;
   }
 
 }

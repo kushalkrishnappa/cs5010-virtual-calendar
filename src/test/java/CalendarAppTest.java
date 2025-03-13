@@ -64,8 +64,7 @@ public class CalendarAppTest {
   public void testStartHeadlessMode() {
     CalendarApp.main(
         new String[]{"--mode", "headless", "src/test/resources/headlessExitCommand.txt"});
-    assertEquals("Starting calendar in HEADLESS mode...\n"
-            + "Bye...\n",
+    assertEquals("Starting calendar in HEADLESS mode...\n",
         outputStream.toString().replace("\r\n", "\n"));
   }
 
@@ -90,8 +89,7 @@ public class CalendarAppTest {
   public void testStartHeadlessModeCaseInsensitive() {
     CalendarApp.main(
         new String[]{"--mode", "hEadlEss", "src/test/resources/headlessExitCommand.txt"});
-    assertEquals("Starting calendar in HEADLESS mode...\n"
-            + "Bye...\n",
+    assertEquals("Starting calendar in HEADLESS mode...\n",
         outputStream.toString().replace("\r\n", "\n"));
   }
 
