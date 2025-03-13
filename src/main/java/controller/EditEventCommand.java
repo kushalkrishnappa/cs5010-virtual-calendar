@@ -52,7 +52,7 @@ class EditEventCommand extends Command {
         (builder, value) -> builder.setOccurrences(
             Integer.parseInt(value)
         ));
-    setters.put("repeatDays",
+    setters.put("weekdays",
         (builder, value) -> builder.setRepeatDays(
             CalendarDayOfWeek.parseRepeatDays(value)
         ));
@@ -67,10 +67,10 @@ class EditEventCommand extends Command {
     Map<String, BiConsumer<EventDTOBuilder, String>> setters = new HashMap<>();
     setters.put("name",
         (builder, value) -> builder.setSubject(value));
-    setters.put("startTime",
+    setters.put("startDateTime",
         (builder, value) -> builder.setStartTime(
             LocalDateTime.parse(value, CalendarController.dateTimeFormatter)));
-    setters.put("endTime",
+    setters.put("endDateTime",
         (builder, value) -> builder.setEndTime(
             LocalDateTime.parse(value, CalendarController.dateTimeFormatter)));
     setters.put("description",
@@ -105,20 +105,13 @@ class EditEventCommand extends Command {
   }
 
   private void editSpannedEvent(Scanner commandScanner) throws ParseCommandException {
-    String propertyName = commandScanner.next();
-    eventDTOPropertySetter = eventDTOPropertySetters.get(propertyName);
-    recurringDetailsDTOPropertySetter = recurringDetailsDTOPropertySetters.get(
-        propertyName);
+    setPropertySetters(commandScanner);
 
-    if (Objects.isNull(eventDTOPropertySetter)
-        && Objects.isNull(recurringDetailsDTOPropertySetter)) {
-      throw new ParseCommandException("Invalid property name");
+    try {
+      eventName = parseOptionalQuoted(commandScanner);
+    } catch (ParseCommandException e) {
+      throw new ParseCommandException(e.getMessage() + "edit event <property> <eventName> ...");
     }
-    if (!Objects.isNull(recurringDetailsDTOPropertySetter)) {
-      eventBuilder.setIsRecurring(true);
-    }
-
-    eventName = parseOptionalQuoted(commandScanner);
 
     if (!commandScanner.next().equals("from")) {
       throw new ParseCommandException(
@@ -153,16 +146,7 @@ class EditEventCommand extends Command {
     parseNewPropertyValue(next);
   }
 
-  private String parseOptionalQuoted(Scanner commandScanner) throws ParseCommandException {
-    String token = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
-    if (token == null) {
-      throw new ParseCommandException("Expected token");
-    }
-    return token.startsWith("\"") ? token.substring(1, token.length() - 1) : token;
-  }
-
-  private void editRecurringEvents(Scanner commandScanner) throws ParseCommandException {
-    eventBuilder.setIsRecurring(true);
+  private void setPropertySetters(Scanner commandScanner) throws ParseCommandException {
     String propertyName = commandScanner.next();
     eventDTOPropertySetter = eventDTOPropertySetters.get(propertyName);
     recurringDetailsDTOPropertySetter = recurringDetailsDTOPropertySetters.get(
@@ -172,7 +156,24 @@ class EditEventCommand extends Command {
         && Objects.isNull(recurringDetailsDTOPropertySetter)) {
       throw new ParseCommandException("Invalid property name");
     }
-    eventName = parseOptionalQuoted(commandScanner);
+  }
+
+  private String parseOptionalQuoted(Scanner commandScanner) throws ParseCommandException {
+    String token = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
+    if (token == null) {
+      throw new ParseCommandException("Invalid command format: ");
+    }
+    return token.startsWith("\"") ? token.substring(1, token.length() - 1) : token;
+  }
+
+  private void editRecurringEvents(Scanner commandScanner) throws ParseCommandException {
+    eventBuilder.setIsRecurring(true);
+    setPropertySetters(commandScanner);
+    try {
+      eventName = parseOptionalQuoted(commandScanner);
+    } catch (ParseCommandException e) {
+      throw new ParseCommandException(e.getMessage() + "edit events <property> <eventName> ...");
+    }
 
     String next = commandScanner.next();
 
@@ -195,10 +196,15 @@ class EditEventCommand extends Command {
       if (!next.equals("with")) {
         throw new ParseCommandException(
             "Invalid command format: edit events <property> <eventName> "
-                + "with ...");
+                + "(from|with) ...");
       }
     }
-    parseNewPropertyValue(parseOptionalQuoted(commandScanner));
+    try {
+      parseNewPropertyValue(parseOptionalQuoted(commandScanner));
+    } catch (ParseCommandException e) {
+      throw new ParseCommandException(e.getMessage() + "edit events <property> <eventName> "
+          + "[from <dateStringTtimeString>] with <propertyValue>");
+    }
   }
 
   private void parseNewPropertyValue(String next) throws ParseCommandException {
@@ -224,7 +230,7 @@ class EditEventCommand extends Command {
             Objects.nonNull(recurringDetailsDTOPropertySetter) ?
                 recurringDetailsDTOBuilder.build()
                 : null)
-        .setIsRecurring(Objects.nonNull(recurringDetailsDTOPropertySetter))
+        .setIsRecurring(Objects.nonNull(recurringDetailsDTOPropertySetter) ? true : null)
         .build());
   }
 
@@ -232,6 +238,8 @@ class EditEventCommand extends Command {
   void promptResult(ControllerUtility controllerUtility) {
     if (updatedEvents > 0) {
       controllerUtility.promptOutput("Successfully updated event(s)\n");
+    } else{
+      controllerUtility.promptOutput("No events were updated\n");
     }
   }
 }

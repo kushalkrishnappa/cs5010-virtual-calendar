@@ -28,14 +28,14 @@ public class CalendarApp {
     IModel model = new CalendarModel();
 
     if (args.length < 2) {
-      System.err.println("Usage: java CalendarApp.java --mode [interactive | headless filepath]");
+      promptUsageError();
       return;
     }
 
     // parse the command line arguments for --mode flag
     String modeFlag = args[0];
     if (!modeFlag.equals("--mode")) {
-      System.err.println("Usage: java CalendarApp.java --mode [interactive | headless filepath]");
+      promptUsageError();
       return;
     }
 
@@ -65,12 +65,17 @@ public class CalendarApp {
         }
         break;
       default:
-        System.err.println("Usage: java CalendarApp.java --mode [interactive | headless filepath]");
+        // flow will not reach here
         return;
     }
 
     controller = new CalendarController(model, view, mode);
+    System.out.println("Starting calendar in " + mode + " mode...");
     controller.run();
+  }
+
+  private static void promptUsageError() {
+    System.err.println("Usage: java CalendarApp.java --mode [interactive | headless filepath]");
   }
 
 }
