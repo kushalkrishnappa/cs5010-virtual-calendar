@@ -260,7 +260,7 @@ public class CalendarModel implements IModel {
     // if it was previously an all day event
     setEditForAllDayEvent(parametersToUpdate, existingEvent, updatedEventBuilder);
     // changing recurring details
-    if (parametersToUpdate.getIsRecurring()) {
+    if (Objects.isNull(parametersToUpdate.getIsRecurring())) {
       // and if was already a part of recurring event
       if (existingEvent.getIsRecurring()) {
         throw new IllegalArgumentException(
