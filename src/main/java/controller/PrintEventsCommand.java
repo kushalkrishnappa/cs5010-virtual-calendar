@@ -116,7 +116,7 @@ public class PrintEventsCommand extends Command {
       }
       eventOutput.append(event.getIsRecurring() ? "[Recurring]     " : "[Not Recurring] ")
           .append(event.getSubject())
-          .append(" ")
+          .append(" || ")
           .append(Objects.nonNull(event.getLocation()) ? event.getLocation() : "")
           .append('\n');
       controllerUtility.promptOutput(eventOutput.toString());

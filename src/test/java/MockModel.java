@@ -4,6 +4,7 @@ import exception.EventConflictException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import model.IModel;
 
 class MockModel implements IModel {
@@ -24,6 +25,9 @@ class MockModel implements IModel {
   boolean shouldThrowCalendarExportException;
   boolean shouldThrowIllegalArgumentException;
   Boolean setIsBusyReturn;
+  Integer setEditEventReturn;
+  List<EventDTO> setGetEventsOnDate;
+  List<EventDTO> setGetEventsInRange;
 
   MockModel() {
     createEventCalled = false;
@@ -88,15 +92,15 @@ class MockModel implements IModel {
   @Override
   public Integer editEvent(String name, LocalDateTime startTime, LocalDateTime endTime,
       EventDTO parametersToUpdate) throws EventConflictException, IllegalArgumentException {
-    if (shouldThrowEventConflictException) {
-      throw new EventConflictException("Event conflict");
-    }
-    if (shouldThrowIllegalArgumentException) {
-      throw new IllegalArgumentException("Illegal argument");
-    }
     editEventCalled = true;
     editEventReceived = new editEvent(name, startTime, endTime, parametersToUpdate);
-    return 0;
+    if (shouldThrowEventConflictException) {
+      throw new EventConflictException("Event conflict thrown by MockModel");
+    }
+    if (shouldThrowIllegalArgumentException) {
+      throw new IllegalArgumentException("Illegal argument thrown by MockModel");
+    }
+    return Objects.nonNull(setEditEventReturn) ? setEditEventReturn : 1;
   }
 
   class getEventsOnDate {
@@ -112,7 +116,7 @@ class MockModel implements IModel {
   public List<EventDTO> getEventsOnDate(LocalDate date) {
     getEventsOnDateCalled = true;
     getEventsOnDateReceived = new getEventsOnDate(date);
-    return List.of();
+    return setGetEventsOnDate;
   }
 
   class getEventsInRange {
@@ -130,7 +134,7 @@ class MockModel implements IModel {
   public List<EventDTO> getEventsInRange(LocalDateTime start, LocalDateTime end) {
     getEventsInRangeCalled = true;
     getEventsInRangeReceived = new getEventsInRange(start, end);
-    return List.of();
+    return setGetEventsInRange;
   }
 
   class exportToCSV {

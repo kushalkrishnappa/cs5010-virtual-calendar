@@ -12,7 +12,7 @@ import java.util.HashSet;
 import model.CalendarDayOfWeek;
 import org.junit.Test;
 
-public class CreateCommandTest extends AbstractCommandTest{
+public class CreateCommandTest extends AbstractCommandTest {
 
   @Test
   public void emptyInput() {
@@ -279,7 +279,7 @@ public class CreateCommandTest extends AbstractCommandTest{
   }
 
   @Test
-  public void AllDayEvent() {
+  public void allDayEvent() {
     MockView mockView = new MockView(
         "create event --autoDecline \"event name\" "
             + "on 2025-04-01T13:00\n");
@@ -306,7 +306,7 @@ public class CreateCommandTest extends AbstractCommandTest{
   }
 
   @Test
-  public void AllDayRecurringForOccurEvent() {
+  public void allDayRecurringForOccurEvent() {
     MockView mockView = new MockView(
         "create event \"event name\" "
             + "on 2025-04-01 repeats WRFS for 10 times\n");
@@ -340,7 +340,7 @@ public class CreateCommandTest extends AbstractCommandTest{
   }
 
   @Test
-  public void AllDayRecurringUntilDateEvent() {
+  public void allDayRecurringUntilDateEvent() {
     MockView mockView = new MockView(
         "create event \"event name\" "
             + "on 2025-04-01 repeats WRFS until 2025-05-19\n");
