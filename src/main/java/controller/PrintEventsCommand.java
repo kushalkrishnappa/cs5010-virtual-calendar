@@ -15,13 +15,23 @@ import java.util.Objects;
 import java.util.Scanner;
 import model.IModel;
 
+/**
+ * PrintEventsCommand class implements Command and execute the command to print events on a specific
+ * date or in a specific interval.
+ */
 class PrintEventsCommand extends Command {
 
   private LocalDate onDate;
+
   private LocalDateTime startTime;
+
   private LocalDateTime endTime;
+
   private List<EventDTO> eventsOnDate;
 
+  /**
+   * Constructor for PrintEventsCommand.
+   */
   PrintEventsCommand() {
     onDate = null;
     startTime = null;
@@ -35,7 +45,6 @@ class PrintEventsCommand extends Command {
       if (!commandScanner.next().equals("events")) {
         throw new ParseCommandException("Invalid command format: print events ...");
       }
-
       switch (commandScanner.next()) {
         case "on":
           printEventsOnDate(commandScanner);
@@ -53,6 +62,12 @@ class PrintEventsCommand extends Command {
     }
   }
 
+  /**
+   * Parse the command to print events on a specific date.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void printEventsOnDate(Scanner commandScanner) throws ParseCommandException {
     try {
       onDate = LocalDate.parse(commandScanner.next(), CalendarController.dateFormatter);
@@ -62,6 +77,12 @@ class PrintEventsCommand extends Command {
 
   }
 
+  /**
+   * Parse the command to print events in a specific interval.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void printEventsInInterval(Scanner commandScanner) throws ParseCommandException {
     try {
       startTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);

@@ -6,6 +6,9 @@ import controller.CalendarController;
 import controller.ControllerMode;
 import org.junit.Test;
 
+/**
+ * This is a test class for the ExportCalendarCommand class.
+ */
 public class ExportCalendarCommandTest extends AbstractCommandTest {
 
   @Test

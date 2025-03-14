@@ -13,11 +13,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test class for CalendarModel.
+ */
 public class CalendarModelTest {
 
   private CalendarModel calendarModel;
@@ -260,13 +265,13 @@ public class CalendarModelTest {
         .setIsAllDay(false)
         .build();
 
-    calendarModel.editEvent(
+    int eventsEdited = calendarModel.editEvent(
         "Sample Event",
         LocalDateTime.of(2025, 3, 12, 0, 0),
         LocalDateTime.of(2025, 3, 12, 1, 0),
         eventDTOWithEditedParam
-        );
-
+    );
+    assertEquals(1, eventsEdited);
     assertEquals(1, calendarModel.eventRepository.getAllEvents().size());
     EventDTO editedEvent = calendarModel.eventRepository.getEvent(
         "\"Edited Sample Event\"",
@@ -364,6 +369,304 @@ public class CalendarModelTest {
     assertEquals("Edited All Day Event", editedEvent1.getSubject());
     assertEquals(LocalDateTime.of(2025, 3, 13, 0, 0), editedEvent1.getStartTime());
     assertEquals(LocalDateTime.of(2025, 3, 14, 0, 0), editedEvent1.getEndTime());
+  }
+
+  @Test
+  public void testEditRecurringAllDayEvent() {
+    RecurringDetailsDTO recurringDetails = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
+        .setOccurrences(5)
+        .setUntilDate(null)
+        .build();
+    EventDTO recurringEvent = EventDTO.getBuilder()
+        .setSubject("Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 12, 0, 0))
+        .setEndTime(null) // null end time for all day event
+        .setIsRecurring(true)
+        .setIsAllDay(true)
+        .setRecurringDetails(recurringDetails)
+        .build();
+    calendarModel.createEvent(recurringEvent, false);
+
+    EventDTO editedEvent = EventDTO.getBuilder()
+        .setSubject("Edited Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 14, 0, 0))
+        .setEndTime(null) // null end time for all day event
+        .setIsRecurring(false)
+        .setIsAllDay(false)
+        .build();
+
+    calendarModel.editEvent(
+        "Recurring Event",
+        LocalDateTime.of(2025, 3, 12, 0, 0),
+        LocalDateTime.of(2025, 3, 13, 0, 0),
+        editedEvent
+    );
+
+    assertEquals(5, calendarModel.eventRepository.getAllEvents().size());
+    EventDTO editedEvent1 = calendarModel.eventRepository.getEvent(
+        "Edited Recurring Event",
+        LocalDateTime.of(2025, 3, 14, 0, 0),
+        LocalDateTime.of(2025, 3, 15, 0, 0)
+    );
+
+    assertEquals("Edited Recurring Event", editedEvent1.getSubject());
+    assertEquals(LocalDateTime.of(2025, 3, 14, 0, 0), editedEvent1.getStartTime());
+    assertEquals(LocalDateTime.of(2025, 3, 15, 0, 0), editedEvent1.getEndTime());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testEditEventThrowExceptionIfEventNotPresent() {
+    calendarModel.editEvent("Not Present Event",
+        LocalDateTime.of(2025, 3, 12, 0, 0),
+        LocalDateTime.of(2025, 3, 12, 1, 0),
+        sampleSpannedSingleEventDTO);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testEditEventThrowExceptionIfUpdatadeDtoIsNull() {
+    calendarModel.editEvent(
+        "Sample Event",
+        LocalDateTime.of(2025, 3, 12, 0, 0),
+        LocalDateTime.of(2025, 3, 12, 1, 0),
+        null
+    );
+  }
+
+  @Test
+  public void testEditSimpleDetailsForEvent() {
+    calendarModel.createEvent(sampleSpannedSingleEventDTO, true);
+    EventDTO editedEventDTO = EventDTO.getBuilder()
+        .setSubject("Edited Sample Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 12, 2, 0))
+        .setEndTime(LocalDateTime.of(2025, 3, 12, 3, 0))
+        .setDescription("Sample Description")
+        .setIsPublic(true)
+        .setLocation("Boston")
+        .setIsRecurring(false)
+        .setIsAllDay(false)
+        .build();
+    calendarModel.editEvent(
+        "Sample Event",
+        LocalDateTime.of(2025, 3, 12, 0, 0),
+        LocalDateTime.of(2025, 3, 12, 1, 0),
+        editedEventDTO
+    );
+
+    EventDTO editedEvent = calendarModel.eventRepository.getEvent(
+        "Edited Sample Event",
+        LocalDateTime.of(2025, 3, 12, 2, 0),
+        LocalDateTime.of(2025, 3, 12, 3, 0)
+    );
+
+    assertEquals("Edited Sample Event", editedEvent.getSubject());
+    assertEquals(LocalDateTime.of(2025, 3, 12, 2, 0), editedEvent.getStartTime());
+    assertEquals(LocalDateTime.of(2025, 3, 12, 3, 0), editedEvent.getEndTime());
+    assertEquals("Sample Description", editedEvent.getDescription());
+    assertEquals("Boston", editedEvent.getLocation());
+    assertTrue(editedEvent.getIsPublic());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testEditRecurringDetailsForExistingRecurringEventThrowsException() {
+    RecurringDetailsDTO recurringDetails = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
+        .setOccurrences(5)
+        .setUntilDate(null)
+        .build();
+    EventDTO recurringEvent = EventDTO.getBuilder()
+        .setSubject("Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 12, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 3, 12, 1, 0))
+        .setIsRecurring(true)
+        .setIsAllDay(false)
+        .setRecurringDetails(recurringDetails)
+        .build();
+    calendarModel.createEvent(recurringEvent, false);
+
+    EventDTO editedEvent = EventDTO.getBuilder()
+        .setSubject("Edited Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 12, 2, 0))
+        .setEndTime(LocalDateTime.of(2025, 3, 12, 3, 0))
+        .setIsRecurring(null)
+        .setIsAllDay(false)
+        .build();
+    calendarModel.editEvent(
+        "Recurring Event",
+        LocalDateTime.of(2025, 3, 12, 0, 0),
+        LocalDateTime.of(2025, 3, 12, 1, 0),
+        editedEvent
+    );
+  }
+
+  @Test()
+  public void testEditAndSetRecurringDetailsForExistingSimpleEvent() {
+    calendarModel.createEvent(sampleSpannedSingleEventDTO, true);
+    RecurringDetailsDTO recurringDetailsDTO = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
+        .setOccurrences(5)
+        .setUntilDate(null)
+        .build();
+    EventDTO editedEventDTO = EventDTO.getBuilder()
+        .setSubject("Edited Simple Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 12, 2, 0))
+        .setEndTime(LocalDateTime.of(2025, 3, 12, 3, 0))
+        .setIsRecurring(true)
+        .setIsAllDay(false)
+        .setRecurringDetails(recurringDetailsDTO)
+        .build();
+    Integer eventsEdited = calendarModel.editEvent(
+        "Sample Event",
+        LocalDateTime.of(2025, 3, 12, 0, 0),
+        LocalDateTime.of(2025, 3, 12, 1, 0),
+        editedEventDTO
+    );
+    EventDTO editedEvent = calendarModel.eventRepository.getEvent(
+        "Edited Simple Event",
+        LocalDateTime.of(2025, 3, 12, 2, 0),
+        LocalDateTime.of(2025, 3, 12, 3, 0)
+    );
+    assertEquals("Edited Simple Event", editedEvent.getSubject());
+    assertEquals(LocalDateTime.of(2025, 3, 12, 2, 0),
+        editedEvent.getStartTime());
+    assertEquals(LocalDateTime.of(2025, 3, 12, 3, 0),
+        editedEvent.getEndTime());
+  }
+
+  // Test getEventsOnDate Method in CalendarModel
+
+  @Test
+  public void testGetEventsOnDate() {
+    calendarModel.createEvent(sampleSpannedSingleEventDTO, true);
+    List<EventDTO> eventsOnDate = calendarModel.getEventsOnDate(LocalDate.of(2025, 3, 12));
+    assertEquals(1, eventsOnDate.size());
+    assertEquals("Sample Event", eventsOnDate.get(0).getSubject());
+  }
+
+  // Test getEventsInRange Method in CalendarModel
+
+  @Test
+  public void testGetEventsInRange() {
+    calendarModel.createEvent(sampleSpannedSingleEventDTO, true);
+    EventDTO anotherSampleEvent = EventDTO.getBuilder()
+        .setSubject("Another Sample Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 13, 2, 0))
+        .setEndTime(LocalDateTime.of(2025, 3, 13, 3, 0))
+        .setIsRecurring(false)
+        .setIsAllDay(false)
+        .build();
+    calendarModel.createEvent(anotherSampleEvent, false);
+    List<EventDTO> eventsInRange = calendarModel.getEventsInRange(
+        LocalDateTime.of(2025, 3, 11, 0, 0),
+        LocalDateTime.of(2025, 3, 14, 1, 0)
+    );
+    assertEquals(2, eventsInRange.size());
+  }
+
+  // Test Editing Events by Name
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testRecurringAllDayEventWithNoEventsToEditShouldRaiseExceptions() {
+    RecurringDetailsDTO recurringDetails = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
+        .setOccurrences(5)
+        .setUntilDate(null)
+        .build();
+    EventDTO editedEvent = EventDTO.getBuilder()
+        .setSubject("Edited Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 14, 0, 0))
+        .setEndTime(null) // null end time for all day event
+        .setIsRecurring(true)
+        .setIsAllDay(false)
+        .setRecurringDetails(recurringDetails)
+        .build();
+
+    calendarModel.editEvent(
+        "Not Present Event",
+        LocalDateTime.of(2025, 3, 12, 0, 0),
+        null,
+        editedEvent
+    );
+  }
+
+  @Test
+  public void testAllDayEventWithRecurrenceSetAndEndTimeNull() {
+    RecurringDetailsDTO recurringDetails = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
+        .setOccurrences(2)
+        .setUntilDate(null)
+        .build();
+    EventDTO recurringEvent = EventDTO.getBuilder()
+        .setSubject("Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 12, 0, 0))
+        .setEndTime(null) // null end time for all day event
+        .setIsRecurring(true)
+        .setIsAllDay(true)
+        .setRecurringDetails(recurringDetails)
+        .build();
+    calendarModel.createEvent(recurringEvent, false);
+
+    EventDTO editedEvent = EventDTO.getBuilder()
+        .setSubject("Edited Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 14, 0, 0))
+        .setEndTime(null) // null end time for all day event
+        .setDescription("Sample Description")
+        .setLocation("Boston")
+        .setIsPublic(true)
+        .setIsRecurring(false)
+        .setIsAllDay(false)
+        .setRecurringDetails(null)
+        .build();
+
+    calendarModel.editEvent(
+        "Recurring Event",
+        LocalDateTime.of(2025, 3, 12, 0, 0),
+        null,
+        editedEvent
+    );
+
+    assertEquals(2, calendarModel.eventRepository.getAllEvents().size());
+  }
+
+  @Test
+  public void testEditAllDayEventWithRecurrenceChangeWillCreateNewEvents() {
+    RecurringDetailsDTO recurringDetails = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
+        .setOccurrences(5)
+        .setUntilDate(null)
+        .build();
+    EventDTO recurrenceEvent = EventDTO.getBuilder()
+        .setSubject("Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 12, 0, 0))
+        .setEndTime(null) // null end time for all day event
+        .setIsRecurring(true)
+        .setIsAllDay(true)
+        .setRecurringDetails(recurringDetails)
+        .build();
+    calendarModel.createEvent(recurrenceEvent, false);
+
+    RecurringDetailsDTO editedRecurringDetails = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
+        .setOccurrences(3)
+        .setUntilDate(null)
+        .build();
+    EventDTO editedEventDTO = EventDTO.getBuilder()
+        .setSubject("Edited Recurring Event")
+        .setStartTime(LocalDateTime.of(2025, 3, 15, 2, 0))
+        .setEndTime(null)
+        .setIsRecurring(true)
+        .setIsAllDay(true)
+        .setRecurringDetails(recurringDetails)
+        .build();
+
+    calendarModel.editEvent(
+        "Recurring Event",
+        LocalDateTime.of(2025, 3, 15, 0, 0),
+        null,
+        editedEventDTO
+    );
+
+    assertEquals(7, calendarModel.eventRepository.getAllEvents().size());
   }
 
   // Test exportToCSV Method in CalendarModel

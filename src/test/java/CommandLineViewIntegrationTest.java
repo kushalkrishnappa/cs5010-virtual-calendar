@@ -15,6 +15,9 @@ import org.junit.Before;
 import org.junit.Test;
 import view.CommandLineView;
 
+/**
+ * This is a test class for the CommandLineView class.
+ */
 public class CommandLineViewIntegrationTest {
 
   private IController controller;
@@ -23,6 +26,9 @@ public class CommandLineViewIntegrationTest {
   private final StringBuilder output;
   private final BlockingQueue<String> outputSignal;
 
+  /**
+   * Constructor for the CommandLineViewIntegrationTest.
+   */
   public CommandLineViewIntegrationTest() {
     Readable readable;
     readable = null;

@@ -97,7 +97,7 @@ public class CalendarAppTest {
   public void testHeadlessFileNotFound() {
     String fileName = "src/test/resources/NoSuchFileExists.txt";
     CalendarApp.main(new String[]{"--mode", "hEadlEss", fileName});
-    assertEquals("File not found: " + fileName +"\n",
+    assertEquals("File not found: " + fileName + "\n",
         errorStream.toString().replace("\r\n", "\n"));
   }
 }

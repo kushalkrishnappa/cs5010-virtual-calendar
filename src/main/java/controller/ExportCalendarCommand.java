@@ -8,11 +8,19 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import model.IModel;
 
+/**
+ * ExportCalendarCommand class implements Command and execute the command to export the calendar to
+ * a CSV file.
+ */
 class ExportCalendarCommand extends Command {
 
   private String outputFilePath;
+
   private String filename;
 
+  /**
+   * Constructor for ExportCalendarCommand.
+   */
   ExportCalendarCommand() {
     outputFilePath = null;
     filename = null;

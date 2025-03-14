@@ -11,6 +11,9 @@ import java.util.HashSet;
 import model.CalendarDayOfWeek;
 import org.junit.Test;
 
+/**
+ * Test class for EditEventCommand.
+ */
 public class EditEventCommandTest extends AbstractCommandTest {
 
   @Test
@@ -835,7 +838,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
 
   @Test
   public void noEventsUpdated() {
-    mockModel.setEditEventReturn=0;
+    mockModel.setEditEventReturn = 0;
     assertEquals("No events were updated",
         getDisplayMessageWithInput("edit events name eventName with updatedEvent"));
   }

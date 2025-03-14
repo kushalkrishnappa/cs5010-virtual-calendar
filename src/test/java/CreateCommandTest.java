@@ -12,6 +12,9 @@ import java.util.HashSet;
 import model.CalendarDayOfWeek;
 import org.junit.Test;
 
+/**
+ * This is a test class for the CreateCommand class.
+ */
 public class CreateCommandTest extends AbstractCommandTest {
 
   @Test

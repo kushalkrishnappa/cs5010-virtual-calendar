@@ -21,15 +21,9 @@ public interface IModel {
   /**
    * Creates an event in the calendar.
    *
-   * <p> If it contains both start and end time, it creates an event with start and end time.
+   * <p>If it contains both start and end time, it creates an event with start and end time.
    *
-   * <p> Command for creating an event: create event --autoDecline <eventName> from
-   * <dateStringTtimeString> to <dateStringTtimeString>
-   *
-   * <p> If it contains only start time, it creates an all day event.
-   *
-   * <p> Command for creating an all day event: create event --autoDecline <eventName> on
-   * <dateStringTtimeString>
+   * <p>If it contains only start time, it creates an all day event.
    *
    * @param eventDTO    The event to be created
    * @param autoDecline Whether the event should be auto declined
@@ -40,7 +34,7 @@ public interface IModel {
       throws EventConflictException, IllegalArgumentException;
 
   /**
-   * Edits an event in the calendar.
+   * Edits a specific event in the calendar.
    *
    * @param name               name of the event
    * @param startTime          start time of the event
@@ -54,10 +48,21 @@ public interface IModel {
       EventDTO parametersToUpdate) throws EventConflictException, IllegalArgumentException;
 
 
-  // print events on <dateStringTtimeString>
+  /**
+   * Gets all events in the calendar on specified date.
+   *
+   * @param date date to get events on
+   * @return list of events on the given date
+   */
   List<EventDTO> getEventsOnDate(LocalDate date);
 
-  // print events from <dateStringTtimeString> to <dateStringTtimeString>
+  /**
+   * Gets all events in the calendar on specified date range.
+   *
+   * @param start start time of the range
+   * @param end  end time of the range
+   * @return list of events in the given range
+   */
   List<EventDTO> getEventsInRange(LocalDateTime start, LocalDateTime end);
 
   /**

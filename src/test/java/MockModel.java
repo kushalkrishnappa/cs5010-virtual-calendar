@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import model.IModel;
 
+/**
+ * MockModel class implements IModel and provides a mock model for testing.
+ */
 class MockModel implements IModel {
 
   boolean createEventCalled;
@@ -15,12 +18,12 @@ class MockModel implements IModel {
   boolean getEventsInRangeCalled;
   boolean exportToCSVCalled;
   boolean isBusyCalled;
-  createEvent createEventReceived;
-  editEvent editEventReceived;
-  getEventsOnDate getEventsOnDateReceived;
-  getEventsInRange getEventsInRangeReceived;
-  exportToCSV exportToCSVReceived;
-  isBusy isBusyReceived;
+  CreateEvent createEventReceived;
+  EditEvent editEventReceived;
+  GetEventsOnDate getEventsOnDateReceived;
+  GetEventsInRange getEventsInRangeReceived;
+  ExportToCSV exportToCSVReceived;
+  IsBusy isBusyReceived;
   boolean shouldThrowEventConflictException;
   boolean shouldThrowCalendarExportException;
   boolean shouldThrowIllegalArgumentException;
@@ -49,12 +52,12 @@ class MockModel implements IModel {
     shouldThrowIllegalArgumentException = false;
   }
 
-  class createEvent {
+  class CreateEvent {
 
     EventDTO eventDTO;
     Boolean autoDecline;
 
-    createEvent(EventDTO eventDTO, Boolean autoDecline) {
+    CreateEvent(EventDTO eventDTO, Boolean autoDecline) {
       this.eventDTO = eventDTO;
       this.autoDecline = autoDecline;
     }
@@ -70,17 +73,18 @@ class MockModel implements IModel {
       throw new IllegalArgumentException("Illegal argument");
     }
     createEventCalled = true;
-    createEventReceived = new createEvent(eventDTO, autoDecline);
+    createEventReceived = new CreateEvent(eventDTO, autoDecline);
   }
 
-  class editEvent {
+  class EditEvent {
 
     String name;
+
     LocalDateTime startTime;
     LocalDateTime endTime;
     EventDTO parametersToUpdate;
 
-    editEvent(String name, LocalDateTime startTime, LocalDateTime endTime,
+    EditEvent(String name, LocalDateTime startTime, LocalDateTime endTime,
         EventDTO parametersToUpdate) {
       this.name = name;
       this.startTime = startTime;
@@ -93,7 +97,7 @@ class MockModel implements IModel {
   public Integer editEvent(String name, LocalDateTime startTime, LocalDateTime endTime,
       EventDTO parametersToUpdate) throws EventConflictException, IllegalArgumentException {
     editEventCalled = true;
-    editEventReceived = new editEvent(name, startTime, endTime, parametersToUpdate);
+    editEventReceived = new EditEvent(name, startTime, endTime, parametersToUpdate);
     if (shouldThrowEventConflictException) {
       throw new EventConflictException("Event conflict thrown by MockModel");
     }
@@ -103,11 +107,11 @@ class MockModel implements IModel {
     return Objects.nonNull(setEditEventReturn) ? setEditEventReturn : 1;
   }
 
-  class getEventsOnDate {
+  class GetEventsOnDate {
 
     LocalDate date;
 
-    getEventsOnDate(LocalDate date) {
+    GetEventsOnDate(LocalDate date) {
       this.date = date;
     }
   }
@@ -115,16 +119,16 @@ class MockModel implements IModel {
   @Override
   public List<EventDTO> getEventsOnDate(LocalDate date) {
     getEventsOnDateCalled = true;
-    getEventsOnDateReceived = new getEventsOnDate(date);
+    getEventsOnDateReceived = new GetEventsOnDate(date);
     return setGetEventsOnDate;
   }
 
-  class getEventsInRange {
+  class GetEventsInRange {
 
     LocalDateTime start;
     LocalDateTime end;
 
-    getEventsInRange(LocalDateTime start, LocalDateTime end) {
+    GetEventsInRange(LocalDateTime start, LocalDateTime end) {
       this.start = start;
       this.end = end;
     }
@@ -133,15 +137,15 @@ class MockModel implements IModel {
   @Override
   public List<EventDTO> getEventsInRange(LocalDateTime start, LocalDateTime end) {
     getEventsInRangeCalled = true;
-    getEventsInRangeReceived = new getEventsInRange(start, end);
+    getEventsInRangeReceived = new GetEventsInRange(start, end);
     return setGetEventsInRange;
   }
 
-  class exportToCSV {
+  class ExportToCSV {
 
     String filename;
 
-    exportToCSV(String filename) {
+    ExportToCSV(String filename) {
       this.filename = filename;
     }
   }
@@ -152,15 +156,15 @@ class MockModel implements IModel {
       throw new CalendarExportException("Calendar export failed");
     }
     exportToCSVCalled = true;
-    exportToCSVReceived = new exportToCSV(fileName);
+    exportToCSVReceived = new ExportToCSV(fileName);
     return "Return from exportToCSV";
   }
 
-  class isBusy {
+  class IsBusy {
 
     LocalDateTime dateTime;
 
-    isBusy(LocalDateTime dateTime) {
+    IsBusy(LocalDateTime dateTime) {
       this.dateTime = dateTime;
     }
   }
@@ -168,7 +172,7 @@ class MockModel implements IModel {
   @Override
   public Boolean isBusy(LocalDateTime dateTime) {
     isBusyCalled = true;
-    isBusyReceived = new isBusy(dateTime);
+    isBusyReceived = new IsBusy(dateTime);
     return setIsBusyReturn;
   }
 }
