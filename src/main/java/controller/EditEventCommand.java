@@ -19,22 +19,35 @@ import java.util.function.BiConsumer;
 import model.CalendarDayOfWeek;
 import model.IModel;
 
+/**
+ * EditEventCommand class implements Command and execute the command to edit an event or a series of
+ * events.
+ */
 class EditEventCommand extends Command {
 
   private String eventName;
+
   private LocalDateTime startTime;
+
   private LocalDateTime endTime;
+
   private final Map<String, BiConsumer<EventDTOBuilder, String>> eventDTOPropertySetters;
   BiConsumer<EventDTOBuilder, String> eventDTOPropertySetter;
+
   private final Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>>
       recurringDetailsDTOPropertySetters;
-  BiConsumer<RecurringDetailsDTOBuilder, String>
-      recurringDetailsDTOPropertySetter;
+
+  BiConsumer<RecurringDetailsDTOBuilder, String> recurringDetailsDTOPropertySetter;
+
   private final EventDTOBuilder eventBuilder;
+
   private final RecurringDetailsDTOBuilder recurringDetailsDTOBuilder;
 
   private Integer updatedEvents;
 
+  /**
+   * Constructor for EditEventCommand.
+   */
   EditEventCommand() {
     eventName = null;
     startTime = null;
@@ -45,8 +58,14 @@ class EditEventCommand extends Command {
     recurringDetailsDTOBuilder = RecurringDetailsDTO.getBuilder();
   }
 
+
+  /**
+   * Create a map of property setters for RecurringDetailsDTO.
+   *
+   * @return A map of property setters for RecurringDetailsDTO.
+   */
   private final Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>>
-  createRecurringDetailsPropertySetters() {
+        createRecurringDetailsPropertySetters() {
     Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>> setters = new HashMap<>();
     setters.put("occurrences",
         (builder, value) -> builder.setOccurrences(
@@ -238,7 +257,7 @@ class EditEventCommand extends Command {
   void promptResult(ControllerUtility controllerUtility) {
     if (updatedEvents > 0) {
       controllerUtility.promptOutput("Successfully updated event(s)\n");
-    } else{
+    } else {
       controllerUtility.promptOutput("No events were updated\n");
     }
   }

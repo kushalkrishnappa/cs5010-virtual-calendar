@@ -21,14 +21,14 @@ public class EventDTO {
   /**
    * Protected constructor for EventDTO. The object is created using the EventDTOBuilder class.
    *
-   * @param subject     The subject of the event
-   * @param startTime   The start time of the event
-   * @param endTime     The end time of the event
-   * @param description The description of the event
-   * @param location    The location of the event
-   * @param isPublic    Whether the event is public or not
-   * @param isAllDay    Whether the event is all day or not
-   * @param isRecurring Whether the event is recurring or not
+   * @param subject          The subject of the event
+   * @param startTime        The start time of the event
+   * @param endTime          The end time of the event
+   * @param description      The description of the event
+   * @param location         The location of the event
+   * @param isPublic         Whether the event is public or not
+   * @param isAllDay         Whether the event is all day or not
+   * @param isRecurring      Whether the event is recurring or not
    * @param recurringDetails The recurring details of the event
    */
   private EventDTO(
@@ -41,9 +41,6 @@ public class EventDTO {
       Boolean isAllDay,
       Boolean isRecurring,
       RecurringDetailsDTO recurringDetails) {
-//    if (subject == null || startTime == null) {
-//      throw new IllegalArgumentException("Cannot be null");
-//    }
     this.subject = subject;
     this.startTime = startTime;
     this.endTime = endTime;
@@ -152,16 +149,34 @@ public class EventDTO {
       return this;
     }
 
+    /**
+     * Sets whether the event is all day or not.
+     *
+     * @param isAllDay Whether the event is all day or not
+     * @return EventDTOBuilder object
+     */
     public EventDTOBuilder setIsAllDay(Boolean isAllDay) {
       this.isAllDay = isAllDay;
       return this;
     }
 
+    /**
+     * Sets whether the event is recurring or not.
+     *
+     * @param isRecurring Whether the event is recurring or not
+     * @return EventDTOBuilder object
+     */
     public EventDTOBuilder setIsRecurring(Boolean isRecurring) {
       this.isRecurring = isRecurring;
       return this;
     }
 
+    /**
+     * Sets the recurring details of the event.
+     *
+     * @param recurringDetails The recurring details of the event
+     * @return EventDTOBuilder object
+     */
     public EventDTOBuilder setRecurringDetails(RecurringDetailsDTO recurringDetails) {
       this.recurringDetails = recurringDetails;
       return this;
@@ -186,38 +201,83 @@ public class EventDTO {
     }
   }
 
+  /**
+   * Gets the subject of the event.
+   *
+   * @return The subject of the event
+   */
   public String getSubject() {
     return this.subject;
   }
 
+  /**
+   * Gets the start time of the event.
+   *
+   * @return The start time of the event
+   */
   public LocalDateTime getStartTime() {
     return this.startTime;
   }
 
+  /**
+   * Gets the end time of the event.
+   *
+   * @return The end time of the event
+   */
   public LocalDateTime getEndTime() {
     return this.endTime;
   }
 
+  /**
+   * Gets the description of the event.
+   *
+   * @return The description of the event
+   */
   public String getDescription() {
     return this.description;
   }
 
+  /**
+   * Gets the location of the event.
+   *
+   * @return The location of the event
+   */
   public String getLocation() {
     return this.location;
   }
 
+  /**
+   * Gets whether the event is public or not.
+   *
+   * @return Whether the event is public or not
+   */
   public Boolean getIsPublic() {
     return this.isPublic;
   }
 
+  /**
+   * Gets whether the event is all day or not.
+   *
+   * @return Whether the event is all day or not
+   */
   public Boolean getIsAllDay() {
     return this.isAllDay;
   }
 
+  /**
+   * Gets whether the event is recurring or not.
+   *
+   * @return Whether the event is recurring or not
+   */
   public Boolean getIsRecurring() {
     return this.isRecurring;
   }
 
+  /**
+   * Gets the recurring details of the event.
+   *
+   * @return The recurring details of the event
+   */
   public RecurringDetailsDTO getRecurringDetails() {
     return this.recurringDetails;
   }

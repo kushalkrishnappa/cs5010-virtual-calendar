@@ -14,6 +14,9 @@ import java.util.List;
 import model.CalendarDayOfWeek;
 import org.junit.Test;
 
+/**
+ * Test class for PrintEventsCommand.
+ */
 public class PrintEventsCommandTest extends AbstractCommandTest {
 
   @Test

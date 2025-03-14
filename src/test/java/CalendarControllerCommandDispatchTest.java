@@ -1,6 +1,9 @@
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+/**
+ * This is a test suite for the CalendarController class.
+ */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     CreateCommandTest.class,
@@ -9,5 +12,5 @@ import org.junit.runners.Suite;
     ShowStatusCommandTest.class,
     ExportCalendarCommandTest.class,})
 public class CalendarControllerCommandDispatchTest {
-
+  // the class remains empty.
 }

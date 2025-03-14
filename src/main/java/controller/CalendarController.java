@@ -13,20 +13,32 @@ import java.util.function.Supplier;
 import model.IModel;
 import view.IView;
 
+/**
+ * Controller for the calendar application. It handles user input and executes commands.
+ */
 public class CalendarController implements IController {
 
   private final ControllerMode mode;
+
   private final IView view;
+
   private final IModel model;
+
   static final String dateFormat = "yyyy-MM-dd";
+
   static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
+
   static final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm";
-  static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
-      dateTimeFormat);
+
+  static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormat);
 
   final ControllerUtility controllerUtility;
+
   private boolean exitFlag;
 
+  /**
+   * Utility class for the controller.
+   */
   class ControllerUtility {
 
     void promptOutput(String message) {
@@ -36,6 +48,13 @@ public class CalendarController implements IController {
     }
   }
 
+  /**
+   * Constructor for the CalendarController.
+   *
+   * @param model The model for the calendar application
+   * @param view  The view for the calendar application
+   * @param mode  The mode of the controller
+   */
   public CalendarController(IModel model, IView view, ControllerMode mode) {
     this.model = model;
     this.view = view;
@@ -70,12 +89,20 @@ public class CalendarController implements IController {
     }
   }
 
+  /**
+   * Prompt the user for input.
+   */
   private void promptUserInput() {
     if (mode == ControllerMode.INTERACTIVE) {
       view.displayMessage("calApp> ");
     }
   }
 
+  /**
+   * Prompt the user with an error message.
+   *
+   * @param message The error message to be displayed.
+   */
   private void promptError(String message) {
     view.displayError(message);
     if (mode == ControllerMode.HEADLESS) {
@@ -84,9 +111,13 @@ public class CalendarController implements IController {
   }
 
 
+  /**
+   * Execute the command from the Scanner object.
+   *
+   * @param lineScanner Scanner object that contains the command
+   */
   private void executeCommand(Scanner lineScanner) {
     controller.Command command;
-
     String firstToken = lineScanner.next();
     if (firstToken.equals("exit")) {
       exitProgram();
@@ -117,7 +148,9 @@ public class CalendarController implements IController {
     command.promptResult(controllerUtility);
   }
 
-
+  /**
+   * Factory class for creating commands.
+   */
   private static class CommandFactory {
 
     private static final Map<String, Supplier<Command>> commandMap = new HashMap<>();
@@ -130,6 +163,12 @@ public class CalendarController implements IController {
       commandMap.put("show", ShowStatusCommand::new);
     }
 
+    /**
+     * Create a Command object based on the first token of the command.
+     *
+     * @param firstToken The first token of the command
+     * @return The Command object corresponding to the first token
+     */
     static Command createCommand(String firstToken) {
       Supplier<Command> commandSupplier = commandMap.get(firstToken);
       if (commandSupplier != null) {
@@ -139,11 +178,13 @@ public class CalendarController implements IController {
     }
   }
 
+  /**
+   * Exit the program.
+   */
   private void exitProgram() {
     if (mode == ControllerMode.INTERACTIVE) {
       view.displayMessage("Bye...\n");
     }
     exitFlag = true;
   }
-
 }

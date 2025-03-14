@@ -2,6 +2,9 @@ import controller.CalendarController;
 import controller.ControllerMode;
 import org.junit.Before;
 
+/**
+ * This is an abstract class for the command tests.
+ */
 public abstract class AbstractCommandTest {
   CalendarController controller;
   MockModel mockModel;

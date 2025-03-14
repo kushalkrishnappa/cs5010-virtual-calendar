@@ -1,6 +1,9 @@
 import java.io.StringReader;
 import view.IView;
 
+/**
+ * MockView class implements IView and is used for testing purposes.
+ */
 class MockView implements IView {
 
   Readable inputStream;

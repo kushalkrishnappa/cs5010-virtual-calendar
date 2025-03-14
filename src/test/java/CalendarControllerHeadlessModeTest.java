@@ -5,6 +5,9 @@ import controller.ControllerMode;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * This is a test class for the CalendarController class in headless mode.
+ */
 public class CalendarControllerHeadlessModeTest {
   MockModel mockModel;
   CalendarController controller;
@@ -38,7 +41,7 @@ public class CalendarControllerHeadlessModeTest {
 
   @Test
   public void exitCommandNotSpecifiedInFile() {
-    mockModel.setIsBusyReturn=true;
+    mockModel.setIsBusyReturn = true;
     MockView mockView = new MockView("show status on 2025-10-21T12:00\n");
     controller = new CalendarController(mockModel, mockView, ControllerMode.HEADLESS);
     controller.run();

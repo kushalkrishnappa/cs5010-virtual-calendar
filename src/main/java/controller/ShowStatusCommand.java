@@ -10,11 +10,19 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import model.IModel;
 
+/**
+ * ShowStatusCommand class implements Command and execute the command to show the status of the
+ * calendar at a specific time.
+ */
 class ShowStatusCommand extends Command {
 
   private LocalDateTime dateTime;
+
   private Boolean isBusy;
 
+  /**
+   * Constructor for ShowStatusCommand.
+   */
   ShowStatusCommand() {
     dateTime = null;
     isBusy = null;

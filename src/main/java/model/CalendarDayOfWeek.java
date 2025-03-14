@@ -20,42 +20,62 @@ import java.util.TreeSet;
  * </ul>
  */
 public enum CalendarDayOfWeek {
+
   /**
-   * Represents Monday.
+   * Monday.
    */
   M(DayOfWeek.MONDAY),
+
   /**
-   * Represents Tuesday.
+   * Tuesday.
    */
   T(DayOfWeek.TUESDAY),
+
   /**
-   * Represents Wednesday.
+   * Wednesday.
    */
   W(DayOfWeek.WEDNESDAY),
+
   /**
-   * Represents Thursday.
+   * Thursday.
    */
   R(DayOfWeek.THURSDAY),
+
   /**
-   * Represents Friday.
+   * Friday.
    */
   F(DayOfWeek.FRIDAY),
+
   /**
-   * Represents Saturday.
+   * Saturday.
    */
   S(DayOfWeek.SATURDAY),
+
   /**
-   * Represents Sunday.
+   * Sunday.
    */
   U(DayOfWeek.SUNDAY);
 
   private final DayOfWeek dayOfWeek;
 
+  /**
+   * Constructs a CalendarDayOfWeek enum constant.
+   *
+   * @param dayOfWeek the Java Time object corresponding to the day of the week
+   */
   CalendarDayOfWeek(DayOfWeek dayOfWeek) {
     this.dayOfWeek = dayOfWeek;
   }
 
-  public static Set<CalendarDayOfWeek> parseRepeatDays(String days) throws IllegalArgumentException {
+  /**
+   * Parses a string representation of the days of the week into a set of CalendarDayOfWeek objects.
+   *
+   * @param days the string representation of the days of the week
+   * @return the set of days of the week
+   * @throws IllegalArgumentException if the string is not a valid representation of the days of the
+   */
+  public static Set<CalendarDayOfWeek> parseRepeatDays(String days)
+      throws IllegalArgumentException {
     Set<CalendarDayOfWeek> repeatDays = new HashSet<>();
     for (char day : days.toCharArray()) {
       repeatDays.add(CalendarDayOfWeek.valueOf(String.valueOf(day)));
@@ -63,6 +83,12 @@ public enum CalendarDayOfWeek {
     return repeatDays;
   }
 
+  /**
+   * Gets the Java Time object specific to the day of the week.
+   *
+   * @param daysOfWeek the set of days of the week to convert
+   * @return the set of days of the week as Java Time objects
+   */
   static TreeSet<DayOfWeek> getJavaTimeDaysOfWeek(Set<CalendarDayOfWeek> daysOfWeek) {
     TreeSet<DayOfWeek> javaTimeDaysOfWeek = new TreeSet<>();
     for (CalendarDayOfWeek day : daysOfWeek) {

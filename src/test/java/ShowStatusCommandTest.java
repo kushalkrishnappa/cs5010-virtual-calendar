@@ -2,6 +2,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * This is a test class for the ShowStatusCommand class.
+ */
 public class ShowStatusCommandTest extends AbstractCommandTest {
 
   @Test

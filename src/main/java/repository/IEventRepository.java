@@ -29,22 +29,6 @@ public interface IEventRepository {
   boolean deleteEvent(String name, LocalDateTime startTime, LocalDateTime endTime);
 
   /**
-   * Update an event in the repository based on event name, start time, and end time.
-   *
-   * @param eventDTO The event to be updated
-   * @return true if event is updated successfully, false otherwise
-   */
-  boolean updateEvent(EventDTO eventDTO);
-
-  /**
-   * Update a list of events in the repository based on name, start time, and end time.
-   *
-   * @param eventDTOList List of events to be updated
-   * @return true if events are updated successfully, false otherwise
-   */
-  boolean updateEvents(List<EventDTO> eventDTOList);
-
-  /**
    * Retrieves an event in the repository based on the name, start time, and end time.
    *
    * @param name      The name of the event
@@ -54,6 +38,11 @@ public interface IEventRepository {
    */
   EventDTO getEvent(String name, LocalDateTime startTime, LocalDateTime endTime);
 
+  /**
+   * Return all events in the repository.
+   *
+   * @return list of all events in the repository
+   */
   List<EventDTO> getAllEvents();
 
   /**
@@ -82,15 +71,19 @@ public interface IEventRepository {
   List<EventDTO> getEventsByName(String name);
 
   /**
-   * Retrieves all events in the repository starting from the given time with the given name.
+   * Retrieves all events in the repository at the given date and time.
    *
-   * @param name      The name of the event
-   * @param startTime The start time of the event
-   * @return a list of events starting from given time with given name
+   * @param dateTime The date and time to get events for
+   * @return a list of events at the given date and time
    */
-  List<EventDTO> getEventsStartingFrom(String name, LocalDateTime startTime);
-
   List<EventDTO> getEventsAt(LocalDateTime dateTime);
 
+  /**
+   * Retrieves all events in the repository that overlap with the given time range.
+   *
+   * @param startTime The start time of the event
+   * @param endTime   The end time of the event
+   * @return a list of events that overlap with the given time range
+   */
   List<EventDTO> searchOverlaps(LocalDateTime startTime, LocalDateTime endTime);
 }

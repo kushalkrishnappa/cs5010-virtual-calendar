@@ -10,8 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 import view.CommandLineView;
 
-
-
+/**
+ * This is a test class for the CommandLineView class.
+ */
 public class CommandLineViewTest {
   private MockReadable mockInput;
   private MockAppendable mockOutput;
@@ -26,6 +27,7 @@ public class CommandLineViewTest {
       content = new ArrayList<>();
       shouldThrowIOException = false;
     }
+
     public void setShouldThrowIOException(boolean shouldThrow) {
       this.shouldThrowIOException = shouldThrow;
     }

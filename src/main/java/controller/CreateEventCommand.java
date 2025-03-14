@@ -1,6 +1,5 @@
 package controller;
 
-
 import controller.CalendarController.ControllerUtility;
 import dto.EventDTO;
 import dto.RecurringDetailsDTO;
@@ -18,19 +17,32 @@ import java.util.Set;
 import model.CalendarDayOfWeek;
 import model.IModel;
 
+/**
+ * CreateEventCommand class implements Command and execute the command to create an event.
+ */
 class CreateEventCommand extends Command {
 
   private String eventName;
+
   private Boolean autoDecline;
+
   private LocalDateTime startTime;
+
   private LocalDateTime endTime;
 
   private Boolean isRecurring;
+
   private Boolean isAllDay;
+
   private Set<CalendarDayOfWeek> repeatDays;
+
   private LocalDateTime untilDate;
+
   private Integer occurrences;
 
+  /**
+   * Constructor for CreateEventCommand.
+   */
   CreateEventCommand() {
     eventName = null;
     autoDecline = false;
@@ -86,6 +98,12 @@ class CreateEventCommand extends Command {
     }
   }
 
+  /**
+   * Parse the command to create an all day event.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void handleCreateAllDayEvent(Scanner commandScanner) throws ParseCommandException {
     isAllDay = true;
     String startTime = commandScanner.next();
@@ -122,6 +140,13 @@ class CreateEventCommand extends Command {
     }
   }
 
+  /**
+   * Parse the command to create a recurring event.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @return true if the command is not in the correct format
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private boolean notParseRepeatDays(Scanner commandScanner) throws ParseCommandException {
     if (!commandScanner.hasNext()) {
       return true;
@@ -142,6 +167,12 @@ class CreateEventCommand extends Command {
     return false;
   }
 
+  /**
+   * Parse the command to create an all day event that repeats until a specific date.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void handleCreateAllDayUntilEvent(Scanner commandScanner)
       throws ParseCommandException {
     try {
@@ -154,6 +185,12 @@ class CreateEventCommand extends Command {
     isRecurring = true;
   }
 
+  /**
+   * Parse the command to create an all day event that repeats N times.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void handleCreateNTimesEvent(Scanner commandScanner)
       throws ParseCommandException {
     try {
@@ -178,6 +215,12 @@ class CreateEventCommand extends Command {
     isRecurring = true;
   }
 
+  /**
+   * Parse the command to create an event that spans multiple days.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void handleCreateSpannedEvent(Scanner commandScanner) throws ParseCommandException {
     try {
       startTime = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
@@ -215,6 +258,13 @@ class CreateEventCommand extends Command {
     }
   }
 
+  /**
+   * Parse the command to create an event that spans multiple days and repeats until a specific
+   * date.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void handleCreateSpannedUntilEvent(Scanner commandScanner) throws ParseCommandException {
     try {
       untilDate = LocalDateTime.parse(commandScanner.next(), CalendarController.dateTimeFormatter);
@@ -224,7 +274,6 @@ class CreateEventCommand extends Command {
     }
     isRecurring = true;
   }
-
 
   @Override
   void executeCommand(IModel model)

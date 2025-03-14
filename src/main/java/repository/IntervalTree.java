@@ -6,15 +6,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class represents the data structure IntervalTree. The events are stored in the nodes of the
+ * tree. The tree is used to store events and perform operations like insert, search, and delete.
+ * The events are stored in the nodes based on their start time.
+ */
 public class IntervalTree {
 
   private Node root;
 
+  /**
+   * Constructor for IntervalTree.
+   *
+   * @param event The event to be inserted
+   * @return true if the event is successfully inserted, false otherwise
+   */
   public Boolean insert(EventDTO event) {
     root = insert(root, event);
     return true;
   }
 
+  /**
+   * Recursive method to insert an event into the tree.
+   *
+   * @param node  The node to insert the event
+   * @param event The event to be inserted
+   * @return The node after inserting the event
+   */
   private Node insert(Node node, EventDTO event) {
     if (node == null) {
       return new Node(event);
@@ -37,18 +55,32 @@ public class IntervalTree {
     return node;
   }
 
+  /**
+   * Search for events that overlap with the given time range.
+   *
+   * @param startTime The start time of the event
+   * @param endTime   The end time of the event
+   * @return A list of events that overlap with the given time range
+   */
   public List<EventDTO> searchOverlapping(LocalDateTime startTime, LocalDateTime endTime) {
     List<EventDTO> result = new ArrayList<>();
     searchOverlapping(root, startTime, endTime, result);
     return result;
   }
 
-  private void searchOverlapping(Node node, LocalDateTime startTime, LocalDateTime endTime,
-      List<EventDTO> result) {
+  /**
+   * Search for events that overlap with the given time range within a node.
+   *
+   * @param node      The node to search for overlapping events
+   * @param startTime The start time
+   * @param endTime   The end time
+   * @param result    The list of events that overlap with the given time range
+   */
+  private void searchOverlapping(Node node, LocalDateTime startTime,
+      LocalDateTime endTime, List<EventDTO> result) {
     if (node == null) {
       return;
     }
-
     // If the left child is not null and the maxEnd of the left child is after the start time
     if (node.left == null || node.left.maxEnd.isBefore(startTime)) {
       searchOverlappingWithinNode(node, startTime, endTime, result);
@@ -60,6 +92,14 @@ public class IntervalTree {
     }
   }
 
+  /**
+   * Search for events that overlap with the given time range within a node.
+   *
+   * @param node      The node to search for overlapping events
+   * @param startTime The start time
+   * @param endTime   The end time
+   * @param result    The list of events that overlap with the given time range
+   */
   private static void searchOverlappingWithinNode(Node node, LocalDateTime startTime,
       LocalDateTime endTime, List<EventDTO> result) {
     // Compare the node itself for overlapping
@@ -73,12 +113,25 @@ public class IntervalTree {
     }
   }
 
+  /**
+   * Search for events that overlap with the given time range.
+   *
+   * @param dateTime The date and time to get events for
+   * @return a list of events at the given date and time
+   */
   public List<EventDTO> searchOverlappingPoint(LocalDateTime dateTime) {
     List<EventDTO> result = new ArrayList<>();
     searchOverlappingPoint(root, dateTime, result);
     return result;
   }
 
+  /**
+   * Search for events that overlap with the given time range within a node.
+   *
+   * @param node     The node to search for overlapping events
+   * @param dateTime The date and time to get events for
+   * @param result   The list of events that overlap with the given time range
+   */
   private void searchOverlappingPoint(Node node, LocalDateTime dateTime, List<EventDTO> result) {
     if (node == null) {
       return;
@@ -102,12 +155,25 @@ public class IntervalTree {
     }
   }
 
+  /**
+   * Retrieves all events in the repository on given date.
+   *
+   * @param subject The name of the event
+   * @return a list of events with the given name
+   */
   public List<EventDTO> findByName(String subject) {
     List<EventDTO> result = new ArrayList<>();
     findByName(root, subject, result);
     return result;
   }
 
+  /**
+   * Search for events with the given name within a node.
+   *
+   * @param node    The node to search for events
+   * @param subject The name of the event
+   * @param result  The list of events with the given name
+   */
   private void findByName(Node node, String subject, List<EventDTO> result) {
     if (node == null) {
       return;
@@ -117,16 +183,33 @@ public class IntervalTree {
     findByName(node.right, subject, result);
   }
 
+  /**
+   * Retrieves an event in the repository based on the name, start time, and end time.
+   *
+   * @param subject   The name of the event
+   * @param startTime The start time of the event
+   * @param endTime   The end time of the event
+   * @return an event if it exists, empty otherwise
+   */
   public EventDTO findEvent(String subject, LocalDateTime startTime, LocalDateTime endTime) {
     return findEvent(root, subject, startTime, endTime);
   }
 
+  /**
+   * Search for an event with the given name, start time, and end time within a node.
+   *
+   * @param node      The node to search for the event
+   * @param subject   The name of the event
+   * @param startTime The start time of the event
+   * @param endTime   The end time of the event
+   * @return an event if it exists, empty otherwise
+   */
   private EventDTO findEvent(Node node, String subject, LocalDateTime startTime,
       LocalDateTime endTime) {
     if (node == null) {
       return null;
     }
-
+    // check within the node
     if (node.startTime.isEqual(startTime)) {
       for (EventDTO event : node.events) {
         if (event.getSubject().equals(subject) && event.getEndTime().isEqual(endTime)) {
@@ -134,7 +217,7 @@ public class IntervalTree {
         }
       }
     }
-
+    // check the right child if the start time is before the node's start time
     if (node.startTime.isBefore(startTime)) {
       return findEvent(node.right, subject, startTime, endTime);
     } else {
@@ -142,33 +225,62 @@ public class IntervalTree {
     }
   }
 
+  /**
+   * Get all events in the repository.
+   *
+   * @return A list of all events in the repository
+   */
   public List<EventDTO> getAllEvents() {
     return getAllEvents(root);
   }
 
+  /**
+   * Get all events in the repository within a node.
+   *
+   * @param node The node to get all events from
+   * @return A list of all events in the repository
+   */
   private List<EventDTO> getAllEvents(Node node) {
     List<EventDTO> result = new ArrayList<>();
     if (node == null) {
       return result;
     }
+    // Inorder traversal
     result.addAll(getAllEvents(node.left));
     result.addAll(node.events);
     result.addAll(getAllEvents(node.right));
     return result;
   }
 
+  /**
+   * Deletes an event from the repository based on the name, start time, and end time.
+   *
+   * @param subject   The name of the event
+   * @param startTime The start time of the event
+   * @param endTime   The end time of the event
+   * @return true if the event is successfully deleted, false otherwise
+   */
   public Boolean delete(String subject, LocalDateTime startTime, LocalDateTime endTime) {
-    boolean isDeleted = false;
+    Boolean isDeleted = false;
     root = delete(root, subject, startTime, endTime, isDeleted);
     return isDeleted;
   }
 
+  /**
+   * Recursive method to delete an event from the tree.
+   *
+   * @param node      The node to delete the event
+   * @param subject   The name of the event
+   * @param startTime The start time of the event
+   * @param endTime   The end time of the event
+   * @param isDeleted A flag to check if the event is deleted
+   * @return The node after deleting the event
+   */
   private Node delete(Node node, String subject, LocalDateTime startTime, LocalDateTime endTime,
-      boolean isDeleted) {
+      Boolean isDeleted) {
     if (node == null) {
       return null;
     }
-
     if (node.startTime.isEqual(startTime)) {
       for (EventDTO event : node.events) {
         if (event.getSubject().equals(subject) && event.getEndTime().isEqual(endTime)) {
@@ -177,21 +289,18 @@ public class IntervalTree {
           break;
         }
       }
-
       // Delete the node if it has no events
       if (node.events.isEmpty()) {
         // check if the node has no children
         if (node.left == null && node.right == null) {
           return null;
         }
-
         // check if the node has only one child
         if (node.left == null) {
           return node.right;
         } else if (node.right == null) {
           return node.left;
         }
-
         // check if the node has two children
         // find the inorder child
         Node successor = findSuccessor(node.right);
@@ -202,10 +311,8 @@ public class IntervalTree {
         // delete the successor
         node.right = deleteSuccessor(node.right);
         // done deleting
-
       }
       reComputeMaxEnd(node);
-
     } else if (node.startTime.isBefore(startTime)) {
       node.right = delete(node.right, subject, startTime, endTime, isDeleted);
     } else {
@@ -214,42 +321,58 @@ public class IntervalTree {
     return node;
   }
 
+  /**
+   * Recompute the maxEnd of a node. It is needed after deleting an event and traversing back to
+   * root.
+   *
+   * @param node The node to recompute the maxEnd
+   */
   private static void reComputeMaxEnd(Node node) {
     // update the maxEnd
     node.maxEnd = node.events.stream().map(EventDTO::getEndTime)
         .max(LocalDateTime::compareTo).orElse(null);
-
+    // check if the maxEnd of the left child is greater
     if (!Objects.isNull(node.maxEnd)) {
       if (node.left != null && node.maxEnd.isBefore(node.left.maxEnd)) {
         node.maxEnd = node.left.maxEnd;
-      }
+      } // check if the maxEnd of the right child is greater
       if (node.right != null && node.maxEnd.isBefore(node.right.maxEnd)) {
         node.maxEnd = node.right.maxEnd;
       }
     }
   }
 
+  /**
+   * Delete the successor of a node.
+   *
+   * @param node The node to delete the successor
+   * @return The node after deleting the successor
+   */
   private Node deleteSuccessor(Node node) {
+    // check if the node has no children
     if (node == null) {
       return null;
     }
-
+    // check if the node has only one child
     if (node.left == null) {
       return node.right;
-    } else {
+    } else { // check if the node has two children
       node.left = deleteSuccessor(node.left);
       reComputeMaxEnd(node);
       return node;
     }
-
-
   }
 
+  /**
+   * Find the successor of a node.
+   *
+   * @param node The node to find the successor
+   * @return The successor of the node
+   */
   private Node findSuccessor(Node node) {
     while (node.left != null) {
       node = node.left;
     }
     return node;
   }
-
 }
