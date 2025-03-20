@@ -110,18 +110,12 @@ class PrintEventsCommand extends Command {
       throws CalendarExportException, EventConflictException {
     if (!Objects.isNull(onDate)) {
       eventsOnDate = controllerUtility.getCurrentCalendar().model
-//          .getEventsOnDate(
-//              toUTC(onDate.atStartOfDay(), controllerUtility.getCurrentCalendar().zoneId)
-//                  .toLocalDate());
-          .getEventsInRange(
-              toUTC(onDate.atStartOfDay(), controllerUtility.getCurrentCalendar().zoneId),
-              toUTC(onDate.atStartOfDay().plusDays(1),
-                  controllerUtility.getCurrentCalendar().zoneId));
+          .getEventsOnDate(
+              onDate.atStartOfDay()
+                  .toLocalDate());
     } else {
       eventsOnDate = controllerUtility.getCurrentCalendar().model
-          .getEventsInRange(
-              toUTC(startTime, controllerUtility.getCurrentCalendar().zoneId),
-              toUTC(endTime, controllerUtility.getCurrentCalendar().zoneId));
+          .getEventsInRange(startTime, endTime);
     }
   }
 
@@ -135,25 +129,21 @@ class PrintEventsCommand extends Command {
     for (EventDTO event : eventsOnDate) {
       eventOutput.setLength(0);
       eventOutput.append('[')
-          .append(fromUTC(event.getStartTime(), controllerUtility.getCurrentCalendar().zoneId)
-              .format(dateFormatter))
+          .append(event.getStartTime().format(dateFormatter))
           .append("] ");
       if (event.getIsAllDay()) {
         eventOutput.append(String.format("%-38s", "[ALL DAY EVENT]"));
       } else {
         eventOutput.append('[')
-            .append(fromUTC(event.getStartTime(), controllerUtility.getCurrentCalendar().zoneId)
-                .format(dateTimeFormatter))
+            .append(event.getStartTime().format(dateTimeFormatter))
             .append(" - ")
-            .append(fromUTC(event.getEndTime(), controllerUtility.getCurrentCalendar().zoneId)
-                .format(dateTimeFormatter))
+            .append(event.getEndTime().format(dateTimeFormatter))
             .append("] ");
       }
       eventOutput.append(event.getIsRecurring() ? "[Recurring]     " : "[Not Recurring] ")
           .append(event.getSubject())
           .append(" || ")
-          .append(Objects.nonNull(event.getLocation()) ? event.getLocation() : "")
-          .append('\n');
+          .append(Objects.nonNull(event.getLocation()) ? event.getLocation() : "");
       controllerUtility.promptOutput(eventOutput.toString());
     }
   }

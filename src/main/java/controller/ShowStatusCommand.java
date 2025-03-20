@@ -5,7 +5,6 @@ import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -53,8 +52,7 @@ class ShowStatusCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
-    isBusy = controllerUtility.getCurrentCalendar().model
-        .isBusy(toUTC(dateTime, controllerUtility.getCurrentCalendar().zoneId));
+    isBusy = controllerUtility.getCurrentCalendar().model.isBusy(dateTime);
   }
 
   @Override
@@ -65,11 +63,6 @@ class ShowStatusCommand extends Command {
     } else {
       output.append("Available at ");
     }
-    controllerUtility.promptOutput(output.append(
-            dateTime
-                .atZone(ZoneOffset.UTC)
-                .withZoneSameInstant(controllerUtility.getCurrentCalendar().zoneId)
-                .toLocalDateTime())
-        .toString());
+    controllerUtility.promptOutput(output.append(dateTime).toString());
   }
 }

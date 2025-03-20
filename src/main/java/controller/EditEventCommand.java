@@ -248,47 +248,17 @@ class EditEventCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
-    EventDTO updateEventDTO = eventBuilder
-        .setRecurringDetails(
-            Objects.nonNull(recurringDetailsDTOPropertySetter) ?
-                recurringDetailsDTOBuilder.build()
-                : null)
-        .setIsRecurring(Objects.nonNull(recurringDetailsDTOPropertySetter) ? true : null)
-        .build();
-
     updatedEvents = controllerUtility.getCurrentCalendar().model
-        .editEvent(eventName,
-            toUTC(startTime, controllerUtility.getCurrentCalendar().zoneId),
-            toUTC(endTime, controllerUtility.getCurrentCalendar().zoneId),
-            copyWithTimeToUTC(updateEventDTO, controllerUtility));
+        .editEvent(eventName, startTime, endTime,
+            eventBuilder
+                .setRecurringDetails(
+                    Objects.nonNull(recurringDetailsDTOPropertySetter) ?
+                        recurringDetailsDTOBuilder.build()
+                        : null)
+                .setIsRecurring(Objects.nonNull(recurringDetailsDTOPropertySetter) ? true : null)
+                .build());
   }
 
-  private EventDTO copyWithTimeToUTC(EventDTO updateEventDTO, ControllerUtility controllerUtility) {
-    return EventDTO.getBuilder()
-        .setSubject(updateEventDTO.getSubject())
-        .setIsAllDay(updateEventDTO.getIsAllDay())
-        .setDescription(updateEventDTO.getDescription())
-        .setLocation(updateEventDTO.getLocation())
-        .setIsPublic(updateEventDTO.getIsPublic())
-        .setStartTime(Objects.nonNull(updateEventDTO.getStartTime())
-            ? toUTC(updateEventDTO.getStartTime(), controllerUtility.getCurrentCalendar().zoneId)
-            : null)
-        .setEndTime(Objects.nonNull(updateEventDTO.getEndTime())
-            ? toUTC(updateEventDTO.getEndTime(), controllerUtility.getCurrentCalendar().zoneId)
-            : null)
-        .setIsRecurring(updateEventDTO.getIsRecurring())
-        .setRecurringDetails(Objects.nonNull(updateEventDTO.getRecurringDetails())
-            ? RecurringDetailsDTO.getBuilder()
-            .setRepeatDays(updateEventDTO.getRecurringDetails().getRepeatDays())
-            .setOccurrences(updateEventDTO.getRecurringDetails().getOccurrences())
-            .setUntilDate(Objects.nonNull(updateEventDTO.getRecurringDetails().getUntilDate())
-                ? toUTC(updateEventDTO.getRecurringDetails().getUntilDate(),
-                controllerUtility.getCurrentCalendar().zoneId)
-                : null)
-            .build()
-            : null)
-        .build();
-  }
 
   @Override
   void promptResult(ControllerUtility controllerUtility) {
