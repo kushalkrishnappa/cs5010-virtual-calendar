@@ -52,7 +52,12 @@ public class IntervalTree {
       node.right = insert(node.right, event);
       node.maxEnd = node.right.maxEnd.isAfter(node.maxEnd) ? node.right.maxEnd : node.maxEnd;
     }
-    return node;
+
+    // update the height of the node
+    updateHeight(node);
+
+    // balance the tree
+    return balanceTree(node);
   }
 
   /**
@@ -312,34 +317,17 @@ public class IntervalTree {
         node.right = deleteSuccessor(node.right);
         // done deleting
       }
-      reComputeMaxEnd(node);
+      updateMaxEnd(node);
     } else if (node.startTime.isBefore(startTime)) {
       node.right = delete(node.right, subject, startTime, endTime, isDeleted);
     } else {
       node.left = delete(node.left, subject, startTime, endTime, isDeleted);
     }
-    return node;
-  }
 
-  /**
-   * Recompute the maxEnd of a node. It is needed after deleting an event and traversing back to
-   * root.
-   *
-   * @param node The node to recompute the maxEnd
-   */
-  private static void reComputeMaxEnd(Node node) {
-    // update the maxEnd
-    node.maxEnd = node.events.stream().map(EventDTO::getEndTime)
-        .max(LocalDateTime::compareTo).orElse(null);
-    // check if the maxEnd of the left child is greater
-    if (!Objects.isNull(node.maxEnd)) {
-      if (node.left != null && node.maxEnd.isBefore(node.left.maxEnd)) {
-        node.maxEnd = node.left.maxEnd;
-      } // check if the maxEnd of the right child is greater
-      if (node.right != null && node.maxEnd.isBefore(node.right.maxEnd)) {
-        node.maxEnd = node.right.maxEnd;
-      }
-    }
+    // update the height of the node
+    updateHeight(node);
+
+    return balanceTree(node);
   }
 
   /**
@@ -358,7 +346,7 @@ public class IntervalTree {
       return node.right;
     } else { // check if the node has two children
       node.left = deleteSuccessor(node.left);
-      reComputeMaxEnd(node);
+      updateMaxEnd(node);
       return node;
     }
   }
@@ -373,6 +361,158 @@ public class IntervalTree {
     while (node.left != null) {
       node = node.left;
     }
+    return node;
+  }
+
+  /**
+   * Update the height of the Node.
+   *
+   * <p>The height of a node is the maximum height of its left and right child plus one. If the
+   * node is null, the height is set to 0. If the node is leaf node, the height is set to 1.
+   *
+   * @param node The node to update the height for
+   */
+  private void updateHeight(Node node) {
+    if (node != null) {
+      int leftHeight = Objects.isNull(node.left) ? 0 : node.left.height;
+      int rightHeight = Objects.isNull(node.right) ? 0 : node.right.height;
+      node.height = Math.max(leftHeight, rightHeight) + 1;
+    }
+  }
+
+  /**
+   * Balance factor is a tree invariant that is used to determine if the tree is balanced. If the
+   * balance factor is greater than 1 or less than -1, the tree is unbalanced.
+   *
+   * @param node The node to get the balance factor for
+   * @return The balance factor of the node
+   */
+  private int getBalanceFactor(Node node) {
+    if (node != null) {
+      int leftHeight = Objects.isNull(node.left) ? 0 : node.left.height;
+      int rightHeight = Objects.isNull(node.right) ? 0 : node.right.height;
+      return leftHeight - rightHeight;
+    }
+    return 0;
+  }
+
+  /**
+   * Update the maxEnd of a node. The maxEnd is the maximum end time of all the events in the
+   * subtree of the node.
+   *
+   * @param node The node to update the maxEnd for
+   */
+  private static void updateMaxEnd(Node node) {
+    if (node != null) {
+      // update the maxEnd from events within the node
+      node.maxEnd = node.events.stream()
+          .map(EventDTO::getEndTime)
+          .max(LocalDateTime::compareTo)
+          .orElse(null);
+
+      // check if the left child is not null and the maxEnd of the left child is greater
+      if (node.left != null) {
+        if (node.maxEnd != null && node.left.maxEnd.isAfter(node.maxEnd)) {
+          node.maxEnd = node.left.maxEnd;
+        }
+      }
+
+      // check if the right child is not null and the maxEnd of the right child is greater
+      if (node.right != null) {
+        if (node.maxEnd != null && node.right.maxEnd.isAfter(node.maxEnd)) {
+          node.maxEnd = node.right.maxEnd;
+        }
+      }
+    }
+  }
+
+  /**
+   * Rotate the tree to the right. This is used to balance the tree when the left subtree is taller
+   * than the right subtree.
+   *
+   * @param node The node to rotate right
+   * @return The new root of the tree after rotation
+   */
+  private Node rotateRight(Node node) {
+    Node newRoot = node.left;
+    Node tempRight = newRoot.right;
+
+    // perform rotation
+    newRoot.right = node;
+    node.left = tempRight;
+
+    // update heights
+    updateHeight(node);
+    updateHeight(newRoot);
+
+    // update maxEnd
+    updateMaxEnd(node);
+    updateMaxEnd(newRoot);
+
+    return newRoot;
+  }
+
+  /**
+   * Rotate the tree to the left. This is used to balance the tree when the right subtree is taller
+   * than the left subtree.
+   *
+   * @param node The node to rotate left
+   * @return The new root of the tree after rotation
+   */
+  private Node rotateLeft(Node node) {
+    Node newRoot = node.right;
+    Node tempLeft = newRoot.left;
+
+    // perform rotation
+    newRoot.left = node;
+    node.right = tempLeft;
+
+    // update heights
+    updateHeight(node);
+    updateHeight(newRoot);
+
+    // update maxEnd
+    updateMaxEnd(node);
+    updateMaxEnd(newRoot);
+
+    return newRoot;
+  }
+
+  /**
+   * Balance the tree if the balance factor is greater than 1 or less than -1.
+   *
+   * @param node the node on which the tree is to be balanced
+   * @return the node on which the tree is balanced i.e, balance factor is between -1 and 1
+   */
+  private Node balanceTree(Node node) {
+    if (node == null) {
+      return null;
+    }
+
+    // get the balance factor of the root node
+    int balanceFactor = getBalanceFactor(node);
+
+    // check if the tree is left heavy
+    if (balanceFactor > 1) {
+      // left-right case
+      if (getBalanceFactor(node.left) < 0) {
+        node.left = rotateLeft(node.left);
+      }
+      // left-left case
+      return rotateRight(node);
+    }
+
+    // check if the tree is right heavy
+    if (balanceFactor < -1) {
+      // right-left case
+      if (getBalanceFactor(node.right) > 0) {
+        node.right = rotateRight(node.right);
+      }
+      // right-right case
+      return rotateLeft(node);
+    }
+
+    // the node is balanced
     return node;
   }
 }
