@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
-import model.IModel;
 
 /**
  * PrintEventsCommand class implements Command and execute the command to print events on a specific
@@ -40,7 +39,7 @@ class PrintEventsCommand extends Command {
   }
 
   @Override
-  void parseCommand(Scanner commandScanner) throws ParseCommandException {
+  Command parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
       if (!commandScanner.next().equals("events")) {
         throw new ParseCommandException("Invalid command format: print events ...");
@@ -60,6 +59,7 @@ class PrintEventsCommand extends Command {
           "Invalid command format: print events "
               + "(on <dateTime>|from <startDateTime> to <endDateTime>)");
     }
+    return this;
   }
 
   /**
@@ -106,11 +106,22 @@ class PrintEventsCommand extends Command {
   }
 
   @Override
-  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
+  void executeCommand(ControllerUtility controllerUtility)
+      throws CalendarExportException, EventConflictException {
     if (!Objects.isNull(onDate)) {
-      eventsOnDate = model.getEventsOnDate(onDate);
+      eventsOnDate = controllerUtility.getCurrentCalendar().model
+//          .getEventsOnDate(
+//              toUTC(onDate.atStartOfDay(), controllerUtility.getCurrentCalendar().zoneId)
+//                  .toLocalDate());
+          .getEventsInRange(
+              toUTC(onDate.atStartOfDay(), controllerUtility.getCurrentCalendar().zoneId),
+              toUTC(onDate.atStartOfDay().plusDays(1),
+                  controllerUtility.getCurrentCalendar().zoneId));
     } else {
-      eventsOnDate = model.getEventsInRange(startTime, endTime);
+      eventsOnDate = controllerUtility.getCurrentCalendar().model
+          .getEventsInRange(
+              toUTC(startTime, controllerUtility.getCurrentCalendar().zoneId),
+              toUTC(endTime, controllerUtility.getCurrentCalendar().zoneId));
     }
   }
 
@@ -124,15 +135,18 @@ class PrintEventsCommand extends Command {
     for (EventDTO event : eventsOnDate) {
       eventOutput.setLength(0);
       eventOutput.append('[')
-          .append(event.getStartTime().format(dateFormatter))
+          .append(fromUTC(event.getStartTime(), controllerUtility.getCurrentCalendar().zoneId)
+              .format(dateFormatter))
           .append("] ");
       if (event.getIsAllDay()) {
         eventOutput.append(String.format("%-38s", "[ALL DAY EVENT]"));
       } else {
         eventOutput.append('[')
-            .append(event.getStartTime().format(dateTimeFormatter))
+            .append(fromUTC(event.getStartTime(), controllerUtility.getCurrentCalendar().zoneId)
+                .format(dateTimeFormatter))
             .append(" - ")
-            .append(event.getEndTime().format(dateTimeFormatter))
+            .append(fromUTC(event.getEndTime(), controllerUtility.getCurrentCalendar().zoneId)
+                .format(dateTimeFormatter))
             .append("] ");
       }
       eventOutput.append(event.getIsRecurring() ? "[Recurring]     " : "[Not Recurring] ")

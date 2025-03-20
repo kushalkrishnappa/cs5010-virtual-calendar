@@ -5,7 +5,6 @@ import dto.EventDTO;
 import dto.RecurringDetailsDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
-import exception.InvalidDateTimeRangeException;
 import exception.ParseCommandException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
 import model.CalendarDayOfWeek;
-import model.IModel;
 
 /**
  * CreateEventCommand class implements Command and execute the command to create an event.
@@ -56,11 +54,28 @@ class CreateEventCommand extends Command {
   }
 
   @Override
-  void parseCommand(Scanner commandScanner) throws ParseCommandException {
+  Command parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
-      if (!commandScanner.next().equals("event")) {
-        throw new ParseCommandException("Invalid command format: create event ...");
+      switch (commandScanner.next()) {
+        case "calendar":
+          Command command;
+          command = new CreateCalendarCommand();
+          command.parseCommand(commandScanner);
+          return command;
+        case "event":
+          break;
+        default:
+          throw new ParseCommandException("Invalid command: create (calendar|event) ...");
       }
+    } catch (NoSuchElementException e) {
+      throw new ParseCommandException(
+          "Invalid command format: create (calendar|event) ...");
+    }
+
+    try {
+//      if (!commandScanner.next().equals("event")) {
+//        throw new ParseCommandException("Invalid command format: create event ...");
+//      }
 
       String next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
       if (Objects.isNull(next)) {
@@ -96,6 +111,7 @@ class CreateEventCommand extends Command {
               + "(on <dateTime>| from <startDateTime> to <endDateTime>) "
               + "[repeats <weekdays> (for <N> times| until <untilDateTime>)]");
     }
+    return this;
   }
 
   /**
@@ -276,20 +292,21 @@ class CreateEventCommand extends Command {
   }
 
   @Override
-  void executeCommand(IModel model)
-      throws CalendarExportException, EventConflictException, InvalidDateTimeRangeException {
-    model.createEvent(
+  void executeCommand(ControllerUtility controllerUtility)
+      throws CalendarExportException, EventConflictException {
+    controllerUtility.getCurrentCalendar().model.createEvent(
         EventDTO.getBuilder()
             .setSubject(eventName)
-            .setStartTime(startTime)
-            .setEndTime(endTime)
+            .setStartTime(toUTC(startTime, controllerUtility.getCurrentCalendar().zoneId))
+            .setEndTime(toUTC(endTime, controllerUtility.getCurrentCalendar().zoneId))
             .setIsAllDay(isAllDay)
             .setIsRecurring(isRecurring)
             .setRecurringDetails(
                 isRecurring ?
                     RecurringDetailsDTO.getBuilder()
                         .setRepeatDays(repeatDays)
-                        .setUntilDate(untilDate)
+                        .setUntilDate(
+                            toUTC(untilDate, controllerUtility.getCurrentCalendar().zoneId))
                         .setOccurrences(occurrences)
                         .build()
                     : null
@@ -301,6 +318,6 @@ class CreateEventCommand extends Command {
 
   @Override
   void promptResult(ControllerUtility controllerUtility) {
-    controllerUtility.promptOutput("Successfully created event " + eventName + "\n");
+    controllerUtility.promptOutput("Successfully created event " + eventName);
   }
 }

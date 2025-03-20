@@ -3,9 +3,12 @@ package controller;
 import controller.CalendarController.ControllerUtility;
 import exception.CalendarExportException;
 import exception.EventConflictException;
+import exception.InvalidTimeZoneException;
 import exception.ParseCommandException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Scanner;
-import model.IModel;
 
 /**
  * Command class is an abstract class that represents a command to be executed by the controller.
@@ -18,16 +21,18 @@ abstract class Command {
    * @param commandScanner Scanner object that contains the command to be parsed.
    * @throws ParseCommandException if the command is invalid.
    */
-  abstract void parseCommand(Scanner commandScanner) throws ParseCommandException;
+  abstract Command parseCommand(Scanner commandScanner)
+      throws ParseCommandException, InvalidTimeZoneException;
 
   /**
    * Executes the command on the model.
    *
-   * @param model IModel object that the command will be executed on.
+   * @param controllerUtility the controller utility
    * @throws CalendarExportException if there is an error exporting the calendar.
    * @throws EventConflictException  if there is a conflict with the event.
    */
-  abstract void executeCommand(IModel model) throws CalendarExportException, EventConflictException;
+  abstract void executeCommand(ControllerUtility controllerUtility)
+      throws CalendarExportException, EventConflictException;
 
   /**
    * Prompts the result of the command.
@@ -36,4 +41,18 @@ abstract class Command {
    *                          command.
    */
   abstract void promptResult(ControllerUtility controllerUtility);
+
+  final LocalDateTime toUTC(LocalDateTime zoneDateTime, ZoneId zoneId) {
+    return zoneDateTime
+        .atZone(zoneId)
+        .withZoneSameInstant(ZoneOffset.UTC)
+        .toLocalDateTime();
+  }
+
+  final LocalDateTime fromUTC(LocalDateTime utcDateTime, ZoneId zoneId) {
+    return utcDateTime
+        .atZone(ZoneOffset.UTC)
+        .withZoneSameInstant(zoneId)
+        .toLocalDateTime();
+  }
 }

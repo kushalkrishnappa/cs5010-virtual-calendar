@@ -1,8 +1,11 @@
 package controller;
 
 import exception.CalendarExportException;
+import exception.CalendarNotPresentException;
+import exception.CalendarNotSelectedException;
 import exception.EventConflictException;
 import exception.InvalidDateTimeRangeException;
+import exception.InvalidTimeZoneException;
 import exception.ParseCommandException;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -22,7 +25,11 @@ public class CalendarController implements IController {
 
   private final IView view;
 
-  private final IModel model;
+  private final Supplier<IModel> modelFactory;
+
+  private final Map<String, CalendarEntry> calendars;
+
+  private String currentCalendar;
 
   static final String dateFormat = "yyyy-MM-dd";
 
@@ -43,22 +50,56 @@ public class CalendarController implements IController {
 
     void promptOutput(String message) {
       if (mode == ControllerMode.INTERACTIVE) {
-        view.displayMessage(message);
+        view.displayMessage(message + "\n");
       }
+    }
+
+    Supplier<IModel> getModelFactory() {
+      return modelFactory;
+    }
+
+    CalendarEntry getCurrentCalendar() {
+      if (Objects.isNull(currentCalendar)) {
+        throw new CalendarNotSelectedException(
+            "No calendar is set. Use \"use calendar --name <calName>\" to select a calendar");
+      }
+      return calendars.get(currentCalendar);
+    }
+
+    void setCurrentCalendar(String currentCalendarName) {
+      currentCalendar = currentCalendarName;
+    }
+
+    CalendarEntry getCalendarEntry(String calendar) {
+      return calendars.get(calendar);
+    }
+
+    void addCalendarEntry(String calendar, CalendarEntry calendarEntry) {
+      calendars.put(calendar, calendarEntry);
+    }
+
+    CalendarEntry removeCalendarEntry(String calendar) {
+      return calendars.remove(calendar);
+    }
+
+    void exitProgram() {
+      exitFlag = true;
     }
   }
 
   /**
    * Constructor for the CalendarController.
    *
-   * @param model The model for the calendar application
-   * @param view  The view for the calendar application
-   * @param mode  The mode of the controller
+   * @param modelFactory The model factory for the calendar application
+   * @param view         The view for the calendar application
+   * @param mode         The mode of the controller
    */
-  public CalendarController(IModel model, IView view, ControllerMode mode) {
-    this.model = model;
+  public CalendarController(Supplier<IModel> modelFactory, IView view, ControllerMode mode) {
+    this.modelFactory = modelFactory;
     this.view = view;
     this.mode = mode;
+    this.calendars = new HashMap<>();
+    this.currentCalendar = null;
     controllerUtility = new ControllerUtility();
     exitFlag = false;
   }
@@ -67,7 +108,7 @@ public class CalendarController implements IController {
   public void run() {
     Objects.requireNonNull(mode, "mode cannot be null");
     Objects.requireNonNull(view, "view cannot be null");
-    Objects.requireNonNull(model, "model cannot be null");
+    Objects.requireNonNull(modelFactory, "model cannot be null");
 
     Scanner scanner = new Scanner(view.getInputStream());
     promptUserInput();
@@ -131,17 +172,18 @@ public class CalendarController implements IController {
     }
 
     try {
-      command.parseCommand(lineScanner);
-    } catch (ParseCommandException e) {
+      command = command.parseCommand(lineScanner);
+    } catch (ParseCommandException | InvalidTimeZoneException e) {
       promptError(e.getMessage() + "\n");
       return;
     }
 
     try {
-      command.executeCommand(model);
-    } catch (EventConflictException | CalendarExportException | InvalidDateTimeRangeException |
-             IllegalArgumentException e) {
-      promptError(e.getMessage());
+      command.executeCommand(controllerUtility);
+    } catch (CalendarNotSelectedException | CalendarNotPresentException
+             |  EventConflictException | CalendarExportException | InvalidDateTimeRangeException
+             | IllegalArgumentException e) {
+      promptError(e.getMessage() + "\n");
       return;
     }
 
@@ -156,6 +198,8 @@ public class CalendarController implements IController {
     private static final Map<String, Supplier<Command>> commandMap = new HashMap<>();
 
     static {
+      commandMap.put("use", UseCommand::new);
+      commandMap.put("exit", ExitCommand::new);
       commandMap.put("create", CreateEventCommand::new);
       commandMap.put("edit", EditEventCommand::new);
       commandMap.put("print", PrintEventsCommand::new);
