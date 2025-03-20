@@ -5,9 +5,6 @@ import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.InvalidTimeZoneException;
 import exception.ParseCommandException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Scanner;
 
 /**
@@ -42,17 +39,4 @@ abstract class Command {
    */
   abstract void promptResult(ControllerUtility controllerUtility);
 
-  final LocalDateTime toUTC(LocalDateTime zoneDateTime, ZoneId zoneId) {
-    return zoneDateTime
-        .atZone(zoneId)
-        .withZoneSameInstant(ZoneOffset.UTC)
-        .toLocalDateTime();
-  }
-
-  final LocalDateTime fromUTC(LocalDateTime utcDateTime, ZoneId zoneId) {
-    return utcDateTime
-        .atZone(ZoneOffset.UTC)
-        .withZoneSameInstant(zoneId)
-        .toLocalDateTime();
-  }
 }

@@ -297,16 +297,15 @@ class CreateEventCommand extends Command {
     controllerUtility.getCurrentCalendar().model.createEvent(
         EventDTO.getBuilder()
             .setSubject(eventName)
-            .setStartTime(toUTC(startTime, controllerUtility.getCurrentCalendar().zoneId))
-            .setEndTime(toUTC(endTime, controllerUtility.getCurrentCalendar().zoneId))
+            .setStartTime(startTime)
+            .setEndTime(endTime)
             .setIsAllDay(isAllDay)
             .setIsRecurring(isRecurring)
             .setRecurringDetails(
                 isRecurring ?
                     RecurringDetailsDTO.getBuilder()
                         .setRepeatDays(repeatDays)
-                        .setUntilDate(
-                            toUTC(untilDate, controllerUtility.getCurrentCalendar().zoneId))
+                        .setUntilDate(untilDate)
                         .setOccurrences(occurrences)
                         .build()
                     : null
