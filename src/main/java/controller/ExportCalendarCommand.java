@@ -6,7 +6,6 @@ import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import model.IModel;
 
 /**
  * ExportCalendarCommand class implements Command and execute the command to export the calendar to
@@ -27,7 +26,7 @@ class ExportCalendarCommand extends Command {
   }
 
   @Override
-  void parseCommand(Scanner commandScanner) throws ParseCommandException {
+  Command parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
       if (!commandScanner.next().equals("cal")) {
         throw new ParseCommandException("Invalid command format: export cal ...");
@@ -45,15 +44,18 @@ class ExportCalendarCommand extends Command {
     } catch (NoSuchElementException e) {
       throw new ParseCommandException("Invalid command format: export cal <filename(.csv)>");
     }
+    return this;
   }
 
   @Override
-  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
-    outputFilePath = model.exportToCSV(filename);
+  void executeCommand(ControllerUtility controllerUtility)
+      throws CalendarExportException, EventConflictException {
+    outputFilePath = controllerUtility.getCurrentCalendar().model
+        .exportToCSV(filename);
   }
 
   @Override
   void promptResult(ControllerUtility controllerUtility) {
-    controllerUtility.promptOutput("Calendar exported to file:\n" + outputFilePath + "\n");
+    controllerUtility.promptOutput("Calendar exported to file:\n" + outputFilePath);
   }
 }

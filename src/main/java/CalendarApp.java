@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import model.CalendarModel;
-import model.IModel;
 import view.CommandLineView;
 import view.IView;
 
@@ -25,7 +24,7 @@ public class CalendarApp {
     // create the model
     IView view;
     IController controller;
-    IModel model = new CalendarModel();
+//    IModel model = new CalendarModel();
 
     if (args.length < 2) {
       promptUsageError();
@@ -69,7 +68,7 @@ public class CalendarApp {
         return;
     }
 
-    controller = new CalendarController(model, view, mode);
+    controller = new CalendarController(CalendarModel::new, view, mode);
     System.out.println("Starting calendar in " + mode + " mode...");
     controller.run();
   }

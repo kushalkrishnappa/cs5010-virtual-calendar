@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.BiConsumer;
 import model.CalendarDayOfWeek;
-import model.IModel;
 
 /**
  * EditEventCommand class implements Command and execute the command to edit an event or a series of
@@ -65,7 +64,7 @@ class EditEventCommand extends Command {
    * @return A map of property setters for RecurringDetailsDTO.
    */
   private final Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>>
-        createRecurringDetailsPropertySetters() {
+  createRecurringDetailsPropertySetters() {
     Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>> setters = new HashMap<>();
     setters.put("occurrences",
         (builder, value) -> builder.setOccurrences(
@@ -103,9 +102,13 @@ class EditEventCommand extends Command {
   }
 
   @Override
-  void parseCommand(Scanner commandScanner) throws ParseCommandException {
+  Command parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
       switch (commandScanner.next()) {
+        case "calendar":
+          Command command = new EditCalendarCommand();
+          command.parseCommand(commandScanner);
+          return command;
         case "event":
           editSpannedEvent(commandScanner);
           break;
@@ -113,14 +116,14 @@ class EditEventCommand extends Command {
           editRecurringEvents(commandScanner);
           break;
         default:
-          throw new ParseCommandException("Invalid command format: edit (event|events) ...");
+          throw new ParseCommandException(
+              "Invalid command format: edit (calendar|event|events) ...");
       }
     } catch (NoSuchElementException e) {
       throw new ParseCommandException(
-          "Invalid command format: edit (event|events) <property> <eventName> "
-              + "[from <startDateTime> [to <endDateTime>] with] "
-              + "<newPropertyValue>");
+          "Invalid command format: edit (calendar|event|events) ...");
     }
+    return this;
   }
 
   private void editSpannedEvent(Scanner commandScanner) throws ParseCommandException {
@@ -243,22 +246,56 @@ class EditEventCommand extends Command {
   }
 
   @Override
-  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
-    updatedEvents = model.editEvent(eventName, startTime, endTime, eventBuilder
+  void executeCommand(ControllerUtility controllerUtility)
+      throws CalendarExportException, EventConflictException {
+    EventDTO updateEventDTO = eventBuilder
         .setRecurringDetails(
             Objects.nonNull(recurringDetailsDTOPropertySetter) ?
                 recurringDetailsDTOBuilder.build()
                 : null)
         .setIsRecurring(Objects.nonNull(recurringDetailsDTOPropertySetter) ? true : null)
-        .build());
+        .build();
+
+    updatedEvents = controllerUtility.getCurrentCalendar().model
+        .editEvent(eventName,
+            toUTC(startTime, controllerUtility.getCurrentCalendar().zoneId),
+            toUTC(endTime, controllerUtility.getCurrentCalendar().zoneId),
+            copyWithTimeToUTC(updateEventDTO, controllerUtility));
+  }
+
+  private EventDTO copyWithTimeToUTC(EventDTO updateEventDTO, ControllerUtility controllerUtility) {
+    return EventDTO.getBuilder()
+        .setSubject(updateEventDTO.getSubject())
+        .setIsAllDay(updateEventDTO.getIsAllDay())
+        .setDescription(updateEventDTO.getDescription())
+        .setLocation(updateEventDTO.getLocation())
+        .setIsPublic(updateEventDTO.getIsPublic())
+        .setStartTime(Objects.nonNull(updateEventDTO.getStartTime())
+            ? toUTC(updateEventDTO.getStartTime(), controllerUtility.getCurrentCalendar().zoneId)
+            : null)
+        .setEndTime(Objects.nonNull(updateEventDTO.getEndTime())
+            ? toUTC(updateEventDTO.getEndTime(), controllerUtility.getCurrentCalendar().zoneId)
+            : null)
+        .setIsRecurring(updateEventDTO.getIsRecurring())
+        .setRecurringDetails(Objects.nonNull(updateEventDTO.getRecurringDetails())
+            ? RecurringDetailsDTO.getBuilder()
+            .setRepeatDays(updateEventDTO.getRecurringDetails().getRepeatDays())
+            .setOccurrences(updateEventDTO.getRecurringDetails().getOccurrences())
+            .setUntilDate(Objects.nonNull(updateEventDTO.getRecurringDetails().getUntilDate())
+                ? toUTC(updateEventDTO.getRecurringDetails().getUntilDate(),
+                controllerUtility.getCurrentCalendar().zoneId)
+                : null)
+            .build()
+            : null)
+        .build();
   }
 
   @Override
   void promptResult(ControllerUtility controllerUtility) {
     if (updatedEvents > 0) {
-      controllerUtility.promptOutput("Successfully updated event(s)\n");
+      controllerUtility.promptOutput("Successfully updated event(s)");
     } else {
-      controllerUtility.promptOutput("No events were updated\n");
+      controllerUtility.promptOutput("No events were updated");
     }
   }
 }

@@ -5,10 +5,10 @@ import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import model.IModel;
 
 /**
  * ShowStatusCommand class implements Command and execute the command to show the status of the
@@ -29,7 +29,7 @@ class ShowStatusCommand extends Command {
   }
 
   @Override
-  void parseCommand(Scanner commandScanner) throws ParseCommandException {
+  Command parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
       if (!commandScanner.next().equals("status")) {
         throw new ParseCommandException("Invalid command format: show status ...");
@@ -47,19 +47,29 @@ class ShowStatusCommand extends Command {
     } catch (NoSuchElementException e) {
       throw new ParseCommandException("Invalid command format: show status on <dateTime>");
     }
+    return this;
   }
 
   @Override
-  void executeCommand(IModel model) throws CalendarExportException, EventConflictException {
-    isBusy = model.isBusy(dateTime);
+  void executeCommand(ControllerUtility controllerUtility)
+      throws CalendarExportException, EventConflictException {
+    isBusy = controllerUtility.getCurrentCalendar().model
+        .isBusy(toUTC(dateTime, controllerUtility.getCurrentCalendar().zoneId));
   }
 
   @Override
   void promptResult(ControllerUtility controllerUtility) {
+    StringBuilder output = new StringBuilder();
     if (isBusy) {
-      controllerUtility.promptOutput("Busy at " + dateTime + "\n");
+      output.append("Busy at ");
     } else {
-      controllerUtility.promptOutput("Available at " + dateTime + "\n");
+      output.append("Available at ");
     }
+    controllerUtility.promptOutput(output.append(
+            dateTime
+                .atZone(ZoneOffset.UTC)
+                .withZoneSameInstant(controllerUtility.getCurrentCalendar().zoneId)
+                .toLocalDateTime())
+        .toString());
   }
 }
