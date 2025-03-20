@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Node is a class that represents a node in an Interval Tree.
+ * This class represents a node in the interval tree. The data related to the calendar events is
+ * stored in the node.
  *
- * <p>It contains a list of events, a start time, an end time, a maximum end time, and references to
- * the left and right children.
+ * <p>It contains the start and end time of the event, the maximum end time of the events in the
+ * subtree, and the left and right child nodes along with the height of the node. Upon collision,
+ * the node will store all the collided events in a list.
  */
 class Node {
 
@@ -25,10 +27,17 @@ class Node {
 
   Node right;
 
+  Integer height;
+
   /**
-   * Constructor for Node. The node will be part of interval tree and will store the given event.
+   * Constructor will initialize new node and adds the event to the node. It will also set the start
+   * and end time of the node to the start and end time of the event. The maximum end time is set to
+   * the end time of the event (property required to identify the conflicts).
    *
-   * @param event The event to be stored in the node
+   * <p>The default value of the left and right child nodes is null. The height of the node is set
+   * to 1.
+   *
+   * @param event the event to be added to the node
    */
   Node(EventDTO event) {
     this.events = new ArrayList<>();
@@ -36,6 +45,8 @@ class Node {
     this.startTime = event.getStartTime();
     this.endTime = event.getEndTime();
     this.maxEnd = event.getEndTime();
-    this.left = this.right = null;
+    this.left = null;
+    this.right = null;
+    this.height = 1;
   }
 }
