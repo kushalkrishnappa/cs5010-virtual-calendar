@@ -25,6 +25,8 @@ public class CopyEventCommand extends Command {
 
   private String targetCalendarName;
 
+  private Integer copiedEvents;
+
   CopyEventCommand() {
     sourceStartDate = null;
     sourceEndDate = null;
@@ -194,7 +196,10 @@ public class CopyEventCommand extends Command {
 
   @Override
   void promptResult(ControllerUtility controllerUtility) {
-    //TODO: Implement logic to prompt result of the copy command
-
+    if (copiedEvents > 0) {
+      controllerUtility.promptOutput("Successfully copied event(s) to " + targetCalendarName);
+    } else {
+      controllerUtility.promptOutput("No events were copied to " + targetCalendarName);
+    }
   }
 }
