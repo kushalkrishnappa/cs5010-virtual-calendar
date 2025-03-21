@@ -201,6 +201,7 @@ public class CalendarController implements IController {
       commandMap.put("use", UseCommand::new);
       commandMap.put("exit", ExitCommand::new);
       commandMap.put("create", CreateEventCommand::new);
+      commandMap.put("copy", CopyEventCommand::new);
       commandMap.put("edit", EditEventCommand::new);
       commandMap.put("print", PrintEventsCommand::new);
       commandMap.put("export", ExportCalendarCommand::new);
