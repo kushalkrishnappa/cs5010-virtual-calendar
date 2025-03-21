@@ -3,7 +3,6 @@ package controller;
 import controller.CalendarController.ControllerUtility;
 import dto.EventDTO;
 import exception.CalendarExportException;
-import exception.EventConflictException;
 import exception.InvalidTimeZoneException;
 import exception.ParseCommandException;
 import java.time.Duration;
@@ -193,9 +192,22 @@ public class CopyEventCommand extends Command {
     }
   }
 
+  /**
+   * Execute the copy command on the model. It copies the event(s) from the source calendar to the
+   * target calendar.
+   *
+   * <p>The recurring details of the recurring event(s) are reset and the event(s) are copied as
+   * non-recurring events.
+   *
+   * <p>It does not check for conflicts in the target calendar. It will create the event(s) in the
+   * target calendar even if there is a conflict.
+   *
+   * @param controllerUtility the controller utility class
+   * @throws CalendarExportException if the target calendar is not present in the model
+   */
   @Override
   void executeCommand(ControllerUtility controllerUtility)
-      throws CalendarExportException, EventConflictException {
+      throws CalendarExportException {
     // check if target calendar is present
     CalendarEntry targetCalendarEntry = controllerUtility.getCalendarEntry(targetCalendarName);
     if (Objects.isNull(targetCalendarEntry)) {
@@ -243,8 +255,6 @@ public class CopyEventCommand extends Command {
       durationOfEvent = Duration.between(eventToCopy.getStartTime(), eventToCopy.getEndTime());
     }
 
-    //TODO: should copy recurring details for an event if recurring?
-
     // Create a new event in target calendar
     EventDTO.EventDTOBuilder builder = EventDTO.getBuilder()
         .setSubject(eventToCopy.getSubject())
@@ -260,7 +270,6 @@ public class CopyEventCommand extends Command {
       builder.setEndTime(targetStartDateTime.plus(durationOfEvent));
     }
 
-    // TODO: check for conflict in target calendar?
     // Create the event in target calendar
     targetCalendarEntry.model.createEvent(builder.build(), false);
     return 1;
@@ -268,8 +277,46 @@ public class CopyEventCommand extends Command {
 
   private int copyEventsOnDate(CalendarEntry sourceCalendarEntry,
       CalendarEntry targetCalendarEntry) {
-    //TODO: Implement logic to copy events on a date from sourceCalendarEntry to targetCalendarEntry
-    return 0;
+
+    // get all the events on the source date
+    List<EventDTO> eventsOnDate = sourceCalendarEntry.model.getEventsOnDate(sourceStartDate);
+
+    if (eventsOnDate.isEmpty()) {
+      return 0;
+    }
+
+    int copiedEvents = 0;
+
+    for (EventDTO event : eventsOnDate) {
+      // calculate event duration between startTime and endTime
+      Duration durationOfEvent = Duration.between(event.getStartTime(), event.getEndTime());
+
+      // get the startDateTime for event to be copied (time will be same as source)
+      LocalDateTime newStartDateTime = targetStartDate.atTime(event.getStartTime().toLocalTime());
+
+      // get the endDateTime for event to be copied (time will be same as source)
+      LocalDateTime newEndDateTime = null;
+      if (!event.getIsAllDay() && event.getEndTime() != null) {
+        newEndDateTime = newStartDateTime.plus(durationOfEvent);
+      }
+
+      // create a new event in target calendar
+      EventDTO eventToCopy = EventDTO.getBuilder()
+          .setSubject(event.getSubject())
+          .setDescription(event.getDescription())
+          .setLocation(event.getLocation())
+          .setIsAllDay(event.getIsAllDay())
+          .setIsPublic(event.getIsPublic())
+          .setIsRecurring(false)
+          .setStartTime(newStartDateTime)
+          .setEndTime(newEndDateTime)
+          .build();
+
+      // create the event in target calendar
+      targetCalendarEntry.model.createEvent(eventToCopy, false);
+      copiedEvents++;
+    }
+    return copiedEvents;
   }
 
   private int copyEventsBetweenDates(CalendarEntry sourceCalendarEntry,
