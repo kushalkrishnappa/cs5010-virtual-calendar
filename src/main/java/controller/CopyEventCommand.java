@@ -1,6 +1,7 @@
 package controller;
 
 import controller.CalendarController.ControllerUtility;
+import dto.EventDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.InvalidTimeZoneException;
@@ -8,7 +9,9 @@ import exception.ParseCommandException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class CopyEventCommand extends Command {
@@ -24,6 +27,8 @@ public class CopyEventCommand extends Command {
   private LocalDateTime targetStartDateTime;
 
   private String targetCalendarName;
+
+  private String eventName;
 
   private Integer copiedEvents;
 
@@ -62,7 +67,7 @@ public class CopyEventCommand extends Command {
       throws ParseCommandException, InvalidTimeZoneException {
     // parse the <eventName>
     try {
-      String eventName = parseOptionalQuoted(commandScanner);
+      eventName = parseOptionalQuoted(commandScanner);
     } catch (ParseCommandException e) {
       throw new ParseCommandException(
           e.getMessage() + "copy event <eventName> ...");
@@ -190,8 +195,87 @@ public class CopyEventCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
-    //TODO: Implement logic to copy events
+    // check if target calendar is present
+    CalendarEntry targetCalendarEntry = controllerUtility.getCalendarEntry(targetCalendarName);
+    if (Objects.isNull(targetCalendarEntry)) {
+      throw new CalendarExportException("Target calendar not found: " + targetCalendarName);
+    }
 
+    // get current calendar entry
+    CalendarEntry currentCalendarEntry = controllerUtility.getCurrentCalendar();
+
+    // copy events from current calendar to target calendar
+    if (sourceStartDateTime != null) {
+      copiedEvents = copySingleEvent(currentCalendarEntry, targetCalendarEntry);
+    } else if (sourceStartDate != null && sourceEndDate != null) {
+      // copy events between two dates
+      copiedEvents = copyEventsBetweenDates(currentCalendarEntry, targetCalendarEntry);
+    } else {
+      // copy events on a date
+      copiedEvents = copyEventsOnDate(currentCalendarEntry, targetCalendarEntry);
+    }
+  }
+
+  private int copySingleEvent(CalendarEntry sourceCalendarEntry,
+      CalendarEntry targetCalendarEntry) {
+    // get event in source calendar for the given dateTime
+    List<EventDTO> events = sourceCalendarEntry.model.getEventsInRange(
+        sourceStartDateTime, sourceStartDateTime.plusMinutes(1));
+
+    // filter the event to copy
+    EventDTO eventToCopy = null;
+    for (EventDTO event : events) {
+      if (event.getSubject().equals(eventName)) {
+        eventToCopy = event;
+        break;
+      }
+    }
+
+    // if no event found, return 0
+    if (eventToCopy == null) {
+      return 0;
+    }
+
+    // calculate event duration i.e. end time - start time in minutes
+    long durationMinutes = 0;
+    if (!eventToCopy.getIsAllDay() && eventToCopy.getEndTime() != null) {
+      durationMinutes = java.time.temporal.ChronoUnit.MINUTES.between(
+          eventToCopy.getStartTime(), eventToCopy.getEndTime());
+    }
+
+    //TODO: should copy recurring details for an event if recurring?
+
+    // Create a new event in target calendar
+    EventDTO.EventDTOBuilder builder = EventDTO.getBuilder()
+        .setSubject(eventToCopy.getSubject())
+        .setDescription(eventToCopy.getDescription())
+        .setLocation(eventToCopy.getLocation())
+        .setIsAllDay(eventToCopy.getIsAllDay())
+        .setIsPublic(eventToCopy.getIsPublic())
+        .setIsRecurring(false)
+        .setStartTime(targetStartDateTime);
+
+    // Set end time if applicable
+    if (!eventToCopy.getIsAllDay() && durationMinutes > 0) {
+      builder.setEndTime(targetStartDateTime.plusMinutes(durationMinutes));
+    }
+
+    // TODO: check for conflict in target calendar?
+    // Create the event in target calendar
+    targetCalendarEntry.model.createEvent(builder.build(), false);
+    return 1;
+  }
+
+  private int copyEventsOnDate(CalendarEntry sourceCalendarEntry,
+      CalendarEntry targetCalendarEntry) {
+    //TODO: Implement logic to copy events on a date from sourceCalendarEntry to targetCalendarEntry
+    return 0;
+  }
+
+  private int copyEventsBetweenDates(CalendarEntry sourceCalendarEntry,
+      CalendarEntry targetCalendarEntry) {
+    //TODO: Implement logic to copy events between two dates from sourceCalendarEntry to targetCalendarEntry
+    return 0;
   }
 
   @Override
