@@ -18,6 +18,7 @@ class MockModel implements IModel {
   boolean getEventsInRangeCalled;
   boolean exportToCSVCalled;
   boolean isBusyCalled;
+  boolean getAllEventsCalled;
   CreateEvent createEventReceived;
   EditEvent editEventReceived;
   GetEventsOnDate getEventsOnDateReceived;
@@ -139,6 +140,12 @@ class MockModel implements IModel {
     getEventsInRangeCalled = true;
     getEventsInRangeReceived = new GetEventsInRange(start, end);
     return setGetEventsInRange;
+  }
+
+  @Override
+  public List<EventDTO> getAllEvents() {
+    getAllEventsCalled = true;
+    return List.of();
   }
 
   class ExportToCSV {

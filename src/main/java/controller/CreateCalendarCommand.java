@@ -51,6 +51,10 @@ class CreateCalendarCommand extends Command {
     if (Objects.isNull(calendarName)) {
       throw new ParseCommandException("Invalid command format: create calendar --name <name>");
     }
+    calendarName =
+        calendarName.startsWith("\"")
+            ? calendarName.substring(1, calendarName.length() - 1)
+            : calendarName;
   }
 
   @Override

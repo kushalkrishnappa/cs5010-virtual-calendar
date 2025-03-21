@@ -66,7 +66,7 @@ public class PrintEventsCommandTest extends AbstractCommandTest {
   public void getEventsOnDate() {
     MockView mockView = new MockView("print events on 2025-10-21");
     mockModel.setGetEventsOnDate = generateEvents();
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.createEventCalled);
@@ -85,7 +85,7 @@ public class PrintEventsCommandTest extends AbstractCommandTest {
     MockView mockView = new MockView("print events from 2025-10-21T09:00 to "
         + "2025-10-22T09:30");
     mockModel.setGetEventsInRange = generateEvents();
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.createEventCalled);

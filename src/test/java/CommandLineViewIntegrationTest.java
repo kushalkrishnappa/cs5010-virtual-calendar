@@ -46,7 +46,7 @@ public class CommandLineViewIntegrationTest {
   @Before
   public void setUp() throws InterruptedException {
     controller = new CalendarController(
-        new CalendarModel(),
+        CalendarModel::new,
         new CommandLineView(input, output),
         ControllerMode.INTERACTIVE
     );

@@ -33,7 +33,7 @@ public class ExportCalendarCommandTest extends AbstractCommandTest {
   public void validFileNameWithoutExtension() {
     mockModel.shouldThrowCalendarExportException = false;
     MockView mockView = new MockView("export cal filename\n");
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertEquals("calApp> Calendar exported to file:\n"
             + "Return from exportToCSV\n"
@@ -53,7 +53,7 @@ public class ExportCalendarCommandTest extends AbstractCommandTest {
   public void validFileNameWithExtension() {
     mockModel.shouldThrowCalendarExportException = false;
     MockView mockView = new MockView("export cal filename.csv\n");
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertEquals("calApp> Calendar exported to file:\n"
             + "Return from exportToCSV\n"
