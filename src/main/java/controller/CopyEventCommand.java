@@ -6,6 +6,7 @@ import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.InvalidTimeZoneException;
 import exception.ParseCommandException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -219,8 +220,8 @@ public class CopyEventCommand extends Command {
   private int copySingleEvent(CalendarEntry sourceCalendarEntry,
       CalendarEntry targetCalendarEntry) {
     // get event in source calendar for the given dateTime
-    List<EventDTO> events = sourceCalendarEntry.model.getEventsInRange(
-        sourceStartDateTime, sourceStartDateTime.plusMinutes(1));
+    List<EventDTO> events = sourceCalendarEntry
+        .model.getEventsInRange(sourceStartDateTime, sourceStartDateTime);
 
     // filter the event to copy
     EventDTO eventToCopy = null;
@@ -232,15 +233,14 @@ public class CopyEventCommand extends Command {
     }
 
     // if no event found, return 0
-    if (eventToCopy == null) {
+    if (Objects.isNull(eventToCopy)) {
       return 0;
     }
 
-    // calculate event duration i.e. end time - start time in minutes
-    long durationMinutes = 0;
+    // calculate event duration i.e. endTime - startTime in minutes
+    Duration durationOfEvent = null;
     if (!eventToCopy.getIsAllDay() && eventToCopy.getEndTime() != null) {
-      durationMinutes = java.time.temporal.ChronoUnit.MINUTES.between(
-          eventToCopy.getStartTime(), eventToCopy.getEndTime());
+      durationOfEvent = Duration.between(eventToCopy.getStartTime(), eventToCopy.getEndTime());
     }
 
     //TODO: should copy recurring details for an event if recurring?
@@ -256,8 +256,8 @@ public class CopyEventCommand extends Command {
         .setStartTime(targetStartDateTime);
 
     // Set end time if applicable
-    if (!eventToCopy.getIsAllDay() && durationMinutes > 0) {
-      builder.setEndTime(targetStartDateTime.plusMinutes(durationMinutes));
+    if (!eventToCopy.getIsAllDay() && durationOfEvent != null) {
+      builder.setEndTime(targetStartDateTime.plus(durationOfEvent));
     }
 
     // TODO: check for conflict in target calendar?
