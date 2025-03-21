@@ -564,6 +564,11 @@ public class CalendarModel implements IModel {
     return eventRepository.getEventsInRange(startTime, endTime);
   }
 
+  @Override
+  public List<EventDTO> getAllEvents() {
+    return eventRepository.getAllEvents();
+  }
+
   /**
    * Check if there is a conflict with the given start and end time.
    *

@@ -11,7 +11,10 @@ class MockView implements IView {
   StringBuilder displayErrorMessage;
 
   MockView(String inputStream) {
-    this.inputStream = new StringReader(inputStream);
+    this.inputStream = new StringReader(
+        "create calendar --name default --timezone Asia/Kolkata\n"
+        + "use calendar --name default\n"
+        + inputStream);
     displayMessage = new StringBuilder();
     displayErrorMessage = new StringBuilder();
   }
@@ -34,7 +37,7 @@ class MockView implements IView {
   }
 
   String getDisplayMessage() {
-    String s = displayMessage.toString().split("\n")[0];
+    String s = displayMessage.toString().split("\n")[2];
     return s.startsWith("calApp>") ? s.substring(8) : s;
   }
 

@@ -192,7 +192,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     MockView mockView = new MockView(
         "create event --autoDecline \"event name\" "
             + "from 2025-04-01T12:00 to 2025-04-01T13:00\n");
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
     assertFalse(mockModel.exportToCSVCalled);
@@ -218,7 +218,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     MockView mockView = new MockView(
         "create event --autoDecline \"event name\" "
             + "from 2025-04-01T12:00 to 2025-04-01T13:00 repeats MTU for 10 times\n");
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
     assertFalse(mockModel.exportToCSVCalled);
@@ -252,7 +252,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     MockView mockView = new MockView(
         "create event --autoDecline \"event name\" "
             + "from 2025-04-01T12:00 to 2025-04-01T13:00 repeats MTU until 2025-05-10T12:00\n");
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
     assertFalse(mockModel.exportToCSVCalled);
@@ -286,7 +286,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     MockView mockView = new MockView(
         "create event --autoDecline \"event name\" "
             + "on 2025-04-01T13:00\n");
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
     assertFalse(mockModel.exportToCSVCalled);
@@ -313,7 +313,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     MockView mockView = new MockView(
         "create event \"event name\" "
             + "on 2025-04-01 repeats WRFS for 10 times\n");
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
     assertFalse(mockModel.exportToCSVCalled);
@@ -347,7 +347,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     MockView mockView = new MockView(
         "create event \"event name\" "
             + "on 2025-04-01 repeats WRFS until 2025-05-19\n");
-    controller = new CalendarController(mockModel, mockView, ControllerMode.INTERACTIVE);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
     assertFalse(mockModel.exportToCSVCalled);

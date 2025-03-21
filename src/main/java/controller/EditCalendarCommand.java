@@ -2,19 +2,24 @@ package controller;
 
 import controller.CalendarController.ControllerUtility;
 import controller.CalendarEntry.CalendarEntryBuilder;
+import dto.EventDTO;
+import dto.RecurringDetailsDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.BiConsumer;
+import model.IModel;
 
 class EditCalendarCommand extends Command {
 
   private String calendarName;
   private String newCalendarName;
+  private String newTimeZone;
   private final CalendarEntryBuilder calendarEntryBuilder;
 
   private final Map<String, BiConsumer<CalendarEntryBuilder, String>> calendarEntryPropertySetters;
@@ -30,17 +35,22 @@ class EditCalendarCommand extends Command {
 
   private Map<String, BiConsumer<CalendarEntryBuilder, String>> createPropertySetters() {
     Map<String, BiConsumer<CalendarEntryBuilder, String>> propertySetters = new HashMap<>();
-    propertySetters.put("timezone", (builder, zoneIdString) -> builder.setZoneId(zoneIdString));
-    propertySetters.put("name", (builder, name) -> {
-      newCalendarName = name;
-      return;
-    });
+    propertySetters.put("timezone",
+        (builder, zoneIdString) -> {
+          builder.setZoneId(zoneIdString);
+          newTimeZone = zoneIdString;
+        });
+    propertySetters.put("name",
+        (builder, name) -> {
+          newCalendarName = name;
+          return;
+        });
     return propertySetters;
   }
 
   @Override
   Command parseCommand(Scanner commandScanner) throws ParseCommandException {
-    while(commandScanner.hasNext()) {
+    while (commandScanner.hasNext()) {
       switch (commandScanner.next()) {
         case "--name":
           parseCalendarName(commandScanner);
@@ -75,24 +85,74 @@ class EditCalendarCommand extends Command {
     if (Objects.isNull(calendarName)) {
       throw new ParseCommandException("Invalid command format: create calendar --name <name>");
     }
+    calendarName =
+        calendarName.startsWith("\"")
+            ? calendarName.substring(1, calendarName.length() - 1)
+            : calendarName;
   }
 
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
     CalendarEntry calendarEntry = controllerUtility.removeCalendarEntry(calendarName);
-    CalendarEntry updatedCalendarEntry = calendarEntryBuilder.setModel(calendarEntry.model).build();
+    CalendarEntry updatedCalendarEntry = calendarEntryBuilder.setModel(
+        Objects.nonNull(newTimeZone)
+            ? shiftCalendarTimezone(calendarEntry.model, calendarEntry.zoneId,
+            ZoneId.of(newTimeZone), controllerUtility.getModelFactory().get())
+            : calendarEntry.model
+    ).build();
 
     if (Objects.nonNull(newCalendarName)) {
       controllerUtility.addCalendarEntry(newCalendarName, calendarEntry);
-    } else{
+    } else {
       controllerUtility.addCalendarEntry(calendarName, updatedCalendarEntry);
     }
 
   }
 
+  private IModel shiftCalendarTimezone(IModel existingModel, ZoneId existingZoneId,
+      ZoneId newZoneId, IModel newModel) {
+    existingModel.getAllEvents().forEach(event -> {
+      newModel.createEvent(
+          EventDTO.getBuilder()
+              .setSubject(event.getSubject())
+              .setDescription(event.getDescription())
+              .setLocation(event.getLocation())
+              .setIsPublic(event.getIsPublic())
+              .setIsAllDay(event.getIsAllDay())
+              .setIsRecurring(event.getIsRecurring())
+              .setStartTime(event.getStartTime()
+                  .atZone(existingZoneId)
+                  .withZoneSameInstant(newZoneId)
+                  .toLocalDateTime())
+              .setEndTime(event.getEndTime()
+                  .atZone(existingZoneId)
+                  .withZoneSameInstant(newZoneId)
+                  .toLocalDateTime())
+              .setRecurringDetails(
+                  Objects.nonNull(event.getRecurringDetails())
+                      ? RecurringDetailsDTO.getBuilder()
+                      .setRepeatDays(event.getRecurringDetails().getRepeatDays())
+                      .setOccurrences(event.getRecurringDetails().getOccurrences())
+                      .setUntilDate(
+                          Objects.nonNull(event.getRecurringDetails().getUntilDate())
+                              ? event.getRecurringDetails().getUntilDate()
+                              .atZone(existingZoneId)
+                              .withZoneSameInstant(newZoneId)
+                              .toLocalDateTime()
+                              : null
+                      )
+                      .build()
+                      : null
+              )
+              .build()
+          , false);
+    });
+    return newModel;
+  }
+
   @Override
   void promptResult(ControllerUtility controllerUtility) {
-
+    controllerUtility.promptOutput("Calendar updated successfully");
   }
 }

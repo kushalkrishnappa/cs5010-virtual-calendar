@@ -66,6 +66,12 @@ public interface IModel {
   List<EventDTO> getEventsInRange(LocalDateTime start, LocalDateTime end);
 
   /**
+   * Get all events in the calendar.
+   *
+   * @return list of all events in the calendar
+   */
+  List<EventDTO> getAllEvents();
+  /**
    * Exports the calendar to a CSV file.
    *
    * @param fileName filename to export
