@@ -1,7 +1,6 @@
 package model;
 
 import dto.EventDTO;
-import exception.CalendarExportException;
 import exception.EventConflictException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -71,14 +70,6 @@ public interface IModel {
    * @return list of all events in the calendar
    */
   List<EventDTO> getAllEvents();
-  /**
-   * Exports the calendar to a CSV file.
-   *
-   * @param fileName filename to export
-   * @return the file name
-   * @throws CalendarExportException if the export fails
-   */
-  String exportToCSV(String fileName) throws CalendarExportException;
 
   /**
    * Checks if the user is busy at a given dateTime.

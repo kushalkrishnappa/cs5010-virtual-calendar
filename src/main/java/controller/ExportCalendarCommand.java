@@ -1,11 +1,15 @@
 package controller;
 
 import controller.CalendarController.ControllerUtility;
+import dto.EventDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import service.CSVCalendarExporter;
+import service.ICalendarExporter;
 
 /**
  * ExportCalendarCommand class implements Command and execute the command to export the calendar to
@@ -50,8 +54,10 @@ class ExportCalendarCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
-    outputFilePath = controllerUtility.getCurrentCalendar().model
-        .exportToCSV(filename);
+    List<EventDTO> allEvents = controllerUtility.getCurrentCalendar().model
+        .getAllEvents();
+    ICalendarExporter calendarExporter = new CSVCalendarExporter();
+    outputFilePath = calendarExporter.export(allEvents, filename);
   }
 
   @Override
