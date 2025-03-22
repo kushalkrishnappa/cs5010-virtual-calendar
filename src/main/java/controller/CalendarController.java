@@ -135,7 +135,9 @@ public class CalendarController implements IController {
    */
   private void promptUserInput() {
     if (mode == ControllerMode.INTERACTIVE) {
-      view.displayMessage("calApp> ");
+      view.displayMessage("calApp [" +
+          (Objects.nonNull(currentCalendar)? currentCalendar : "No calendar in use")
+          + "]> ");
     }
   }
 
