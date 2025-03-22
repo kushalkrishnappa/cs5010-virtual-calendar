@@ -236,43 +236,14 @@ public class CopyEventCommand extends Command {
         .model.getEventsInRange(sourceStartDateTime, sourceStartDateTime);
 
     // filter the event to copy
-    EventDTO eventToCopy = null;
-    for (EventDTO event : events) {
-      if (event.getSubject().equals(eventName)) {
-        eventToCopy = event;
-        break;
-      }
-    }
+    events.removeIf(event -> !event.getSubject().equals(eventName));
 
-    // if no event found, return 0
-    if (Objects.isNull(eventToCopy)) {
+    // no event to copy, return 0
+    if (events.isEmpty()) {
       return 0;
     }
 
-    // calculate event duration i.e. endTime - startTime in minutes
-    Duration durationOfEvent = null;
-    if (!eventToCopy.getIsAllDay() && eventToCopy.getEndTime() != null) {
-      durationOfEvent = Duration.between(eventToCopy.getStartTime(), eventToCopy.getEndTime());
-    }
-
-    // Create a new event in target calendar
-    EventDTO.EventDTOBuilder builder = EventDTO.getBuilder()
-        .setSubject(eventToCopy.getSubject())
-        .setDescription(eventToCopy.getDescription())
-        .setLocation(eventToCopy.getLocation())
-        .setIsAllDay(eventToCopy.getIsAllDay())
-        .setIsPublic(eventToCopy.getIsPublic())
-        .setIsRecurring(false)
-        .setStartTime(targetStartDateTime);
-
-    // Set end time if applicable
-    if (!eventToCopy.getIsAllDay() && durationOfEvent != null) {
-      builder.setEndTime(targetStartDateTime.plus(durationOfEvent));
-    }
-
-    // Create the event in target calendar
-    targetCalendarEntry.model.createEvent(builder.build(), false);
-    return 1;
+    return copyEvents(targetCalendarEntry, events);
   }
 
   private int copyEventsOnDate(CalendarEntry sourceCalendarEntry,
@@ -280,22 +251,48 @@ public class CopyEventCommand extends Command {
     // get all the events on the source date
     List<EventDTO> eventsOnDate = sourceCalendarEntry.model.getEventsOnDate(sourceStartDate);
 
+    // no events to copy, return 0
     if (eventsOnDate.isEmpty()) {
       return 0;
     }
 
+    return  copyEvents(targetCalendarEntry, eventsOnDate);
+  }
+
+  private int copyEventsBetweenDates(CalendarEntry sourceCalendarEntry,
+      CalendarEntry targetCalendarEntry) {
+    // get all the events between the two dates
+    List<EventDTO> eventsBetweenDates = sourceCalendarEntry.model
+        .getEventsInRange(
+            sourceStartDate.atStartOfDay(),
+            sourceEndDate.plusDays(1).atStartOfDay()
+        );
+
+    // no events to copy, return 0
+    if (eventsBetweenDates.isEmpty()) {
+      return 0;
+    }
+
+    return copyEvents(targetCalendarEntry, eventsBetweenDates);
+  }
+
+  private int copyEvents(CalendarEntry targetCalendarEntry, List<EventDTO> eventsOnDate) {
     int copiedEvents = 0;
 
     for (EventDTO event : eventsOnDate) {
-      // calculate event duration between startTime and endTime
-      Duration durationOfEvent = Duration.between(event.getStartTime(), event.getEndTime());
-
       // get the startDateTime for event to be copied (time will be same as source)
-      LocalDateTime newStartDateTime = targetStartDate.atTime(event.getStartTime().toLocalTime());
+      LocalDateTime newStartDateTime;
+      if (!Objects.isNull(sourceStartDateTime)) {
+        newStartDateTime = sourceStartDateTime;
+      } else {
+        newStartDateTime = targetStartDate.atTime(event.getStartTime().toLocalTime());
+      }
 
       // get the endDateTime for event to be copied (time will be same as source)
       LocalDateTime newEndDateTime = null;
       if (!event.getIsAllDay() && event.getEndTime() != null) {
+        // calculate event duration between startTime and endTime
+        Duration durationOfEvent = Duration.between(event.getStartTime(), event.getEndTime());
         newEndDateTime = newStartDateTime.plus(durationOfEvent);
       }
 
@@ -316,12 +313,6 @@ public class CopyEventCommand extends Command {
       copiedEvents++;
     }
     return copiedEvents;
-  }
-
-  private int copyEventsBetweenDates(CalendarEntry sourceCalendarEntry,
-      CalendarEntry targetCalendarEntry) {
-    //TODO: Implement logic to copy events between two dates from sourceCalendarEntry to targetCalendarEntry
-    return 0;
   }
 
   @Override
