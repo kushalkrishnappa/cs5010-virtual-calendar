@@ -265,7 +265,7 @@ public class CopyEventCommand extends Command {
     List<EventDTO> eventsBetweenDates = sourceCalendarEntry.model
         .getEventsInRange(
             sourceStartDate.atStartOfDay(),
-            sourceEndDate.plusDays(1).atStartOfDay()
+            sourceStartDate.atTime(23, 59,59)
         );
 
     // no events to copy, return 0
@@ -276,14 +276,14 @@ public class CopyEventCommand extends Command {
     return copyEvents(targetCalendarEntry, eventsBetweenDates);
   }
 
-  private int copyEvents(CalendarEntry targetCalendarEntry, List<EventDTO> eventsOnDate) {
+  private int copyEvents(CalendarEntry targetCalendarEntry, List<EventDTO> eventsToCopy) {
     int copiedEvents = 0;
 
-    for (EventDTO event : eventsOnDate) {
+    for (EventDTO event : eventsToCopy) {
       // get the startDateTime for event to be copied (time will be same as source)
       LocalDateTime newStartDateTime;
       if (!Objects.isNull(sourceStartDateTime)) {
-        newStartDateTime = sourceStartDateTime;
+        newStartDateTime = targetStartDateTime;
       } else {
         newStartDateTime = targetStartDate.atTime(event.getStartTime().toLocalTime());
       }
@@ -303,7 +303,7 @@ public class CopyEventCommand extends Command {
           .setLocation(event.getLocation())
           .setIsAllDay(event.getIsAllDay())
           .setIsPublic(event.getIsPublic())
-          .setIsRecurring(false)
+          .setIsRecurring(false) // recurring details are reset on copy
           .setStartTime(newStartDateTime)
           .setEndTime(newEndDateTime)
           .build();
