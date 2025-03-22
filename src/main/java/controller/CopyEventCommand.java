@@ -277,7 +277,6 @@ public class CopyEventCommand extends Command {
 
   private int copyEventsOnDate(CalendarEntry sourceCalendarEntry,
       CalendarEntry targetCalendarEntry) {
-
     // get all the events on the source date
     List<EventDTO> eventsOnDate = sourceCalendarEntry.model.getEventsOnDate(sourceStartDate);
 
