@@ -2,12 +2,12 @@ package service;
 
 import dto.EventDTO;
 import exception.CalendarExportException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * This strategy exports the events in a csv format required by Google calendar's import.
+ */
 public class CSVCalendarExporter implements ICalendarExporter {
 
 
@@ -18,51 +18,45 @@ public class CSVCalendarExporter implements ICalendarExporter {
       DateTimeFormatter.ofPattern("hh:mm a");
 
   @Override
-  public String export(List<EventDTO> events, String fileName) {
-    // If there are no events, throw an CalendarExportException
+  public String export(List<EventDTO> events) {
+    // If there are no events, throw a CalendarExportException
     if (events.isEmpty()) {
       throw new CalendarExportException("No events to export");
     }
 
-    // Define file path - if the file name does not end with .csv, add it
-    String csvFilePath = fileName.endsWith(".csv") ? fileName : fileName + ".csv";
+    StringBuilder csvContent = new StringBuilder();
 
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFilePath))) {
-      // Write the header
-      writer.write(getCSVHeader());
-      writer.newLine();
+    csvContent.append(getCSVHeader())
+        .append(System.lineSeparator());
 
-      // Write each event as a row in CSV
-      for (EventDTO event : events) {
-        writer.write(String.join(",",
-            // Subject
-            escapeCSV(event.getSubject()),
-            // Start Date
-            event.getStartTime() != null ? event.getStartTime().format(calenderExportDateFormatter)
-                : "",
-            // Start Time
-            event.getStartTime() != null && !event.getIsAllDay() ? event.getStartTime()
-                .format(calenderExportTimeFormatter) : "",
-            // End Date
-            event.getEndTime() != null ? event.getEndTime().format(calenderExportDateFormatter)
-                : "",
-            // End Time
-            event.getEndTime() != null && !event.getIsAllDay() ? event.getEndTime()
-                .format(calenderExportTimeFormatter) : "",
-            // All Day Event
-            event.getIsAllDay() ? "True" : "False",
-            // Description
-            escapeCSV(event.getDescription()),
-            // Location
-            escapeCSV(event.getLocation()),
-            // Private
-            event.getIsPublic() ? "False" : "True"));
-        writer.newLine();
-      }
-      return csvFilePath;
-    } catch (IOException e) {
-      throw new CalendarExportException("Error exporting to CSV");
+    // Write each event as a row in CSV
+    for (EventDTO event : events) {
+      csvContent.append(String.join(",",
+              // Subject
+              escapeCSV(event.getSubject()),
+              // Start Date
+              event.getStartTime() != null ? event.getStartTime().format(calenderExportDateFormatter)
+                  : "",
+              // Start Time
+              event.getStartTime() != null && !event.getIsAllDay() ? event.getStartTime()
+                  .format(calenderExportTimeFormatter) : "",
+              // End Date
+              event.getEndTime() != null ? event.getEndTime().format(calenderExportDateFormatter)
+                  : "",
+              // End Time
+              event.getEndTime() != null && !event.getIsAllDay() ? event.getEndTime()
+                  .format(calenderExportTimeFormatter) : "",
+              // All Day Event
+              event.getIsAllDay() ? "True" : "False",
+              // Description
+              escapeCSV(event.getDescription()),
+              // Location
+              escapeCSV(event.getLocation()),
+              // Private
+              event.getIsPublic() ? "False" : "True"))
+          .append(System.lineSeparator());
     }
+    return csvContent.toString();
   }
 
   /**

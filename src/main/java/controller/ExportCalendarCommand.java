@@ -1,15 +1,16 @@
 package controller;
 
 import controller.CalendarController.ControllerUtility;
-import dto.EventDTO;
 import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
-import java.util.List;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import service.CSVCalendarExporter;
 import service.ICalendarExporter;
+import service.IFileWriter;
+import service.StandardFileWriter;
 
 /**
  * ExportCalendarCommand class implements Command and execute the command to export the calendar to
@@ -21,12 +22,15 @@ class ExportCalendarCommand extends Command {
 
   private String filename;
 
+  private final IFileWriter fileWriter;
+
   /**
    * Constructor for ExportCalendarCommand.
    */
   ExportCalendarCommand() {
     outputFilePath = null;
     filename = null;
+    fileWriter = new StandardFileWriter();
   }
 
   @Override
@@ -54,10 +58,17 @@ class ExportCalendarCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
-    List<EventDTO> allEvents = controllerUtility.getCurrentCalendar().model
-        .getAllEvents();
+    // get csv string from the model by passing format strategy
     ICalendarExporter calendarExporter = new CSVCalendarExporter();
-    outputFilePath = calendarExporter.export(allEvents, filename);
+    String csvData = controllerUtility.getCurrentCalendar().model
+        .exportEventsWithExporter(calendarExporter);
+
+    // write the data to file using file strategy
+    try {
+      outputFilePath = fileWriter.write(filename, csvData);
+    } catch (IOException e) {
+      throw new CalendarExportException("Could not write to file: " + filename);
+    }
   }
 
   @Override
