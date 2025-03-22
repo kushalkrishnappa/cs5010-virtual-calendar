@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import repository.IEventRepository;
 import repository.InMemoryEventRepository;
+import service.ICalendarExporter;
 
 /**
  * This class represents the model for the CalendarApp application. It implements the IModel
@@ -556,6 +557,11 @@ public class CalendarModel implements IModel {
   @Override
   public List<EventDTO> getAllEvents() {
     return eventRepository.getAllEvents();
+  }
+
+  @Override
+  public String exportEventsWithExporter(ICalendarExporter exporter) {
+    return exporter.export(eventRepository.getAllEvents());
   }
 
   /**
