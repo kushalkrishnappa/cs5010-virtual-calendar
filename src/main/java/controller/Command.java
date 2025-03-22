@@ -8,15 +8,16 @@ import exception.ParseCommandException;
 import java.util.Scanner;
 
 /**
- * Command class is an abstract class that represents a command to be executed by the controller.
+ * This class represents a command abstraction that involves parsing a command from a command
+ * scanner, executing the command on a model, and prompting the result of the command.
  */
 abstract class Command {
 
   /**
    * Parses the command from the Scanner object.
    *
-   * @param commandScanner Scanner object that contains the command to be parsed.
-   * @throws ParseCommandException if the command is invalid.
+   * @param commandScanner a Scanner object that reads the command (File or console input).
+   * @throws ParseCommandException if the command provided is invalid.
    */
   abstract Command parseCommand(Scanner commandScanner)
       throws ParseCommandException, InvalidTimeZoneException;
@@ -24,8 +25,8 @@ abstract class Command {
   /**
    * Executes the command on the model.
    *
-   * @param controllerUtility the controller utility
-   * @throws CalendarExportException if there is an error exporting the calendar.
+   * @param controllerUtility the controller utility object
+   * @throws CalendarExportException if there is an error on exporting the calendar.
    * @throws EventConflictException  if there is a conflict with the event.
    */
   abstract void executeCommand(ControllerUtility controllerUtility)
@@ -34,8 +35,7 @@ abstract class Command {
   /**
    * Prompts the result of the command.
    *
-   * @param controllerUtility ControllerUtility object that will be used to prompt the result of the
-   *                          command.
+   * @param controllerUtility the controller utility object
    */
   abstract void promptResult(ControllerUtility controllerUtility);
 
