@@ -3,6 +3,7 @@ package controller;
 import controller.CalendarController.ControllerUtility;
 import dto.EventDTO;
 import exception.CalendarExportException;
+import exception.EventConflictException;
 import exception.InvalidTimeZoneException;
 import exception.ParseCommandException;
 import java.time.Duration;
@@ -36,6 +37,8 @@ public class CopyEventCommand extends Command {
 
   private Integer copiedEvents;
 
+  private final StringBuilder conflictMessages;
+
   /**
    * The constructor for the CopyEventCommand class initializes the class variables to null.
    */
@@ -48,6 +51,7 @@ public class CopyEventCommand extends Command {
     targetCalendarName = null;
     eventName = null;
     copiedEvents = null;
+    conflictMessages = new StringBuilder();
   }
 
   /**
@@ -78,7 +82,10 @@ public class CopyEventCommand extends Command {
     } catch (NoSuchElementException e) {
       System.out.println("printing no such element");
       throw new ParseCommandException(
-          "Invalid command format: copy (event|events) (eventName on|on|between)...");
+          "Invalid command format: copy (event|events) (eventName on|on|between) "
+              + "(sourceStartDateTime|sourceStartDateTime|<sourceStartDate> and <sourceEndDate>) "
+              + "--target <targetCalendarName> to (targetStartDateTime|targetStartDate)"
+      );
     }
     return this;
   }
@@ -284,8 +291,9 @@ public class CopyEventCommand extends Command {
    * <p>The recurring details of the recurring event(s) are reset and the event(s) are copied as
    * non-recurring events.
    *
-   * <p>It does not check for conflicts in the target calendar. It will create the event(s) in the
-   * target calendar even if there is a conflict.
+   * <p>It will check for the conflicts in the target calendar and will not copy the event(s) if
+   * there is a conflict. In case of series of events with conflicts, it will follow the best effort
+   * approach to copy events that don't have conflict and skip those that do.
    *
    * @param controllerUtility the controller utility class
    * @throws CalendarExportException if the target calendar is not present in the model
@@ -422,11 +430,29 @@ public class CopyEventCommand extends Command {
           .setEndTime(newEndDateTime)
           .build();
 
-      // create the event in target calendar
-      targetCalendarEntry.model.createEvent(eventToCopy, false);
-      copiedEvents++;
+      // try to create the event in target calendar
+      try {
+        targetCalendarEntry.model.createEvent(eventToCopy, true);
+        copiedEvents++;
+      } catch (EventConflictException e) {
+        // event conflict, add to conflict messages
+        formatConflictMessages();
+        conflictMessages.append(event.getSubject())
+            .append(" on ")
+            .append(newStartDateTime.format(CalendarController.dateTimeFormatter));
+      }
     }
     return copiedEvents;
+  }
+
+  /**
+   * Format the conflict messages to be printed.
+   */
+  private void formatConflictMessages() {
+    if (conflictMessages.length() > 0) {
+      conflictMessages.append("\n");
+    }
+    conflictMessages.append("- Event Conflict: ");
   }
 
   /**
@@ -437,9 +463,16 @@ public class CopyEventCommand extends Command {
   @Override
   void promptResult(ControllerUtility controllerUtility) {
     if (copiedEvents > 0) {
-      controllerUtility.promptOutput("Successfully copied event(s) to " + targetCalendarName);
+      controllerUtility.promptOutput(
+          "Successfully copied" + copiedEvents + " event(s) to " + targetCalendarName);
     } else {
       controllerUtility.promptOutput("No events were copied to " + targetCalendarName);
+    }
+
+    // print conflict messages if any
+    if (conflictMessages.length() > 0) {
+      controllerUtility.promptOutput(
+          "The following events were not copied due to conflicts:\n" + conflictMessages);
     }
   }
 }
