@@ -163,7 +163,9 @@ public class PrintEventsCommandTest extends AbstractCommandTest {
   }
 
   private String generateEventsRepresentation() {
-    return "calApp> "
+    return "calApp [No calendar in use]> Created calendar default\n"
+        + "calApp [No calendar in use]> Switched to default\n"
+        + "calApp [default]> "
         + "[2025-10-21] [2025-10-21 10:00 - 2025-10-22 11:00] [Not Recurring] "
         + "SpannedEvent || SpannedEvent location\n"
         + "[2025-10-21] [2025-10-21 10:00 - 2025-10-21 11:00] [Recurring]     "
@@ -172,6 +174,6 @@ public class PrintEventsCommandTest extends AbstractCommandTest {
         + "AllDayEvent || AllDayEvent location\n"
         + "[2025-10-21] [ALL DAY EVENT]                       [Recurring]     "
         + "AllDayRecurringEvent || AllDayRecurringEvent location\n"
-        + "calApp> ";
+        + "calApp [default]> ";
   }
 }

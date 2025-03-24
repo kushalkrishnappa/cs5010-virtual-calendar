@@ -27,13 +27,13 @@ public class RefactoredCalendarModelTest {
   public void testCreateSimpleEvent() {
     EventDTO simpleEvent = EventDTO.getBuilder()
         .setSubject("simple Event")
-        .setStartTime(LocalDateTime.of(2025, 01, 1, 12, 0, 0))
-        .setEndTime(LocalDateTime.of(2025, 01, 1, 13, 0, 0))
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 1, 13, 0, 0))
         .build();
     EventDTO expectedSimpleEvent = EventDTO.getBuilder()
         .setSubject("simple Event")
-        .setStartTime(LocalDateTime.of(2025, 01, 1, 12, 0, 0))
-        .setEndTime(LocalDateTime.of(2025, 01, 1, 13, 0, 0))
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 1, 13, 0, 0))
         .setIsAllDay(false)
         .setIsRecurring(false)
         .setIsPublic(false)
@@ -47,12 +47,12 @@ public class RefactoredCalendarModelTest {
   public void testCreateAllDayEvent() {
     EventDTO allDayEvent = EventDTO.getBuilder()
         .setSubject("all day Event")
-        .setStartTime(LocalDateTime.of(2025, 01, 1, 12, 0, 0))
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
         .build();
     EventDTO expectedAllDayEvent = EventDTO.getBuilder()
         .setSubject("all day Event")
-        .setStartTime(LocalDateTime.of(2025, 01, 1, 0, 0, 0))
-        .setEndTime(LocalDateTime.of(2025, 01, 2, 0, 0, 0))
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 0, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 2, 0, 0, 0))
         .setIsAllDay(true)
         .setIsRecurring(false)
         .setIsPublic(false)
@@ -70,12 +70,18 @@ public class RefactoredCalendarModelTest {
         .build();
     EventDTO simpleRecurringEvent = EventDTO.getBuilder()
         .setSubject("simple Recurring")
-        .setStartTime(LocalDateTime.of(2025, 01, 1, 12, 0, 0))
-        .setEndTime(LocalDateTime.of(2025, 01, 1, 13, 0, 0))
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 1, 13, 0, 0))
         .setIsRecurring(true)
         .setRecurringDetails(recurDetails)
         .build();
     model.createEvent(simpleRecurringEvent, false);
     assertEquals(5, model.getAllEvents().size());
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateNullEvent() {
+    model.createEvent(null, false);
   }
 }

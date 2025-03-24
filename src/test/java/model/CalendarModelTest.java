@@ -6,13 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 import dto.EventDTO;
 import dto.RecurringDetailsDTO;
-import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.InvalidDateTimeRangeException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import exception.InvalidEventDetailsException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -180,7 +176,7 @@ public class CalendarModelTest {
     calendarModel.createEvent(conflictingEvent, true);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = InvalidEventDetailsException.class)
   public void testCreateRecurringEventSpanningOverDayThrowException() {
     RecurringDetailsDTO recurringDetails = RecurringDetailsDTO.getBuilder()
         .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
@@ -653,7 +649,7 @@ public class CalendarModelTest {
     EventDTO editedEventDTO = EventDTO.getBuilder()
         .setSubject("Edited Recurring Event")
         .setStartTime(LocalDateTime.of(2025, 3, 15, 2, 0))
-        .setEndTime(null)
+        .setEndTime(LocalDateTime.of(2025, 3, 15, 3, 0))
         .setIsRecurring(true)
         .setIsAllDay(true)
         .setRecurringDetails(recurringDetails)
@@ -666,7 +662,7 @@ public class CalendarModelTest {
         editedEventDTO
     );
 
-    assertEquals(7, calendarModel.eventRepository.getAllEvents().size());
+    assertEquals(6, calendarModel.eventRepository.getAllEvents().size());
   }
 
   // Test exportToCSV Method in CalendarModel

@@ -18,15 +18,13 @@ public class EditEventCommandTest extends AbstractCommandTest {
 
   @Test
   public void invalidEmptyCommand() {
-    assertEquals("Invalid command format: edit (event|events) <property> <eventName> "
-            + "[from <startDateTime> [to <endDateTime>] with] "
-            + "<newPropertyValue>",
+    assertEquals("Invalid command format: edit (calendar|event|events) ...",
         getErrorMessageWithInput("edit"));
   }
 
   @Test
   public void invalidEventName() {
-    assertEquals("Invalid command format: edit (event|events) ...",
+    assertEquals("Invalid command format: edit (calendar|event|events) ...",
         getErrorMessageWithInput("edit eventName"));
   }
 

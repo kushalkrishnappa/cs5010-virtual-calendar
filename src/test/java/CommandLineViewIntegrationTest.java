@@ -44,7 +44,7 @@ public class CommandLineViewIntegrationTest {
   }
 
   @Before
-  public void setUp() throws InterruptedException {
+  public void setUp() throws InterruptedException, IOException {
     controller = new CalendarController(
         CalendarModel::new,
         new CommandLineView(input, output),
@@ -75,6 +75,10 @@ public class CommandLineViewIntegrationTest {
     appThread.start();
     monitorThread.start();
     outputSignal.take(); // for the first user prompt (calApp> )
+    pipedInput.write("create calendar --name default --timezone Asia/Kolkata\n".getBytes());
+    outputSignal.take();
+    pipedInput.write("use calendar --name default\n".getBytes());
+    outputSignal.take();
   }
 
   @Test
