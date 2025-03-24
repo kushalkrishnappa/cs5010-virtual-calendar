@@ -1,7 +1,10 @@
 import static org.junit.Assert.assertEquals;
 
 import dto.EventDTO;
+import dto.RecurringDetailsDTO;
 import java.time.LocalDateTime;
+import java.util.Set;
+import model.CalendarDayOfWeek;
 import model.CalendarModel;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,4 +62,20 @@ public class RefactoredCalendarModelTest {
     assertEquals(expectedAllDayEvent, model.getAllEvents().get(0));
   }
 
+  @Test
+  public void testCreateRecurringSimpleEvent() {
+    RecurringDetailsDTO recurDetails = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(Set.of(CalendarDayOfWeek.M,CalendarDayOfWeek.W,CalendarDayOfWeek.F))
+        .setOccurrences(5)
+        .build();
+    EventDTO simpleRecurringEvent = EventDTO.getBuilder()
+        .setSubject("simple Recurring")
+        .setStartTime(LocalDateTime.of(2025, 01, 1, 12, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 01, 1, 13, 0, 0))
+        .setIsRecurring(true)
+        .setRecurringDetails(recurDetails)
+        .build();
+    model.createEvent(simpleRecurringEvent, false);
+    assertEquals(5, model.getAllEvents().size());
+  }
 }

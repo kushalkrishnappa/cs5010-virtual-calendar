@@ -195,7 +195,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
@@ -221,7 +221,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
@@ -255,7 +255,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
@@ -289,7 +289,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
@@ -316,7 +316,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
@@ -350,7 +350,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
     assertTrue(mockModel.createEventCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);

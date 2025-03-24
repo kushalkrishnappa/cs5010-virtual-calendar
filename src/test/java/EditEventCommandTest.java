@@ -128,7 +128,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
   }
 
@@ -142,7 +142,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
   }
 
@@ -155,7 +155,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -178,7 +178,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -201,7 +201,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -224,7 +224,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -247,7 +247,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -270,7 +270,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -293,7 +293,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -316,7 +316,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -342,7 +342,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -368,7 +368,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -395,7 +395,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -417,7 +417,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -439,7 +439,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -461,7 +461,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -483,7 +483,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -505,7 +505,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -527,7 +527,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -549,7 +549,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -574,7 +574,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -599,7 +599,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -625,7 +625,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -646,7 +646,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -667,7 +667,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -688,7 +688,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -709,7 +709,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -730,7 +730,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -751,7 +751,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -772,7 +772,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -796,7 +796,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
@@ -820,7 +820,7 @@ public class EditEventCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals("eventName",
         mockModel.editEventReceived.name);
