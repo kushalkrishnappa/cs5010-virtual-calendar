@@ -19,11 +19,6 @@ public class CSVCalendarExporter implements ICalendarExporter {
 
   @Override
   public String export(List<EventDTO> events) {
-    // If there are no events, throw a CalendarExportException
-    if (events.isEmpty()) {
-      throw new CalendarExportException("No events to export");
-    }
-
     StringBuilder csvContent = new StringBuilder();
 
     csvContent.append(getCSVHeader())
