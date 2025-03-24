@@ -1,4 +1,5 @@
 import dto.EventDTO;
+import exception.CalendarExportException;
 import exception.EventConflictException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,11 +25,12 @@ class MockModel implements IModel {
   EditEvent editEventReceived;
   GetEventsOnDate getEventsOnDateReceived;
   GetEventsInRange getEventsInRangeReceived;
-  ExportEventsWithExporter exportEventsWithExporterReceived;
+  String exportEventsWithExporterReceived;
   IsBusy isBusyReceived;
   boolean shouldThrowEventConflictException;
   boolean shouldThrowCalendarExportException;
   boolean shouldThrowIllegalArgumentException;
+  boolean shouldThrowIOException;
   Boolean setIsBusyReturn;
   Integer setEditEventReturn;
 
@@ -234,7 +236,10 @@ class MockModel implements IModel {
   @Override
   public String exportEventsWithExporter(ICalendarExporter exporter) {
     exportEventsWithExporterCalled = true;
-    return "Result from exporter";
+    if (Objects.isNull(exportEventsWithExporterReceived)) {
+      throw new CalendarExportException("No events to export");
+    }
+    return exportEventsWithExporterReceived;
   }
 
   class IsBusy {

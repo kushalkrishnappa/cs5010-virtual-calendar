@@ -5,11 +5,40 @@ import static org.junit.Assert.assertTrue;
 import controller.CalendarController;
 import controller.ControllerMode;
 import org.junit.Test;
+import org.junit.After;
+import org.junit.Before;
+import java.io.File;
 
 /**
  * This is a test class for the ExportCalendarCommand class.
  */
 public class ExportCalendarCommandTest extends AbstractCommandTest {
+
+  private String testDir;
+  private File testFile;
+
+  @Before
+  public void setUp() {
+    super.setUp();
+    testDir = "target/test_output/";
+    new File(testDir).mkdirs();
+  }
+
+  @After
+  public void tearDown() {
+    // Clean up test files
+    File directory = new File(testDir);
+    if (directory.exists() && directory.isDirectory()) {
+      File[] files = directory.listFiles();
+      if (files != null) {
+        for (File file : files) {
+          if (file.getName().endsWith(".csv")) {
+            file.delete();
+          }
+        }
+      }
+    }
+  }
 
   @Test
   public void invalidExport() {
@@ -29,43 +58,97 @@ public class ExportCalendarCommandTest extends AbstractCommandTest {
         getErrorMessageWithInput("export cal filename.txt"));
   }
 
+//  @Test
+//  public void validFileNameWithoutExtension() {
+//    mockModel.shouldThrowCalendarExportException = false;
+//    MockView mockView = new MockView("export cal filename\n");
+//    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
+//    controller.run();
+//    assertEquals("calApp> Calendar exported to file:\n"
+//            + "Return from exportToCSV\n"
+//            + "calApp> ",
+//        mockView.displayMessage.toString());
+//    assertTrue(mockModel.exportEventsWithExporterCalled);
+//    assertFalse(mockModel.createEventCalled);
+//    assertFalse(mockModel.editEventCalled);
+//    assertFalse(mockModel.getEventsInRangeCalled);
+//    assertFalse(mockModel.getEventsOnDateCalled);
+//    assertFalse(mockModel.isBusyCalled);
+//    assertEquals("filename.csv",
+//        mockModel.exportToCSVReceived.filename);
+//  }
+
   @Test
-  public void validFileNameWithoutExtension() {
-    mockModel.shouldThrowCalendarExportException = false;
-    MockView mockView = new MockView("export cal filename\n");
+  public void testValidExportWithoutExtension() {
+    MockView mockView = new MockView("export cal " + testDir + "no_extension\n");
+    mockModel.exportEventsWithExporterReceived = testDir + "CSV data without extension";
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
     controller.run();
-    assertEquals("calApp> Calendar exported to file:\n"
-            + "Return from exportToCSV\n"
-            + "calApp> ",
-        mockView.displayMessage.toString());
-    assertTrue(mockModel.exportToCSVCalled);
+
+    assertTrue(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.isBusyCalled);
-    assertEquals("filename.csv",
-        mockModel.exportToCSVReceived.filename);
+
+    // Verify the output message indicates success
+    assertTrue(mockView.displayMessage.toString().contains("Calendar exported to file:"));
+
+    // Check if the file exists
+    testFile = new File(testDir + "no_extension.csv");
+    // Uncomment the following line to check file existence if your test harness actually creates files
+    assertTrue(testFile.exists());
+  }
+
+//  @Test
+//  public void validFileNameWithExtension() {
+//    mockModel.shouldThrowCalendarExportException = false;
+//    MockView mockView = new MockView("export cal filename.csv\n");
+//    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
+//    controller.run();
+//    assertEquals("calApp> Calendar exported to file:\n"
+//            + "Return from exportToCSV\n"
+//            + "calApp> ",
+//        mockView.displayMessage.toString());
+//    assertTrue(mockModel.exportEventsWithExporterCalled);
+//    assertFalse(mockModel.createEventCalled);
+//    assertFalse(mockModel.editEventCalled);
+//    assertFalse(mockModel.getEventsInRangeCalled);
+//    assertFalse(mockModel.getEventsOnDateCalled);
+//    assertFalse(mockModel.isBusyCalled);
+//    assertEquals("filename.csv",
+//        mockModel.exportToCSVReceived.filename);
+//  }
+
+  @Test
+  public void testValidExportWithExtension() {
+    MockView mockView = new MockView("export cal " + testDir + "with_extension.csv\n");
+    mockModel.exportEventsWithExporterReceived = testDir + "CSV data with extension";
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
+    controller.run();
+
+    assertTrue(mockModel.exportEventsWithExporterCalled);
+    assertFalse(mockModel.createEventCalled);
+    assertFalse(mockModel.editEventCalled);
+    assertFalse(mockModel.getEventsInRangeCalled);
+    assertFalse(mockModel.getEventsOnDateCalled);
+    assertFalse(mockModel.isBusyCalled);
+
+    // Verify the output message indicates success
+    assertTrue(mockView.displayMessage.toString().contains("Calendar exported to file:"));
+
+    // Check if the file exists
+    testFile = new File(testDir + "with_extension.csv");
+    // Uncomment the following line to check file existence if your test harness actually creates files
+    assertTrue(testFile.exists());
   }
 
   @Test
-  public void validFileNameWithExtension() {
-    mockModel.shouldThrowCalendarExportException = false;
-    MockView mockView = new MockView("export cal filename.csv\n");
-    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
-    controller.run();
-    assertEquals("calApp> Calendar exported to file:\n"
-            + "Return from exportToCSV\n"
-            + "calApp> ",
-        mockView.displayMessage.toString());
-    assertTrue(mockModel.exportToCSVCalled);
-    assertFalse(mockModel.createEventCalled);
-    assertFalse(mockModel.editEventCalled);
-    assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.getEventsOnDateCalled);
-    assertFalse(mockModel.isBusyCalled);
-    assertEquals("filename.csv",
-        mockModel.exportToCSVReceived.filename);
+  public void testExportWithNoEvents() {
+    // Setup mock model to throw CalendarExportException when there are no events
+    mockModel.shouldThrowCalendarExportException = true;
+    assertEquals("No events to export",
+        getErrorMessageWithInput("export cal " + testDir + "empty_calendar.csv"));
   }
 }
