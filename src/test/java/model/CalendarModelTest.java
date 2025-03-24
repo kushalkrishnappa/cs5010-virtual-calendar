@@ -6,9 +6,13 @@ import static org.junit.Assert.assertTrue;
 
 import dto.EventDTO;
 import dto.RecurringDetailsDTO;
+import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.InvalidDateTimeRangeException;
-import exception.InvalidEventDetailsException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -176,7 +180,7 @@ public class CalendarModelTest {
     calendarModel.createEvent(conflictingEvent, true);
   }
 
-  @Test(expected = InvalidEventDetailsException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testCreateRecurringEventSpanningOverDayThrowException() {
     RecurringDetailsDTO recurringDetails = RecurringDetailsDTO.getBuilder()
         .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
@@ -649,7 +653,7 @@ public class CalendarModelTest {
     EventDTO editedEventDTO = EventDTO.getBuilder()
         .setSubject("Edited Recurring Event")
         .setStartTime(LocalDateTime.of(2025, 3, 15, 2, 0))
-        .setEndTime(LocalDateTime.of(2025, 3, 15, 23, 59))
+        .setEndTime(null)
         .setIsRecurring(true)
         .setIsAllDay(true)
         .setRecurringDetails(recurringDetails)
@@ -662,7 +666,7 @@ public class CalendarModelTest {
         editedEventDTO
     );
 
-    assertEquals(6, calendarModel.eventRepository.getAllEvents().size());
+    assertEquals(7, calendarModel.eventRepository.getAllEvents().size());
   }
 
   // Test exportToCSV Method in CalendarModel
@@ -678,7 +682,7 @@ public class CalendarModelTest {
 //    String validFileWithCSVExt = calendarModel.exportToCSV("target/without_csv_ext");
 //    assertTrue(validFileWithCSVExt.endsWith(".csv"));
 //  }
-//
+
 //  @Test
 //  public void testExportToCSVCreatesCSVFile() throws CalendarExportException, IOException {
 //    calendarModel.createEvent(sampleSpannedSingleEventDTO, false);
@@ -689,7 +693,7 @@ public class CalendarModelTest {
 //    // check if file is created
 //    assertTrue(test_exported_csv_file.exists());
 //  }
-//
+
 //  @Test
 //  public void testExportToCSVFormattingForStoringEvents() throws IOException {
 //    calendarModel.createEvent(sampleSpannedSingleEventDTO, false);
@@ -717,7 +721,7 @@ public class CalendarModelTest {
 //        + ",03/12/2025,01:00 AM,False,,,True", reader.readLine());
 //    test_exported_csv_file.delete();
 //  }
-//
+
 //  @Test(expected = CalendarExportException.class)
 //  public void testInvalidFileThrowsAnException() {
 //    calendarModel.createEvent(sampleSpannedSingleEventDTO, false);

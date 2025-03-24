@@ -132,21 +132,16 @@ public class CopyEventCommand extends Command {
    */
   private void parseCopyMultipleEvents(Scanner commandScanner)
       throws ParseCommandException, InvalidTimeZoneException {
-    try {
-      switch (commandScanner.next()) {
-        case "on":
-          parseCopyEventsOnDate(commandScanner);
-          break;
-        case "between":
-          parseCopyEventsBetweenDates(commandScanner);
-          break;
-        default:
-          throw new ParseCommandException(
-              "Invalid command format: copy events (on|between) ...");
-      }
-    } catch (NoSuchElementException e) {
-      throw new ParseCommandException(
-          "Invalid command format: copy events (on|between) ...");
+    switch (commandScanner.next()) {
+      case "on":
+        parseCopyEventsOnDate(commandScanner);
+        break;
+      case "between":
+        parseCopyEventsBetweenDates(commandScanner);
+        break;
+      default:
+        throw new ParseCommandException(
+            "Invalid command format: copy events (on|between) ...");
     }
   }
 
@@ -394,8 +389,8 @@ public class CopyEventCommand extends Command {
 
   /**
    * Copy the events to the target calendar. It creates a new event in the target calendar with the
-   * same details as the source event. Recurring details are reset. It also checks for conflicts
-   * in the target calendar and skips the event if there is a conflict.
+   * same details as the source event. Recurring details are reset. It also checks for conflicts in
+   * the target calendar and skips the event if there is a conflict.
    *
    * @param targetCalendarEntry the target calendar to copy the event to
    * @param eventsToCopy        the list of events to copy
