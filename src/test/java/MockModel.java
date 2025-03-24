@@ -1,11 +1,11 @@
 import dto.EventDTO;
-import exception.CalendarExportException;
 import exception.EventConflictException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import model.IModel;
+import service.ICalendarExporter;
 
 /**
  * MockModel class implements IModel and provides a mock model for testing.
@@ -148,6 +148,11 @@ class MockModel implements IModel {
     return List.of();
   }
 
+  @Override
+  public String exportEventsWithExporter(ICalendarExporter exporter) {
+    return "";
+  }
+
   class ExportToCSV {
 
     String filename;
@@ -157,15 +162,15 @@ class MockModel implements IModel {
     }
   }
 
-  @Override
-  public String exportToCSV(String fileName) throws CalendarExportException {
-    if (shouldThrowCalendarExportException) {
-      throw new CalendarExportException("Calendar export failed");
-    }
-    exportToCSVCalled = true;
-    exportToCSVReceived = new ExportToCSV(fileName);
-    return "Return from exportToCSV";
-  }
+//  @Override
+//  public String exportToCSV(String fileName) throws CalendarExportException {
+//    if (shouldThrowCalendarExportException) {
+//      throw new CalendarExportException("Calendar export failed");
+//    }
+//    exportToCSVCalled = true;
+//    exportToCSVReceived = new ExportToCSV(fileName);
+//    return "Return from exportToCSV";
+//  }
 
   class IsBusy {
 
