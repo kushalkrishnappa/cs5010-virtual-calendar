@@ -56,7 +56,7 @@ public class CalendarAppTest {
     System.setIn(new ByteArrayInputStream("exit\n".getBytes()));
     CalendarApp.main(new String[]{"--mode", "interactive"});
     assertEquals("Starting calendar in INTERACTIVE mode...\n"
-            + "calApp> Bye...\n",
+            + "calApp [No calendar in use]> Bye...\n",
         outputStream.toString().replace("\r\n", "\n"));
   }
 
@@ -81,7 +81,7 @@ public class CalendarAppTest {
     System.setIn(new ByteArrayInputStream("exit\n".getBytes()));
     CalendarApp.main(new String[]{"--mode", "InTeraCtiVe"});
     assertEquals("Starting calendar in INTERACTIVE mode...\n"
-            + "calApp> Bye...\n",
+            + "calApp [No calendar in use]> Bye...\n",
         outputStream.toString().replace("\r\n", "\n"));
   }
 
