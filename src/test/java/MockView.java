@@ -38,11 +38,11 @@ class MockView implements IView {
 
   String getDisplayMessage() {
     String s = displayMessage.toString().split("\n")[2];
-    return s.startsWith("calApp>") ? s.substring(8) : s;
+    return s.startsWith("calApp") ? s.substring(18) : s;
   }
 
   String getErrorMessage() {
     String s = displayErrorMessage.toString().split("\n")[0];
-    return s.startsWith("calApp>") ? s.substring(8) : s;
+    return s.startsWith("calApp") ? s.substring(18) : s;
   }
 }
