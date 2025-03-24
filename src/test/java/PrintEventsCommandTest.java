@@ -72,7 +72,7 @@ public class PrintEventsCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsInRangeCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals(LocalDate.of(2025, 10, 21),
         mockModel.getEventsOnDateReceived.date);
@@ -91,7 +91,7 @@ public class PrintEventsCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.createEventCalled);
     assertFalse(mockModel.editEventCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
-    assertFalse(mockModel.exportToCSVCalled);
+    assertFalse(mockModel.exportEventsWithExporterCalled);
     assertFalse(mockModel.isBusyCalled);
     assertEquals(LocalDateTime.of(2025, 10, 21, 9, 0),
         mockModel.getEventsInRangeReceived.start);
