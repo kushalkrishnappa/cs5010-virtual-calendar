@@ -37,7 +37,7 @@ public class CopyEventCommand extends Command {
 
   private Integer copiedEvents;
 
-  private final StringBuilder conflictMessages;
+  private StringBuilder conflictMessages;
 
   /**
    * The constructor for the CopyEventCommand class initializes the class variables to null.
@@ -51,7 +51,7 @@ public class CopyEventCommand extends Command {
     targetCalendarName = null;
     eventName = null;
     copiedEvents = null;
-    conflictMessages = new StringBuilder();
+    conflictMessages = null;
   }
 
   /**
@@ -80,7 +80,6 @@ public class CopyEventCommand extends Command {
               "Invalid command format: copy (event|events) ...");
       }
     } catch (NoSuchElementException e) {
-      System.out.println("printing no such element");
       throw new ParseCommandException(
           "Invalid command format: copy (event|events) (eventName on|on|between) "
               + "(sourceStartDateTime|sourceStartDateTime|<sourceStartDate> and <sourceEndDate>) "
@@ -301,6 +300,9 @@ public class CopyEventCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException {
+    // create new conflictMessages instance for this command lifecycle
+    conflictMessages = new StringBuilder();
+
     // check if target calendar is present
     CalendarEntry targetCalendarEntry = controllerUtility.getCalendarEntry(targetCalendarName);
     if (Objects.isNull(targetCalendarEntry)) {
@@ -392,7 +394,8 @@ public class CopyEventCommand extends Command {
 
   /**
    * Copy the events to the target calendar. It creates a new event in the target calendar with the
-   * same details as the source event. Recurring details are reset.
+   * same details as the source event. Recurring details are reset. It also checks for conflicts
+   * in the target calendar and skips the event if there is a conflict.
    *
    * @param targetCalendarEntry the target calendar to copy the event to
    * @param eventsToCopy        the list of events to copy
@@ -464,7 +467,7 @@ public class CopyEventCommand extends Command {
   void promptResult(ControllerUtility controllerUtility) {
     if (copiedEvents > 0) {
       controllerUtility.promptOutput(
-          "Successfully copied" + copiedEvents + " event(s) to " + targetCalendarName);
+          "Successfully copied " + copiedEvents + " event(s) to " + targetCalendarName);
     } else {
       controllerUtility.promptOutput("No events were copied to " + targetCalendarName);
     }
