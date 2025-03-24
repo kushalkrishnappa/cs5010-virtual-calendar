@@ -36,6 +36,7 @@
             <param>model.*</param>
             <param>repository.*</param>
             <param>view.*</param>
+            <param>service.*</param>
             <param>CalendarApp</param>
           </targetClasses>
           <targetTests>

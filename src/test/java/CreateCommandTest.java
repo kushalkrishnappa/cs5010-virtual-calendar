@@ -19,7 +19,7 @@ public class CreateCommandTest extends AbstractCommandTest {
 
   @Test
   public void emptyInput() {
-    assertEquals("calApp> ", getDisplayMessageWithInput(""));
+    assertEquals("calApp [default]> ", getDisplayMessageWithInput(""));
   }
 
   @Test
@@ -30,7 +30,7 @@ public class CreateCommandTest extends AbstractCommandTest {
 
   @Test
   public void emptyCommand() {
-    assertEquals("calApp> ",
+    assertEquals("calApp [default]> ",
         getDisplayMessageWithInput(""));
   }
 
@@ -41,15 +41,13 @@ public class CreateCommandTest extends AbstractCommandTest {
 
   @Test
   public void invalidCreateMissingTokens() {
-    assertEquals("Invalid command format: create event [--autoDecline] <eventName> "
-            + "(on <dateTime>| from <startDateTime> to <endDateTime>) "
-            + "[repeats <weekdays> (for <N> times| until <untilDateTime>)]",
+    assertEquals("Invalid command format: create (calendar|event) ...",
         getErrorMessageWithInput("create "));
   }
 
   @Test
   public void invalidCreateEvend() {
-    assertEquals("Invalid command format: create event ...",
+    assertEquals("Invalid command: create (calendar|event) ...",
         getErrorMessageWithInput("create evend"));
   }
 
