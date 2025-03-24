@@ -67,7 +67,8 @@ class ExportCalendarCommand extends Command {
     try {
       outputFilePath = fileWriter.write(filename, csvData);
     } catch (IOException e) {
-      throw new CalendarExportException("Could not write to file: " + filename);
+      throw new CalendarExportException(
+          "Could not write to file: " + filename);
     }
   }
 

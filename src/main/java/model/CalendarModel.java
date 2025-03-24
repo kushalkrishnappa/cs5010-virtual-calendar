@@ -3,6 +3,7 @@ package model;
 import dto.EventDTO;
 import dto.EventDTO.EventDTOBuilder;
 import dto.RecurringDetailsDTO;
+import exception.CalendarExportException;
 import exception.EventConflictException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -331,7 +332,12 @@ public class CalendarModel implements IModel {
 
   @Override
   public String exportEventsWithExporter(ICalendarExporter exporter) {
-    return exporter.export(eventRepository.getAllEvents());
+    List<EventDTO> events = eventRepository.getAllEvents();
+    // If there are no events, throw a CalendarExportException
+    if (events.isEmpty()) {
+      throw new CalendarExportException("No events to export");
+    }
+    return exporter.export(events);
   }
 
   /**
