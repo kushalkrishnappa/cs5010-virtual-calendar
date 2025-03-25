@@ -120,6 +120,7 @@ public class CalendarController implements IController {
       }
       executeCommand(lineScanner);
       if (exitFlag) {
+        exitProgram();
         return;
       }
       promptUserInput();
@@ -149,7 +150,7 @@ public class CalendarController implements IController {
   private void promptError(String message) {
     view.displayError(message);
     if (mode == ControllerMode.HEADLESS) {
-      exitProgram();
+      exitFlag = true;
     }
   }
 
@@ -162,10 +163,6 @@ public class CalendarController implements IController {
   private void executeCommand(Scanner lineScanner) {
     controller.Command command;
     String firstToken = lineScanner.next();
-    if (firstToken.equals("exit")) {
-      exitProgram();
-      return;
-    }
 
     command = CommandFactory.createCommand(firstToken);
     if (command == null) {
@@ -232,6 +229,5 @@ public class CalendarController implements IController {
     if (mode == ControllerMode.INTERACTIVE) {
       view.displayMessage("Bye...\n");
     }
-    exitFlag = true;
   }
 }
