@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.TreeSet;
 
 class RecurrenceService {
-
+  // TODO: refactor
   static List<EventDTO> generateRecurrence(EventDTO eventDTO) {
     // check if recurring event has repeat days
     if (Objects.isNull(eventDTO.getRecurringDetails().getRepeatDays())) {
@@ -50,11 +50,16 @@ class RecurrenceService {
     // create a list of events from the recurring event
     List<EventDTO> eventDTOs = new ArrayList<>();
     for (List<LocalDateTime> dateTimeRange : recurringDateTimeRange) {
-      EventDTO recurringEvent = EventDTO.getBuilder().setSubject(eventDTO.getSubject())
-          .setStartTime(dateTimeRange.get(0)).setEndTime(dateTimeRange.get(1))
-          .setDescription(eventDTO.getDescription()).setLocation(eventDTO.getLocation())
-          .setIsPublic(eventDTO.getIsPublic()).setIsAllDay(eventDTO.getIsAllDay())
-          .setIsRecurring(true).setRecurringDetails(eventDTO.getRecurringDetails()).build();
+      EventDTO recurringEvent = EventDTO.getBuilder()
+          .setSubject(eventDTO.getSubject())
+          .setStartTime(dateTimeRange.get(0))
+          .setEndTime(dateTimeRange.get(1))
+          .setDescription(eventDTO.getDescription())
+          .setLocation(eventDTO.getLocation())
+          .setIsPublic(eventDTO.getIsPublic())
+          .setIsAllDay(eventDTO.getIsAllDay())
+          .setIsRecurring(true)
+          .setRecurringDetails(eventDTO.getRecurringDetails()).build();
       eventDTOs.add(recurringEvent);
     }
     return eventDTOs;

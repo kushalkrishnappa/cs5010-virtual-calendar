@@ -148,13 +148,12 @@ public class CalendarModel implements IModel {
 
     if (updatedEvent.getIsRecurring()) {
       List<EventDTO> eventsToAdd = RecurrenceService.generateRecurrence(updatedEvent);
-      eventsUpdated += eventsToAdd.size();
       eventsToAdd.forEach(eventService::createEvent);
     } else {
       eventService.createEvent(updatedEvent);
-      eventsUpdated++;
     }
     eventService.deleteEvent(existingEvent);
+    eventsUpdated++;
     return eventsUpdated;
   }
 
@@ -227,7 +226,7 @@ public class CalendarModel implements IModel {
     }
     eventsToUpdate.forEach(eventService::createEvent);
     eventsByName.forEach(eventService::deleteEvent);
-    return eventsToUpdate.size();
+    return eventsByName.size();
   }
 
   private static EventDTOBuilder getEventBuilderWithUpdatedParameters(
@@ -246,9 +245,11 @@ public class CalendarModel implements IModel {
                 parametersToUpdate.getSubject(),
                 existingEvent.getSubject()))
         .setStartTime(
-            Objects.requireNonNullElse(
-                parametersToUpdate.getStartTime(),
-                existingEvent.getStartTime()))
+            Objects.nonNull(parametersToUpdate.getStartTime())
+                ? (Objects.isNull(parametersToUpdate.getEndTime()) && existingEvent.getIsAllDay())
+                ? parametersToUpdate.getStartTime().toLocalDate().atStartOfDay()
+                : parametersToUpdate.getStartTime()
+                : existingEvent.getStartTime())
         .setEndTime(
             Objects.nonNull(parametersToUpdate.getEndTime())
                 ? parametersToUpdate.getEndTime()
@@ -268,8 +269,7 @@ public class CalendarModel implements IModel {
                 parametersToUpdate.getIsPublic(),
                 existingEvent.getIsPublic()))
         .setIsAllDay(
-            (Objects.nonNull(parametersToUpdate.getStartTime())
-                || Objects.nonNull(parametersToUpdate.getEndTime()))
+            Objects.nonNull(parametersToUpdate.getEndTime())
                 ? false
                 : existingEvent.getIsAllDay())
         .setIsRecurring(
@@ -281,13 +281,11 @@ public class CalendarModel implements IModel {
                 ? existingEvent.getRecurringDetails()
                 : RecurringDetailsDTO.getBuilder()
                     .setRepeatDays(
-                        Objects.nonNull(
-                            parametersToUpdate.getRecurringDetails().getRepeatDays())
+                        Objects.nonNull(parametersToUpdate.getRecurringDetails().getRepeatDays())
                             ? parametersToUpdate.getRecurringDetails().getRepeatDays()
                             : existingEvent.getRecurringDetails().getRepeatDays())
                     .setOccurrences(
-                        Objects.nonNull(
-                            parametersToUpdate.getRecurringDetails().getOccurrences())
+                        Objects.nonNull(parametersToUpdate.getRecurringDetails().getOccurrences())
                             ? parametersToUpdate.getRecurringDetails().getOccurrences()
                             : Objects.nonNull(
                                 parametersToUpdate.getRecurringDetails().getUntilDate())

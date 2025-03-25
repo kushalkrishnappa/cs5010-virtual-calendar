@@ -28,7 +28,8 @@ class EventValidator {
         throw new InvalidEventDetailsException(
             "Recurring details is null for event marked as recurring");
       } else if (Objects.nonNull(eventDTO.getEndTime())
-          && !eventDTO.getStartTime().toLocalDate().isEqual(eventDTO.getEndTime().toLocalDate())) {
+          && !eventDTO.getStartTime().toLocalDate().isEqual(eventDTO.getEndTime().toLocalDate())
+          && !(Objects.nonNull(eventDTO.getIsAllDay()) && eventDTO.getIsAllDay())) {
         throw new InvalidEventDetailsException(
             "Start and end time must be on same day for event marked as recurring");
       }
