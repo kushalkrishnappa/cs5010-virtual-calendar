@@ -23,7 +23,7 @@ public class IntervalTree {
    * @return true if the event is successfully inserted, false otherwise
    */
   public Boolean insert(EventDTO event) {
-    if(event == null) {
+    if (event == null) {
       return false;
     }
     root = insert(root, event);
