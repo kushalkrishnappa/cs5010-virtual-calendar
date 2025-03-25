@@ -15,8 +15,8 @@ class EventService {
     eventRepository.insertEvent(eventDTO);
   }
 
-  boolean deleteEvent(EventDTO eventDTO) {
-    return eventRepository.deleteEvent(
+  void deleteEvent(EventDTO eventDTO) {
+    eventRepository.deleteEvent(
         eventDTO.getSubject(),
         eventDTO.getStartTime(),
         eventDTO.getEndTime());
