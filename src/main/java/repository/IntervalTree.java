@@ -14,6 +14,7 @@ import java.util.Objects;
 public class IntervalTree {
 
   private Node root;
+  private Boolean isDeleted;
 
   /**
    * Constructor for IntervalTree.
@@ -22,6 +23,9 @@ public class IntervalTree {
    * @return true if the event is successfully inserted, false otherwise
    */
   public Boolean insert(EventDTO event) {
+    if(event == null) {
+      return false;
+    }
     root = insert(root, event);
     return true;
   }
@@ -246,10 +250,10 @@ public class IntervalTree {
    * @return A list of all events in the repository
    */
   private List<EventDTO> getAllEvents(Node node) {
-    List<EventDTO> result = new ArrayList<>();
     if (node == null) {
-      return result;
+      return List.of();
     }
+    List<EventDTO> result = new ArrayList<>();
     // Inorder traversal
     result.addAll(getAllEvents(node.left));
     result.addAll(node.events);
@@ -266,8 +270,8 @@ public class IntervalTree {
    * @return true if the event is successfully deleted, false otherwise
    */
   public Boolean delete(String subject, LocalDateTime startTime, LocalDateTime endTime) {
-    Boolean isDeleted = false;
-    root = delete(root, subject, startTime, endTime, isDeleted);
+    isDeleted = false;
+    root = delete(root, subject, startTime, endTime);
     return isDeleted;
   }
 
@@ -278,11 +282,9 @@ public class IntervalTree {
    * @param subject   The name of the event
    * @param startTime The start time of the event
    * @param endTime   The end time of the event
-   * @param isDeleted A flag to check if the event is deleted
    * @return The node after deleting the event
    */
-  private Node delete(Node node, String subject, LocalDateTime startTime, LocalDateTime endTime,
-      Boolean isDeleted) {
+  private Node delete(Node node, String subject, LocalDateTime startTime, LocalDateTime endTime) {
     if (node == null) {
       return null;
     }
@@ -319,9 +321,9 @@ public class IntervalTree {
       }
       updateMaxEnd(node);
     } else if (node.startTime.isBefore(startTime)) {
-      node.right = delete(node.right, subject, startTime, endTime, isDeleted);
+      node.right = delete(node.right, subject, startTime, endTime);
     } else {
-      node.left = delete(node.left, subject, startTime, endTime, isDeleted);
+      node.left = delete(node.left, subject, startTime, endTime);
     }
 
     // update the height of the node
