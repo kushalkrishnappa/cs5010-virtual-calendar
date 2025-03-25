@@ -169,11 +169,13 @@ public class CalendarModel implements IModel {
       EventDTO parametersToUpdate) {
     // get the existing recurring events whose start time in after the provided start time
     List<EventDTO> eventsByName = eventRepository.getEventsByName(eventName);
+    eventsByName = eventsByName.stream()
+        .filter(EventDTO::getIsRecurring) // ignore events that are not part of recurrence series
+        .collect(Collectors.toList());
     if (Objects.nonNull(startTime)) {
       eventsByName = eventsByName.stream()
           .filter(event -> (startTime.isBefore(event.getStartTime())
-              || startTime.equals(event.getStartTime()))
-              && event.getIsRecurring()) // ignore events that are not part of recurrence series
+              || startTime.equals(event.getStartTime())))
           .collect(Collectors.toList());
     }
     // found no events to update
