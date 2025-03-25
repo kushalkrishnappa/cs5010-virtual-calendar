@@ -19,19 +19,28 @@ public class CreateCommandTest extends AbstractCommandTest {
 
   @Test
   public void emptyInput() {
-    assertEquals("calApp [default]> ", getDisplayMessageWithInput(""));
+    MockView mockView = new MockView( "");
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
+    controller.run();
+    assertEquals("calApp [default]> ", mockView.displayMessage.toString().split("\n")[2]);
   }
 
   @Test
   public void afterExit() {
-    assertEquals("Bye...",
-        getDisplayMessageWithInput("exit\n"));
+    MockView mockView = new MockView( "exit\n");
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
+    controller.run();
+    assertEquals("calApp [default]> Bye...",
+        mockView.displayMessage.toString().split("\n")[2]);
   }
 
   @Test
   public void emptyCommand() {
+    MockView mockView = new MockView( "");
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
+    controller.run();
     assertEquals("calApp [default]> ",
-        getDisplayMessageWithInput(""));
+        mockView.displayMessage.toString().split("\n")[2]);
   }
 
   @Test

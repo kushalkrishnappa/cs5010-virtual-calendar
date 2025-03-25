@@ -14,6 +14,7 @@ import service.ICalendarExporter;
  */
 class MockModel implements IModel {
 
+  // flags to track the method calls from the controller
   boolean createEventCalled;
   boolean editEventCalled;
   boolean getEventsOnDateCalled;
@@ -21,48 +22,77 @@ class MockModel implements IModel {
   boolean exportEventsWithExporterCalled;
   boolean isBusyCalled;
   boolean getAllEventsCalled;
+
+  // class to store the parameters received in the method calls
   CreateEvent createEventReceived;
   EditEvent editEventReceived;
   GetEventsOnDate getEventsOnDateReceived;
   GetEventsInRange getEventsInRangeReceived;
   String exportEventsWithExporterReceived;
   IsBusy isBusyReceived;
+
+  // flags to control the exceptions thrown from the model
   boolean shouldThrowEventConflictException;
   boolean shouldThrowCalendarExportException;
   boolean shouldThrowIllegalArgumentException;
-  boolean shouldThrowIOException;
-  Boolean setIsBusyReturn;
+
+  // flags to control the return values from the model
   Integer setEditEventReturn;
-
-  List<EventDTO> setGetEventsOnDate;
+  boolean setIsBusyReturn;
   List<EventDTO> setGetEventsInRange;
+  List<EventDTO> setGetEventsOnDate;
 
-  Integer eventsOnDateCount = 0;
-  Integer eventsInRangeCount = 0;
+  // flags to control the event counts on the date and in the range
+  Integer eventsOnDateCount;
+  Integer eventsInRangeCount;
+
+  // flags to control the event properties
+  boolean eventIsAllDay;
+  boolean eventIsRecurring;
+
+  // flags required for copy tests
   String eventNameFilter;
-  String targerCalendarName;
+  String targetCalendarName;
   LocalDateTime targetStartDateTime;
   LocalDate targetStartDate;
-
-  boolean eventIsAllDay = false;
-  boolean eventIsRecurring = false;
+  Integer isBestEffortCopy;
 
   MockModel() {
     createEventCalled = false;
     editEventCalled = false;
     getEventsOnDateCalled = false;
     getEventsInRangeCalled = false;
+    exportEventsWithExporterCalled = false;
     isBusyCalled = false;
+    getAllEventsCalled = false;
 
     createEventReceived = null;
     editEventReceived = null;
     getEventsOnDateReceived = null;
     getEventsInRangeReceived = null;
+    exportEventsWithExporterReceived = null;
     isBusyReceived = null;
 
     shouldThrowEventConflictException = false;
     shouldThrowCalendarExportException = false;
     shouldThrowIllegalArgumentException = false;
+
+    setEditEventReturn = null;
+    setIsBusyReturn = false;
+    setGetEventsInRange = null;
+    setGetEventsOnDate = null;
+
+    eventsOnDateCount = 0;
+    eventsInRangeCount = 0;
+
+    eventIsAllDay = false;
+    eventIsRecurring = false;
+
+    eventNameFilter = null;
+    targetCalendarName = null;
+    targetStartDateTime = null;
+    targetStartDate = null;
+    isBestEffortCopy = 0;
   }
 
   class CreateEvent {
@@ -79,33 +109,34 @@ class MockModel implements IModel {
   @Override
   public void createEvent(EventDTO eventDTO, boolean autoDecline)
       throws EventConflictException, IllegalArgumentException {
-    if (shouldThrowEventConflictException) {
-      throw new EventConflictException("Event conflict");
-    }
-    if (shouldThrowIllegalArgumentException) {
-      throw new IllegalArgumentException("Illegal argument");
-    }
     createEventCalled = true;
     createEventReceived = new CreateEvent(eventDTO, autoDecline);
 
+    // if event is present, set the event details for copy tests
     if (eventDTO != null) {
       eventIsAllDay = eventDTO.getIsAllDay();
       eventIsRecurring = eventDTO.getIsRecurring();
-
-      // Store target calendar name if available (for copy tests)
-      if (targerCalendarName == null && eventDTO.getSubject() != null) {
-        targerCalendarName = "Work"; // Default value if not set
+      if (targetCalendarName == null && eventDTO.getSubject() != null) {
+        targetCalendarName = "default"; // Default value if not set
       }
-
-      // Store target datetime if available (for copy tests)
       if (targetStartDateTime == null && eventDTO.getStartTime() != null) {
         targetStartDateTime = eventDTO.getStartTime();
       }
-
-      // Store target date if available (for copy tests)
       if (targetStartDate == null && eventDTO.getStartTime() != null) {
         targetStartDate = eventDTO.getStartTime().toLocalDate();
       }
+    }
+
+    // check for set exceptions and raise accordingly
+    if (shouldThrowEventConflictException) {
+      if (isBestEffortCopy > 0) {
+        isBestEffortCopy--;
+      } else {
+        throw new EventConflictException("Event conflict");
+      }
+    }
+    if (shouldThrowIllegalArgumentException) {
+      throw new IllegalArgumentException("Illegal argument");
     }
   }
 
@@ -154,23 +185,13 @@ class MockModel implements IModel {
     getEventsOnDateCalled = true;
     getEventsOnDateReceived = new GetEventsOnDate(date);
 
-    // Return mock events if provided
+    // if mock events are provided, return them
     if (!Objects.isNull(setGetEventsOnDate)) {
       return setGetEventsOnDate;
     }
 
-    List<EventDTO> events = new ArrayList<>();
-    for (int i = 0; i < eventsOnDateCount; i++) {
-      EventDTO event = EventDTO.getBuilder()
-          .setSubject("Event " + (i+1))
-          .setStartTime(date.atTime(8 + i, 0))
-          .setEndTime(date.atTime(9 + i, 0))
-          .setIsAllDay(i % 3 == 0)
-          .setIsRecurring(i % 4 == 0)
-          .build();
-      events.add(event);
-    }
-    return events;
+    // if events are not provided, return empty list
+    return List.of();
   }
 
   class GetEventsInRange {
@@ -189,7 +210,7 @@ class MockModel implements IModel {
     getEventsInRangeCalled = true;
     getEventsInRangeReceived = new GetEventsInRange(start, end);
 
-    // return mock events if provided
+    // if mock events are provided, return them
     if (!Objects.isNull(setGetEventsInRange)) {
       if (!Objects.isNull(eventNameFilter)) {
         List<EventDTO> filteredEvents = new ArrayList<>(setGetEventsInRange);
@@ -199,38 +220,15 @@ class MockModel implements IModel {
       return setGetEventsInRange;
     }
 
-    List<EventDTO> events = new ArrayList<>();
-    for (int i = 0; i < eventsInRangeCount; i++) {
-      EventDTO.EventDTOBuilder eventBuilder = EventDTO.getBuilder()
-          .setSubject("Event " + (i+1))
-          .setStartTime(start.plusHours(i))
-          .setEndTime(end.plusHours(i + 1))
-          .setIsAllDay(eventIsAllDay)
-          .setIsRecurring(eventIsRecurring);
+    // if events are not provided, return empty list
+    return List.of();
 
-      if (eventNameFilter != null && i == 0) {
-        eventBuilder.setSubject(eventNameFilter);
-      }
-
-      events.add(eventBuilder.build());
-    }
-    return events;
   }
 
   @Override
   public List<EventDTO> getAllEvents() {
     getAllEventsCalled = true;
     return List.of();
-  }
-
-
-  class ExportEventsWithExporter {
-
-    ICalendarExporter exporter;
-
-    ExportEventsWithExporter(ICalendarExporter exporter) {
-      this.exporter = exporter;
-    }
   }
 
   @Override
