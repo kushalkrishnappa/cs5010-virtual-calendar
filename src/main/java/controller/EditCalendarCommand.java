@@ -94,13 +94,23 @@ class EditCalendarCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
+
     CalendarEntry calendarEntry = controllerUtility.removeCalendarEntry(calendarName);
+    if (Objects.isNull(calendarEntry)) {
+      throw new IllegalArgumentException("Calendar with the provided name doesn't exists");
+    }
+
     CalendarEntry updatedCalendarEntry = calendarEntryBuilder.setModel(
-        Objects.nonNull(newTimeZone)
-            ? shiftCalendarTimezone(calendarEntry.model, calendarEntry.zoneId,
-            ZoneId.of(newTimeZone), controllerUtility.getModelFactory().get())
-            : calendarEntry.model
-    ).build();
+            Objects.nonNull(newTimeZone)
+                ? shiftCalendarTimezone(calendarEntry.model, calendarEntry.zoneId,
+                ZoneId.of(newTimeZone), controllerUtility.getModelFactory().get())
+                : calendarEntry.model
+        )
+        .setZoneId(
+            Objects.nonNull(newTimeZone)
+                ? newTimeZone
+                : calendarEntry.zoneId.toString())
+        .build();
 
     if (Objects.nonNull(newCalendarName)) {
       controllerUtility.addCalendarEntry(newCalendarName, calendarEntry);
