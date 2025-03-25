@@ -120,6 +120,7 @@ public class ExtendedCopyEventCommandTest extends AbstractCommandTest {
     EventDTO event = EventDTO.getBuilder()
         .setSubject("All Day Meeting")
         .setStartTime(LocalDateTime.of(2025, 4, 1, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 4, 2, 0, 0))
         .setIsAllDay(true)
         .setIsRecurring(false)
         .build();
@@ -217,6 +218,8 @@ public class ExtendedCopyEventCommandTest extends AbstractCommandTest {
           .setSubject("Event " + (i + 1))
           .setStartTime(LocalDateTime.of(2025, 4, 1 + i,
               8 + i, 0))
+          .setEndTime(LocalDateTime.of(2025, 4, 1 + i,
+              9 + i, 0))
           .setIsAllDay(true)
           .setIsRecurring(false)
           .build();

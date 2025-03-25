@@ -60,8 +60,7 @@ class CreateEventCommand extends Command {
         case "calendar":
           Command command;
           command = new CreateCalendarCommand();
-          command.parseCommand(commandScanner);
-          return command;
+          return command.parseCommand(commandScanner);
         case "event":
           break;
         default:
@@ -294,6 +293,9 @@ class CreateEventCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
+    // default value of autoDecline is set to true. This will always decline the event if the
+    // event is conflicted with another event.
+    autoDecline = true;
     controllerUtility.getCurrentCalendar().model.createEvent(
         EventDTO.getBuilder()
             .setSubject(eventName)

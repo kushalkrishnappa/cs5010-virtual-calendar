@@ -107,8 +107,7 @@ class EditEventCommand extends Command {
       switch (commandScanner.next()) {
         case "calendar":
           Command command = new EditCalendarCommand();
-          command.parseCommand(commandScanner);
-          return command;
+          return command.parseCommand(commandScanner);
         case "event":
           editSpannedEvent(commandScanner);
           break;

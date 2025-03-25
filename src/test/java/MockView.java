@@ -20,6 +20,12 @@ class MockView implements IView {
     displayErrorMessage = new StringBuilder();
   }
 
+  MockView(String inputStream, boolean isWithoutDefaultCalendar) {
+    this.inputStream = new StringReader(inputStream);
+    displayMessage = new StringBuilder();
+    displayErrorMessage = new StringBuilder();
+  }
+
   @Override
   public void displayMessage(String output) {
     displayMessage.append(output);

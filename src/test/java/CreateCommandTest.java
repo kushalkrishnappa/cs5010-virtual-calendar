@@ -328,7 +328,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.isBusyCalled);
-    assertFalse(mockModel.createEventReceived.autoDecline);
+    assertTrue(mockModel.createEventReceived.autoDecline); // autoDecline is true always
     assertEquals(
         EventDTO.getBuilder()
             .setSubject("event name")
@@ -362,7 +362,7 @@ public class CreateCommandTest extends AbstractCommandTest {
     assertFalse(mockModel.getEventsInRangeCalled);
     assertFalse(mockModel.getEventsOnDateCalled);
     assertFalse(mockModel.isBusyCalled);
-    assertFalse(mockModel.createEventReceived.autoDecline);
+    assertTrue(mockModel.createEventReceived.autoDecline); // autoDecline is true always
     assertEquals(
         EventDTO.getBuilder()
             .setSubject("event name")
