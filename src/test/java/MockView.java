@@ -45,4 +45,5 @@ class MockView implements IView {
     String s = displayErrorMessage.toString().split("\n")[0];
     return s.startsWith("calApp") ? s.substring(18) : s;
   }
+
 }

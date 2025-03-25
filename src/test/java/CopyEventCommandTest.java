@@ -193,4 +193,5 @@ public class CopyEventCommandTest extends AbstractCommandTest {
     assertEquals("Target calendar not found: \"Work\"",
         getErrorMessageWithInput("copy event \"Meeting\" on 2025-04-01T12:00 --target \"Work\" to 2025-04-08T14:00"));
   }
+
 }
