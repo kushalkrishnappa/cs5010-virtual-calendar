@@ -6,6 +6,7 @@ import exception.CalendarNotPresentException;
 import exception.EventConflictException;
 import exception.InvalidTimeZoneException;
 import exception.ParseCommandException;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -17,22 +18,28 @@ public class UseCommand extends Command {
   @Override
   Command parseCommand(Scanner commandScanner)
       throws ParseCommandException, InvalidTimeZoneException {
-    if (!commandScanner.next().equals("calendar")) {
-      throw new ParseCommandException("Invalid command format: use calendar ...");
-    }
+    try {
+      if (!commandScanner.next().equals("calendar")) {
+        throw new ParseCommandException("Invalid command format: use calendar ...");
+      }
 
-    if (!commandScanner.next().equals("--name")) {
-      throw new ParseCommandException("Invalid command format: use calendar --name ...");
-    }
+      if (!commandScanner.next().equals("--name")) {
+        throw new ParseCommandException("Invalid command format: use calendar --name ...");
+      }
 
-    parseCalendarName(commandScanner);
+      parseCalendarName(commandScanner);
+    } catch (NoSuchElementException e) {
+      throw new ParseCommandException(
+          "Invalid command format: use calendar --name <calendar_name> ...");
+    }
     return this;
   }
 
   private void parseCalendarName(Scanner commandScanner) throws ParseCommandException {
     calendarName = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
     if (Objects.isNull(calendarName)) {
-      throw new ParseCommandException("Invalid command format: create calendar --name <name>");
+      throw new ParseCommandException(
+          "Invalid command format: use calendar --name <calendar_name> ...");
     }
     calendarName =
         calendarName.startsWith("\"")

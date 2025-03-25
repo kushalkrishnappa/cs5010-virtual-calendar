@@ -60,8 +60,7 @@ class CreateEventCommand extends Command {
         case "calendar":
           Command command;
           command = new CreateCalendarCommand();
-          command.parseCommand(commandScanner);
-          return command;
+          return command.parseCommand(commandScanner);
         case "event":
           break;
         default:

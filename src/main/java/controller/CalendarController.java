@@ -3,6 +3,7 @@ package controller;
 import exception.CalendarExportException;
 import exception.CalendarNotPresentException;
 import exception.CalendarNotSelectedException;
+import exception.CreateCalendarException;
 import exception.EventConflictException;
 import exception.InvalidDateTimeRangeException;
 import exception.InvalidTimeZoneException;
@@ -179,9 +180,9 @@ public class CalendarController implements IController {
 
     try {
       command.executeCommand(controllerUtility);
-    } catch (CalendarNotSelectedException | CalendarNotPresentException
-             |  EventConflictException | CalendarExportException | InvalidDateTimeRangeException
-             | IllegalArgumentException e) {
+    } catch (CalendarNotSelectedException | CalendarNotPresentException | EventConflictException
+             | CalendarExportException | InvalidDateTimeRangeException | InvalidTimeZoneException
+             | IllegalArgumentException | CreateCalendarException e) {
       promptError(e.getMessage() + "\n");
       return;
     }

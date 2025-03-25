@@ -22,7 +22,7 @@ class CreateCalendarCommand extends Command {
   @Override
   Command parseCommand(Scanner commandScanner)
       throws ParseCommandException, InvalidTimeZoneException {
-    while(commandScanner.hasNext()){
+    while (commandScanner.hasNext()) {
       switch (commandScanner.next()) {
         case "--name":
           parseCalendarName(commandScanner);
@@ -35,13 +35,13 @@ class CreateCalendarCommand extends Command {
               "Invalid command format: create calendar --name <calName> --timezone area/location");
       }
     }
-    if (Objects.isNull(calendarName)||Objects.isNull(zoneIdString)) {
+    if (Objects.isNull(calendarName) || Objects.isNull(zoneIdString)) {
       throw new ParseCommandException("Please Specify calendarName and zoneId");
     }
     return this;
   }
 
-  private void parseTimeZone(Scanner commandScanner) {
+  private void parseTimeZone(Scanner commandScanner) throws ParseCommandException {
     zoneIdString = commandScanner.next();
   }
 
