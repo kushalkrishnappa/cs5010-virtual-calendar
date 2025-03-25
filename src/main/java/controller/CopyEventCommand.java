@@ -409,12 +409,9 @@ public class CopyEventCommand extends Command {
       }
 
       // get the endDateTime for event to be copied (time will be same as source)
-      LocalDateTime newEndDateTime = null;
-      if (!event.getIsAllDay() && event.getEndTime() != null) {
-        // calculate event duration between startTime and endTime
-        Duration durationOfEvent = Duration.between(event.getStartTime(), event.getEndTime());
-        newEndDateTime = newStartDateTime.plus(durationOfEvent);
-      }
+      Duration durationOfEvent = Duration.between(event.getStartTime(), event.getEndTime());
+      // calculate event duration between startTime and endTime
+      LocalDateTime newEndDateTime = newStartDateTime.plus(durationOfEvent);
 
       // create a new event in target calendar
       EventDTO eventToCopy = EventDTO.getBuilder()
