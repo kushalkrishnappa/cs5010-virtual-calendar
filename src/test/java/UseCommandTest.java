@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * Test class for the use command.
  */
-public class UseCommandTest extends AbstractCommandTest{
+public class UseCommandTest extends AbstractCommandTest {
 
   @Test
   public void testEmptyUseCommand() {
