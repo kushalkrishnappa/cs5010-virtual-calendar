@@ -1,4 +1,5 @@
 import java.io.StringReader;
+import java.util.Arrays;
 import view.IView;
 
 /**
@@ -19,12 +20,10 @@ class MockView implements IView {
     displayErrorMessage = new StringBuilder();
   }
 
-
   @Override
   public void displayMessage(String output) {
     displayMessage.append(output);
   }
-
 
   @Override
   public void displayError(String error) {
@@ -37,7 +36,8 @@ class MockView implements IView {
   }
 
   String getDisplayMessage() {
-    String s = displayMessage.toString().split("\n")[2];
+    String[] split = displayMessage.toString().split("\n");
+    String s = String.join("\n",Arrays.copyOfRange(split, 2, split.length-1));
     return s.startsWith("calApp") ? s.substring(18) : s;
   }
 
