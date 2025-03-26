@@ -30,11 +30,7 @@ class CalendarEntry {
     this.zoneId = zoneId;
   }
 
-  /**
-   * This method returns the builder for the CalendarEntry class to create a new instance.
-   *
-   * @return builder for CalendarEntry
-   */
+
   static CalendarEntryBuilder getBuilder() {
     return new CalendarEntryBuilder();
   }

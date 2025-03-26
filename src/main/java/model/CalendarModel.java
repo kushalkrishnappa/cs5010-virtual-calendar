@@ -213,7 +213,8 @@ public class CalendarModel implements IModel {
     return eventsByName.size();
   }
 
-  private EventDTO checkIfNoConflicts(EventDTOBuilder updatedEventBuilder, List<EventDTO> eventsByName) {
+  private EventDTO checkIfNoConflicts(EventDTOBuilder updatedEventBuilder,
+      List<EventDTO> eventsByName) {
     EventDTO updatedEvent = updatedEventBuilder.build();
     EventValidator.validateEvent(updatedEvent);
     // check conflicts (early exit)

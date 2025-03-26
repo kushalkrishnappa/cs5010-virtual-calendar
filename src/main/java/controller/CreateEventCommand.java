@@ -301,12 +301,12 @@ class CreateEventCommand extends Command {
             .setIsAllDay(isAllDay)
             .setIsRecurring(isRecurring)
             .setRecurringDetails(
-                isRecurring ?
-                    RecurringDetailsDTO.getBuilder()
-                        .setRepeatDays(repeatDays)
-                        .setUntilDate(untilDate)
-                        .setOccurrences(occurrences)
-                        .build()
+                isRecurring
+                    ? RecurringDetailsDTO.getBuilder()
+                    .setRepeatDays(repeatDays)
+                    .setUntilDate(untilDate)
+                    .setOccurrences(occurrences)
+                    .build()
                     : null
             )
             .build(),
