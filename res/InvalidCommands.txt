@@ -1,3 +1,5 @@
+create calendar --name default --timezone America/New_York
+use calendar --name default
 create event Meeting from 2025-03-15T09:00 to 2025-03-15T10:00
 create event --autoDecline Meeting from 2025-03-16T09:00 to 2025-03-17T10:00
 create event Lunch from 2025-03-20T12:00 to 2025-03-20T13:30
