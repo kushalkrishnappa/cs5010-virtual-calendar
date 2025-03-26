@@ -77,7 +77,6 @@ public class ExportCalendarCommandTest extends AbstractCommandTest {
 
     // Check if the file exists
     testFile = new File(testDir + "no_extension.csv");
-    // Uncomment the following line to check file existence if your test harness actually creates files
     assertTrue(testFile.exists());
   }
 
@@ -100,7 +99,6 @@ public class ExportCalendarCommandTest extends AbstractCommandTest {
 
     // Check if the file exists
     testFile = new File(testDir + "with_extension.csv");
-    // Uncomment the following line to check file existence if your test harness actually creates files
     assertTrue(testFile.exists());
   }
 

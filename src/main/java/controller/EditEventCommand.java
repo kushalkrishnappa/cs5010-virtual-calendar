@@ -312,8 +312,8 @@ class EditEventCommand extends Command {
         .editEvent(eventName, startTime, endTime,
             eventBuilder
                 .setRecurringDetails(
-                    Objects.nonNull(recurringDetailsDTOPropertySetter) ?
-                        recurringDetailsDTOBuilder.build()
+                    Objects.nonNull(recurringDetailsDTOPropertySetter)
+                        ? recurringDetailsDTOBuilder.build()
                         : null)
                 .setIsRecurring(Objects.nonNull(recurringDetailsDTOPropertySetter) ? true : null)
                 .build());
