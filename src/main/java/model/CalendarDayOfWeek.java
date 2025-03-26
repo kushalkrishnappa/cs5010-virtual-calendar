@@ -87,7 +87,7 @@ public enum CalendarDayOfWeek {
    * Gets the Java Time object specific to the day of the week.
    *
    * @param daysOfWeek the set of days of the week to convert
-   * @return the set of days of the week as Java Time objects
+   * @return the sorted set of days of the week as Java Time objects
    */
   static TreeSet<DayOfWeek> getJavaTimeDaysOfWeek(Set<CalendarDayOfWeek> daysOfWeek) {
     TreeSet<DayOfWeek> javaTimeDaysOfWeek = new TreeSet<>();
