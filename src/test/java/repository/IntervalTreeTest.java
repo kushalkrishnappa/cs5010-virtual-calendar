@@ -9,6 +9,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test class for IntervalTree.
+ */
 public class IntervalTreeTest {
 
   EventDTO event1;

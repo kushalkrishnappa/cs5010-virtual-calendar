@@ -8,6 +8,9 @@ import model.CalendarDayOfWeek;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test class for RecurringDetailsDTO.
+ */
 public class RecurringDetailsDTOTest {
 
   RecurringDetailsDTO recurDetails1;

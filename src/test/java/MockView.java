@@ -43,7 +43,7 @@ class MockView implements IView {
 
   String getDisplayMessage() {
     String[] split = displayMessage.toString().split("\n");
-    String s = String.join("\n",Arrays.copyOfRange(split, 2, split.length-1));
+    String s = String.join("\n",Arrays.copyOfRange(split, 2, split.length - 1));
     return s.startsWith("calApp") ? s.substring(18) : s;
   }
 

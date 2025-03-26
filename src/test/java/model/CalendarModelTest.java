@@ -665,65 +665,6 @@ public class CalendarModelTest {
     assertEquals(6, calendarModel.eventRepository.getAllEvents().size());
   }
 
-  // Test exportToCSV Method in CalendarModel
-
-//  @Test(expected = CalendarExportException.class)
-//  public void testExportToCSVWithNoEventsShouldRaiseException() {
-//    calendarModel.exportToCSV("target/export_empty_events.csv");
-//  }
-//
-//  @Test
-//  public void testExportToCSVWithoutExtAddsCSVExt() {
-//    calendarModel.createEvent(sampleSpannedSingleEventDTO, false);
-//    String validFileWithCSVExt = calendarModel.exportToCSV("target/without_csv_ext");
-//    assertTrue(validFileWithCSVExt.endsWith(".csv"));
-//  }
-
-//  @Test
-//  public void testExportToCSVCreatesCSVFile() throws CalendarExportException, IOException {
-//    calendarModel.createEvent(sampleSpannedSingleEventDTO, false);
-//    String fileName = calendarModel.exportToCSV("target/export_valid_csv.csv");
-//    // assert it is csv file
-//    assertTrue(fileName.endsWith(".csv"));
-//    File test_exported_csv_file = new File(fileName);
-//    // check if file is created
-//    assertTrue(test_exported_csv_file.exists());
-//  }
-
-//  @Test
-//  public void testExportToCSVFormattingForStoringEvents() throws IOException {
-//    calendarModel.createEvent(sampleSpannedSingleEventDTO, false);
-//    EventDTO eventContainingCharToEscape = EventDTO.getBuilder()
-//        .setSubject("Event \"with new line\n")
-//        .setStartTime(LocalDateTime.parse("2025-03-12T00:00:00"))
-//        .setEndTime(LocalDateTime.parse("2025-03-12T01:00:00"))
-//        .setIsRecurring(false)
-//        .setIsAllDay(false)
-//        .build();
-//    calendarModel.createEvent(eventContainingCharToEscape, false);
-//
-//    String fileName = calendarModel.exportToCSV("target/test_formatting_csv.csv");
-//    File test_exported_csv_file = new File(fileName);
-//    BufferedReader reader = new BufferedReader(new FileReader(test_exported_csv_file));
-//
-//    // check the contents in the file are loaded as expected for sampleSpannedSingleEventDTO
-//    assertEquals("Subject,Start Date,Start Time,End Date,"
-//        + "End Time,All Day Event,Description,Location,Private", reader.readLine());
-//    assertEquals("\"Sample Event\",03/12/2025,12:00 AM"
-//        + ",03/12/2025,01:00 AM,False,,,True", reader.readLine());
-//
-//    // check the contents in the file are loaded as expected for eventContainingCharToEscape
-//    assertEquals("\"Event with new line\",03/12/2025,12:00 AM"
-//        + ",03/12/2025,01:00 AM,False,,,True", reader.readLine());
-//    test_exported_csv_file.delete();
-//  }
-
-//  @Test(expected = CalendarExportException.class)
-//  public void testInvalidFileThrowsAnException() {
-//    calendarModel.createEvent(sampleSpannedSingleEventDTO, false);
-//    calendarModel.exportToCSV("///oot/invalid_file_name.csv");
-//  }
-
   // Test isBusy Method in CalendarModel
 
   @Test

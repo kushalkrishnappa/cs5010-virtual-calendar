@@ -8,6 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import service.CSVCalendarExporter;
 
+/**
+ * Test class for CSVCalendarExporter. It tests the export method to ensure that it
+ * correctly formats the events into CSV format.
+ */
 public class CSVCalendarExporterTest {
 
   private List<EventDTO> events;
@@ -23,11 +27,14 @@ public class CSVCalendarExporterTest {
   public void testCSVExporter() {
     populateEvents();
     assertEquals(
-        "Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location,Private"
+        "Subject,Start Date,Start Time,End Date,End Time,"
+            + "All Day Event,Description,Location,Private"
             + System.lineSeparator()
-            + "\"Test Subject\",01/01/2020,12:00 AM,01/01/2020,12:00 PM,False,\"Test Description\",\"Test Location\",True"
+            + "\"Test Subject\",01/01/2020,12:00 AM,01/01/2020,12:00 PM,"
+            + "False,\"Test Description\",\"Test Location\",True"
             + System.lineSeparator()
-            + "\"Test All Day\",01/01/2020,,01/02/2020,,True,\"Test Description\",\"Test Location\",False"
+            + "\"Test All Day\",01/01/2020,,01/02/2020,,"
+            + "True,\"Test Description\",\"Test Location\",False"
             + System.lineSeparator()
             + ",01/01/2020,,01/02/2020,,True,,,False"
             + System.lineSeparator(),

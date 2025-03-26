@@ -5,6 +5,11 @@ import controller.CalendarController;
 import controller.ControllerMode;
 import org.junit.Test;
 
+/**
+ * This is a test class for the CreateCalendarCommand. It tests the parsing logic of the create
+ * calendar command. This tests the parsing logic and the various scenarios of the create
+ * calendar command.
+ */
 public class CreateCalendarCommandTest extends AbstractCommandTest {
 
   String fullInvalidCommand = "Invalid command format: create calendar "

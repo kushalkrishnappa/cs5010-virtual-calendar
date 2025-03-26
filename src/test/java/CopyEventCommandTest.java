@@ -2,6 +2,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * This is a test class for the CopyEventCommand. It tests the parsing logic of the copy command.
+ */
 public class CopyEventCommandTest extends AbstractCommandTest {
 
   private final String fullCopyCommand =
@@ -191,7 +194,8 @@ public class CopyEventCommandTest extends AbstractCommandTest {
   public void testTargetCalendarNotFound() {
     mockModel.shouldThrowCalendarExportException = true;
     assertEquals("Target calendar not found: \"Work\"",
-        getErrorMessageWithInput("copy event \"Meeting\" on 2025-04-01T12:00 --target \"Work\" to 2025-04-08T14:00"));
+        getErrorMessageWithInput("copy event \"Meeting\" on 2025-04-01T12:00 "
+            + "--target \"Work\" to 2025-04-08T14:00"));
   }
 
 }

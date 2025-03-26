@@ -15,6 +15,9 @@ import model.CalendarModel;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test class for editing events with the same name.
+ */
 public class EditEventWithNameTest {
 
   private CalendarModel model;

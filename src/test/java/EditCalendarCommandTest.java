@@ -12,6 +12,10 @@ import java.util.List;
 import model.CalendarDayOfWeek;
 import org.junit.Test;
 
+/**
+ * This is a test class for the EditCalendarCommand. This tests the parsing logic and the various
+ * scenarios of the edit calendar command.
+ */
 public class EditCalendarCommandTest extends AbstractCommandTest {
 
   @Test
