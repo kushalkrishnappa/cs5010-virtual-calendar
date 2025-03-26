@@ -6,8 +6,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Represents a repository for events. This interface defines methods for accessing and managing
- * events in the repository.
+ * This class represents the interface for the Event Repository. It provides methods to insert,
+ * delete, get, and search for events in the repository. The implementation of this interface will
+ * handle the actual data storage and retrieval from the underlying data source (e.g., database,
+ * ADT, etc.).
+ *
+ * <p>For this implementation, the IntervalTree ADT is used to store the events.
+ *
  */
 public interface IEventRepository {
 
