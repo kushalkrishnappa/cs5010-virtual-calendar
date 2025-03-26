@@ -13,6 +13,10 @@ import model.CalendarModel;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * This is a test class for the CreateEventCommand. This tests the parsing logic and the various
+ * scenarios of the create event command.
+ */
 public class CreateEventTest {
 
   private CalendarModel model;

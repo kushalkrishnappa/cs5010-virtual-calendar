@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test class for InMemoryEventRepository.
+ */
 public class InMemoryEventRepositoryTest {
 
   private InMemoryEventRepository repository;

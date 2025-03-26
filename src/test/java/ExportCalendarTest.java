@@ -13,10 +13,15 @@ import model.CalendarModel;
 import org.junit.Test;
 import service.ICalendarExporter;
 
+/**
+ * Test class for ExportCalendar.
+ */
 public class ExportCalendarTest {
 
+  /**
+   * Mock implementation of ICalendarExporter for testing purposes.
+   */
   public class MockCalendarExporter implements ICalendarExporter {
-
 
     boolean exportCalled;
     List<EventDTO> events;

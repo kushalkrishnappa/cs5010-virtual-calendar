@@ -10,6 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 import service.StandardFileWriter;
 
+/**
+ * Test class for StandardFileWriter.
+ */
 public class StandardFileWriterTest {
 
   private String fileName;

@@ -12,6 +12,9 @@ import model.CalendarModel;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test class for EditEventWithKey.
+ */
 public class EditEventWithKeyTest {
 
   private CalendarModel model;
