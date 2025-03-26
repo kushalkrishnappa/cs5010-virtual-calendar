@@ -194,37 +194,38 @@ Shows busy/available status.
 
 ### Assignment 5
 - `Kushal K Krishnappa`:  
+    - Implemented copy events functionality
+    - Enhanced interval tree with adding balancing feature
+
+- `Anirudh Nitin Bakare`:
     - Implemented multiple calendar support
     - Implemented timezone handling and conversion
     - Enhanced model layer for better separation of concerns
-
-- `Anirudh Nitin Bakare`:  
-    - Implemented copy events functionality
     - Implemented calendar editing commands
-    - Refactored export functionality using Strategy Pattern
 
-- `Both Members`:  
+- `Both Members`:
+    - Refactored export functionality using Strategy Pattern
     - Service layer implementation
     - Architecture refactoring for better maintainability
     - Testing and documentation
 
 ### Assignment 4
 - `Kushal K Krishnappa`:  
-    - Implemented core calendar logic (Calendar, Event, RecurringEvent).
-    - Implemented date and time handling.
-    - Implemented CSV export.
+    - Implemented core calendar logic (Calendar, Event, RecurringEvent)
+    - Implemented date and time handling
+    - Implemented CSV export
 
 - `Anirudh Nitin Bakare`:  
-    - Implemented command processing (Controller).
-    - Implemented interactive and headless modes.
-    - Created and implemented the testing suite for Controller.
+    - Implemented command processing (Controller)
+    - Implemented interactive and headless modes
+    - Created and implemented the testing suite for Controller
 
 - `Both Members`:  
-    - Implementing Interval Tree.
-    - Views implementation.
-    - Designing interfaces.
-    - Debugging, testing, and documentation.
-    - Class diagram creation.
+    - Implementing Interval Tree
+    - Views implementation
+    - Designing interfaces
+    - Debugging, testing, and documentation
+    - Class diagram creation
 
 ## Architecture Improvements in Assignment 5
 
