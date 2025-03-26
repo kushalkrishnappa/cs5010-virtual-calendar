@@ -93,13 +93,13 @@ public class IntervalTreeTest {
     assertTrue(tree.insert(event9));
     assertTrue(tree.insert(event10));
 
-    /**
-     * Expected State:
-     * [e4]
-     * [e3]               [e2]
-     * [e1,e7] [e5,e6]    [] [e8,e9]
-     * [] []   [] [e10]      [] []
-     *            [] []
+    /*
+      Expected State:
+      [e4]
+      [e3]               [e2]
+      [e1,e7] [e5,e6]    [] [e8,e9]
+      [] []   [] [e10]      [] []
+                 [] []
      */
     List<EventDTO> allEvents = tree.getAllEvents();
     assertEquals(event1, allEvents.get(0));
@@ -228,5 +228,20 @@ public class IntervalTreeTest {
     assertTrue(eventDTOS.contains(event4));
 
 
+  }
+
+  @Test
+  public void testGetByName() {
+    assertTrue(tree.insert(event1));
+    assertTrue(tree.insert(event1));
+    assertTrue(tree.insert(event2));
+    assertTrue(tree.insert(event3));
+    assertTrue(tree.insert(event4));
+    assertTrue(tree.insert(event5));
+
+    List<EventDTO> events = tree.findByName("event1");
+    assertEquals(2, events.size());
+    assertEquals(event1, events.get(0));
+    assertEquals(event1, events.get(1));
   }
 }
