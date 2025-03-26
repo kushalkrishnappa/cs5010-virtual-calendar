@@ -192,16 +192,7 @@ public class CalendarModel implements IModel {
       for (EventDTO existingEvent : eventsByName) {
         EventDTOBuilder updatedEventBuilder = getEventBuilderWithUpdatedParameters(
             existingEvent, parametersToUpdate);
-        EventDTO updatedEvent = updatedEventBuilder.build();
-        EventValidator.validateEvent(updatedEvent);
-        // check conflicts (early exit)
-        List<EventDTO> finalEventsByName = eventsByName;
-        if (conflictDetector.getConflicts(updatedEvent).stream()
-            .anyMatch(event -> {
-              return finalEventsByName.stream().noneMatch(event::equals);
-            })) {
-          throw new EventConflictException("Updated event has conflict with existing event");
-        }
+        EventDTO updatedEvent = checkIfNoConflicts(updatedEventBuilder, eventsByName);
 
         eventsToUpdate.add(updatedEvent);
       }
@@ -212,16 +203,7 @@ public class CalendarModel implements IModel {
       EventDTOBuilder newRecurEventBuilder = getEventBuilderWithUpdatedParameters(
           eventsByName.get(0), parametersToUpdate);
 
-      EventDTO updatedRecurEvent = newRecurEventBuilder.build();
-      EventValidator.validateEvent(updatedRecurEvent);
-      // check conflict
-      List<EventDTO> finalEventsByName = eventsByName;
-      if (conflictDetector.getConflicts(updatedRecurEvent).stream()
-          .anyMatch(event -> {
-            return finalEventsByName.stream().noneMatch(event::equals);
-          })) {
-        throw new EventConflictException("Updated event has conflict with existing event");
-      }
+      EventDTO updatedRecurEvent = checkIfNoConflicts(newRecurEventBuilder, eventsByName);
 
       eventsToUpdate.addAll(RecurrenceService.generateRecurrence(updatedRecurEvent));
 
@@ -229,6 +211,20 @@ public class CalendarModel implements IModel {
     eventsToUpdate.forEach(eventService::createEvent);
     eventsByName.forEach(eventService::deleteEvent);
     return eventsByName.size();
+  }
+
+  private EventDTO checkIfNoConflicts(EventDTOBuilder updatedEventBuilder, List<EventDTO> eventsByName) {
+    EventDTO updatedEvent = updatedEventBuilder.build();
+    EventValidator.validateEvent(updatedEvent);
+    // check conflicts (early exit)
+    List<EventDTO> finalEventsByName = eventsByName;
+    if (conflictDetector.getConflicts(updatedEvent).stream()
+        .anyMatch(event -> {
+          return finalEventsByName.stream().noneMatch(event::equals);
+        })) {
+      throw new EventConflictException("Updated event has conflict with existing event");
+    }
+    return updatedEvent;
   }
 
   private static EventDTOBuilder getEventBuilderWithUpdatedParameters(

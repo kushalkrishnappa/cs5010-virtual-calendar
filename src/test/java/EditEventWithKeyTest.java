@@ -4,6 +4,7 @@ import static org.junit.Assert.assertThrows;
 import dto.EventDTO;
 import dto.RecurringDetailsDTO;
 import exception.EventConflictException;
+import exception.InvalidDateTimeRangeException;
 import java.time.LocalDateTime;
 import java.util.Set;
 import model.CalendarDayOfWeek;
@@ -158,6 +159,50 @@ public class EditEventWithKeyTest {
         .setDescription("updated Description")
         .setIsPublic(true)
         .setIsAllDay(false)
+        .setIsRecurring(false)
+        .build();
+    assertEquals(Integer.valueOf(1), model.editEvent("simple Event",
+        LocalDateTime.of(2025, 1, 1, 0, 0),
+        LocalDateTime.of(2025, 1, 2, 0, 0),
+        updateRequest));
+    assertEquals(1, model.getAllEvents().size());
+    assertEquals(expectedUpdateEvent, model.getAllEvents().get(0));
+  }
+
+  @Test
+  public void editStartTimeOfAllDayEvent() {
+    // convert all day event to simple event
+    EventDTO simpleEvent = EventDTO.getBuilder()
+        .setSubject("simple Event")
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0))
+        .build();
+    EventDTO expectedSimpleEvent = EventDTO.getBuilder()
+        .setSubject("simple Event")
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 2, 0, 0))
+        .setIsAllDay(true)
+        .setIsRecurring(false)
+        .setIsPublic(false)
+        .build();
+    model.createEvent(simpleEvent, false);
+    assertEquals(1, model.getAllEvents().size());
+    assertEquals(expectedSimpleEvent, model.getAllEvents().get(0));
+
+    EventDTO updateRequest = EventDTO.getBuilder()
+        .setSubject("updated Subject")
+        .setStartTime(LocalDateTime.of(2025, 1, 15, 12, 0))
+        .setLocation("updated Location")
+        .setDescription("updated Description")
+        .setIsPublic(true)
+        .build();
+    EventDTO expectedUpdateEvent = EventDTO.getBuilder()
+        .setSubject("updated Subject")
+        .setStartTime(LocalDateTime.of(2025, 1, 15, 0, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 16, 0, 0))
+        .setLocation("updated Location")
+        .setDescription("updated Description")
+        .setIsPublic(true)
+        .setIsAllDay(true)
         .setIsRecurring(false)
         .build();
     assertEquals(Integer.valueOf(1), model.editEvent("simple Event",
@@ -654,7 +699,7 @@ public class EditEventWithKeyTest {
         .setRecurringDetails(updateRecurDetails)
         .setIsPublic(false)
         .build();
-    assertEquals(Integer.valueOf(1),model.editEvent("all day Event",
+    assertEquals(Integer.valueOf(1), model.editEvent("all day Event",
         LocalDateTime.of(2025, 1, 1, 0, 0),
         LocalDateTime.of(2025, 1, 2, 0, 0),
         updateRequest));
@@ -892,5 +937,82 @@ public class EditEventWithKeyTest {
     assertEquals(2, model.getAllEvents().size());
     assertEquals(expectedSimpleEvent, model.getAllEvents().get(0));
     assertEquals(expectedConflictEvent, model.getAllEvents().get(1));
+  }
+
+  @Test
+  public void editSimpleDetailsOfSimpleEventWithEndTimeBeforeStartTime() {
+    EventDTO simpleEvent = EventDTO.getBuilder()
+        .setSubject("simple Event")
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 1, 13, 0))
+        .build();
+    EventDTO expectedSimpleEvent = EventDTO.getBuilder()
+        .setSubject("simple Event")
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 1, 13, 0))
+        .setIsAllDay(false)
+        .setIsRecurring(false)
+        .setIsPublic(false)
+        .build();
+    model.createEvent(simpleEvent, false);
+    assertEquals(1, model.getAllEvents().size());
+    assertEquals(expectedSimpleEvent, model.getAllEvents().get(0));
+
+    EventDTO updateRequest = EventDTO.getBuilder()
+        .setSubject("updated Subject")
+        .setEndTime(LocalDateTime.of(2025, 1, 1, 11, 0, 0))
+        .setLocation("updated Location")
+        .setDescription("updated Description")
+        .setIsPublic(true)
+        .build();
+    assertThrows(InvalidDateTimeRangeException.class,
+        () -> model.editEvent("simple Event",
+            LocalDateTime.of(2025, 1, 1, 12, 0),
+            LocalDateTime.of(2025, 1, 1, 13, 0),
+            updateRequest));
+    assertEquals(1, model.getAllEvents().size());
+    assertEquals(expectedSimpleEvent, model.getAllEvents().get(0));
+  }
+
+  @Test
+  public void specifyBothOccurrenceAndUntilDateForUpdate() {
+    EventDTO simpleEvent = EventDTO.getBuilder()
+        .setSubject("simple Event")
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 1, 13, 0))
+        .build();
+    EventDTO expectedSimpleEvent = EventDTO.getBuilder()
+        .setSubject("simple Event")
+        .setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0))
+        .setEndTime(LocalDateTime.of(2025, 1, 1, 13, 0))
+        .setIsAllDay(false)
+        .setIsRecurring(false)
+        .setIsPublic(false)
+        .build();
+    model.createEvent(simpleEvent, false);
+    assertEquals(1, model.getAllEvents().size());
+    assertEquals(expectedSimpleEvent, model.getAllEvents().get(0));
+
+    RecurringDetailsDTO updateRecurDetails = RecurringDetailsDTO.getBuilder()
+        .setRepeatDays(
+            Set.of(CalendarDayOfWeek.M, CalendarDayOfWeek.W, CalendarDayOfWeek.F))
+        .setOccurrences(5)
+        .setUntilDate(LocalDateTime.of(2025, 1, 30, 12, 0))
+        .build();
+    EventDTO updateRequest = EventDTO.getBuilder()
+        .setIsRecurring(true)
+        .setRecurringDetails(
+            updateRecurDetails
+        )
+        .build();
+
+    assertThrows(IllegalArgumentException.class,
+        () -> model.editEvent("simple Event",
+            LocalDateTime.of(2025, 1, 1, 12, 0),
+            LocalDateTime.of(2025, 1, 1, 13, 0),
+            updateRequest));
+
+    assertEquals(1, model.getAllEvents().size());
+    assertEquals(expectedSimpleEvent, model.getAllEvents().get(0));
   }
 }
