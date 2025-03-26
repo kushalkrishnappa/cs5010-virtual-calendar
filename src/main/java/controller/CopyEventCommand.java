@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -340,7 +341,7 @@ public class CopyEventCommand extends Command {
       return 0;
     }
 
-    return copyEvents(targetCalendarEntry, events);
+    return copyEvents(sourceCalendarEntry, targetCalendarEntry, events);
   }
 
   /**
@@ -360,7 +361,7 @@ public class CopyEventCommand extends Command {
       return 0;
     }
 
-    return copyEvents(targetCalendarEntry, eventsOnDate);
+    return copyEvents(sourceCalendarEntry, targetCalendarEntry, eventsOnDate);
   }
 
   /**
@@ -376,7 +377,7 @@ public class CopyEventCommand extends Command {
     List<EventDTO> eventsBetweenDates = sourceCalendarEntry.model
         .getEventsInRange(
             sourceStartDate.atStartOfDay(),
-            sourceStartDate.atTime(23, 59, 59)
+            sourceEndDate.atTime(23, 59, 59)
         );
 
     // no events to copy, return 0
@@ -384,7 +385,7 @@ public class CopyEventCommand extends Command {
       return 0;
     }
 
-    return copyEvents(targetCalendarEntry, eventsBetweenDates);
+    return copyEvents(sourceCalendarEntry, targetCalendarEntry, eventsBetweenDates);
   }
 
   /**
@@ -396,7 +397,8 @@ public class CopyEventCommand extends Command {
    * @param eventsToCopy        the list of events to copy
    * @return the number of events copied to target calendar
    */
-  private int copyEvents(CalendarEntry targetCalendarEntry, List<EventDTO> eventsToCopy) {
+  private int copyEvents(CalendarEntry sourceCalendarEntry, CalendarEntry targetCalendarEntry,
+      List<EventDTO> eventsToCopy) {
     int copiedEvents = 0;
 
     for (EventDTO event : eventsToCopy) {
@@ -405,7 +407,13 @@ public class CopyEventCommand extends Command {
       if (!Objects.isNull(sourceStartDateTime)) {
         newStartDateTime = targetStartDateTime;
       } else {
-        newStartDateTime = targetStartDate.atTime(event.getStartTime().toLocalTime());
+        newStartDateTime = targetStartDate
+            .plusDays(
+                ChronoUnit.DAYS.between(sourceStartDate, event.getStartTime().toLocalDate()))
+            .atTime(event.getStartTime().toLocalTime())
+            .atZone(sourceCalendarEntry.zoneId)
+            .withZoneSameInstant(targetCalendarEntry.zoneId)
+            .toLocalDateTime();
       }
 
       // get the endDateTime for event to be copied (time will be same as source)
