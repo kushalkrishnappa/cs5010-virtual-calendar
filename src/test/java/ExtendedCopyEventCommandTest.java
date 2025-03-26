@@ -202,7 +202,7 @@ public class ExtendedCopyEventCommandTest extends AbstractCommandTest {
 
     assertEquals("Successfully copied 2 event(s) to default\n"
             + "The following events were not copied due to conflicts:\n"
-            + "- Event Conflict: Event 3 on 2025-04-03T10:00",
+            + "- Event Conflict: Event 3 on 2025-04-05T10:00",
         getDisplayMessageWithInput("copy events on 2025-04-01 --target default to 2025-04-03"));
 
     assertTrue(mockModel.getEventsOnDateCalled);
@@ -271,8 +271,8 @@ public class ExtendedCopyEventCommandTest extends AbstractCommandTest {
     assertEquals(
         "Successfully copied 3 event(s) to default\n"
             + "The following events were not copied due to conflicts:\n"
-            + "- Event Conflict: Event 4 on 2025-04-08T11:00\n"
-            + "- Event Conflict: Event 5 on 2025-04-08T12:00",
+            + "- Event Conflict: Event 4 on 2025-04-11T11:00\n"
+            + "- Event Conflict: Event 5 on 2025-04-12T12:00",
         getDisplayMessageWithInput(
             "copy events between 2025-04-01 and 2025-04-05 --target default to 2025-04-08"));
 
