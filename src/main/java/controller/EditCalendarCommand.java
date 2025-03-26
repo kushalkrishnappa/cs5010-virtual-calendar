@@ -16,8 +16,8 @@ import java.util.function.BiConsumer;
 import model.IModel;
 
 /**
- * This class represents an implementation of abstract Command class to edit a calendar entry.
- * It allows the user to update the name and time zone of an existing calendar entry.
+ * This class represents an implementation of abstract Command class to edit a calendar entry. It
+ * allows the user to update the name and time zone of an existing calendar entry.
  */
 class EditCalendarCommand extends Command {
 
@@ -47,8 +47,8 @@ class EditCalendarCommand extends Command {
   }
 
   /**
-   * This method creates a map of property setters for the CalendarEntryBuilder. The map
-   * contains the property names as keys and the corresponding setter methods as values.
+   * This method creates a map of property setters for the CalendarEntryBuilder. The map contains
+   * the property names as keys and the corresponding setter methods as values.
    *
    * @return a map of property setters for the CalendarEntryBuilder
    */
@@ -68,9 +68,9 @@ class EditCalendarCommand extends Command {
   }
 
   /**
-   * This method starts parsing the edit calendar command from the Scanner object. It checks if
-   * the edit calendar command contains `--name` or `--property` keyword before calling the
-   * appropriate method to continue the parsing.
+   * This method starts parsing the edit calendar command from the Scanner object. It checks if the
+   * edit calendar command contains `--name` or `--property` keyword before calling the appropriate
+   * method to continue the parsing.
    *
    * @param commandScanner a Scanner object that reads the command (File or console input)
    * @return this command object
@@ -85,6 +85,11 @@ class EditCalendarCommand extends Command {
           break;
         case "--property":
           parseCalendarProperty(commandScanner);
+          break;
+        default:
+          throw new ParseCommandException(
+              "Invalid command format: edit calendar --name <calendar name> "
+                  + "--property <property name> <new property value>");
       }
     }
     if (Objects.isNull(calendarName) || Objects.isNull(calendarEntryPropertySetter)) {
@@ -94,9 +99,8 @@ class EditCalendarCommand extends Command {
   }
 
   /**
-   * Parse the calendar property from the command scanner. It reads the next token from the
-   * scanner and sets the calendarEntryPropertySetter to the corresponding setter method
-   * from the map.
+   * Parse the calendar property from the command scanner. It reads the next token from the scanner
+   * and sets the calendarEntryPropertySetter to the corresponding setter method from the map.
    *
    * @param commandScanner the scanner object that reads the command
    * @throws ParseCommandException if the command provided is invalid
@@ -117,9 +121,9 @@ class EditCalendarCommand extends Command {
   }
 
   /**
-   * Parse the calendar name from the command scanner. It reads the next token from the
-   * scanner and sets the calendarName to the value read. If the calendar name is not found,
-   * it throws a ParseCommandException.
+   * Parse the calendar name from the command scanner. It reads the next token from the scanner and
+   * sets the calendarName to the value read. If the calendar name is not found, it throws a
+   * ParseCommandException.
    *
    * @param commandScanner a Scanner object that reads the command (File or console input)
    * @throws ParseCommandException if the command provided is invalid
@@ -136,13 +140,12 @@ class EditCalendarCommand extends Command {
   }
 
   /**
-   * Execute the edit calendar command on the model. It updates the calendar entry with the
-   * provided name and time zone. If the calendar name is not found, it throws an
-   * IllegalArgumentException.
+   * Execute the edit calendar command on the model. It updates the calendar entry with the provided
+   * name and time zone. If the calendar name is not found, it throws an IllegalArgumentException.
    *
    * @param controllerUtility the controller utility object
    * @throws CalendarExportException if there is an error on exporting the calendar
-   * @throws EventConflictException if there is a conflict with the event
+   * @throws EventConflictException  if there is a conflict with the event
    */
   @Override
   void executeCommand(ControllerUtility controllerUtility)
@@ -174,14 +177,14 @@ class EditCalendarCommand extends Command {
   }
 
   /**
-   * This method shifts the calendar timezone of the model to the new timezone. It iterates
-   * through all the events in the existing model and creates new events in the new model
-   * with the updated timezone.
+   * This method shifts the calendar timezone of the model to the new timezone. It iterates through
+   * all the events in the existing model and creates new events in the new model with the updated
+   * timezone.
    *
-   * @param existingModel the existing model with old timezone
+   * @param existingModel  the existing model with old timezone
    * @param existingZoneId the existing timezone of the model
-   * @param newZoneId the new timezone to shift to
-   * @param newModel the model to which the events will be shifted
+   * @param newZoneId      the new timezone to shift to
+   * @param newModel       the model to which the events will be shifted
    * @return the new model with updated timezone
    */
   private IModel shiftCalendarTimezone(IModel existingModel, ZoneId existingZoneId,
@@ -219,8 +222,7 @@ class EditCalendarCommand extends Command {
                       .build()
                       : null
               )
-              .build()
-          , false);
+              .build(), false);
     });
     return newModel;
   }

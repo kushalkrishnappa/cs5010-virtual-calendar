@@ -55,8 +55,8 @@ class ExportCalendarCommand extends Command {
       if (!filename.endsWith(".csv")) {
         if (filename.contains(".")) {
           throw new ParseCommandException(
-              "Filename must end with .csv or specified without extension. Found: " +
-                  filename.substring(filename.lastIndexOf(".")));
+              "Filename must end with .csv or specified without extension. Found: "
+                  + filename.substring(filename.lastIndexOf(".")));
         }
         filename = filename + ".csv";
       }
@@ -73,7 +73,7 @@ class ExportCalendarCommand extends Command {
    *
    * @param controllerUtility the controller utility object
    * @throws CalendarExportException if there is an error on exporting the calendar
-   * @throws EventConflictException if there is a conflict with the event
+   * @throws EventConflictException  if there is a conflict with the event
    */
   @Override
   void executeCommand(ControllerUtility controllerUtility)

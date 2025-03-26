@@ -142,10 +142,7 @@ class PrintEventsCommand extends Command {
 
   /**
    * Prompt the result of the print events command. It formats the output to show the events in a
-   * specific date or in a specific interval. The output format is:
-   * <p>
-   * [startDate] [startTime - EndTime] [NotRecurring] name location [startDate] [ ALL DAY EVENT]
-   * [Recurring]  name location
+   * specific date or in a specific interval.
    *
    * @param controllerUtility the controller utility object
    */

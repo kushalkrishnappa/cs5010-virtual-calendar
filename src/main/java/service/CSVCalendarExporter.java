@@ -1,7 +1,6 @@
 package service;
 
 import dto.EventDTO;
-import exception.CalendarExportException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 

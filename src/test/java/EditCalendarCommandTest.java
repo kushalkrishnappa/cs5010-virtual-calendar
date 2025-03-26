@@ -22,13 +22,15 @@ public class EditCalendarCommandTest extends AbstractCommandTest {
 
   @Test
   public void testInvalidCommandMissingNameFlag() {
-    assertEquals("Please specify calendar name and property to update",
+    assertEquals("Invalid command format: edit calendar --name <calendar name> "
+            + "--property <property name> <new property value>",
         getErrorMessageWithInput("edit calendar defaultCalendar --property timezone Asia/Tokyo"));
   }
 
   @Test
   public void testInvalidCommandMissingPropertyFlag() {
-    assertEquals("Please specify calendar name and property to update",
+    assertEquals("Invalid command format: edit calendar --name <calendar name> "
+            + "--property <property name> <new property value>",
         getErrorMessageWithInput("edit calendar --name default timezone Asia/Tokyo"));
   }
 

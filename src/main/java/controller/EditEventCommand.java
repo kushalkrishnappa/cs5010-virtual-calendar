@@ -67,7 +67,7 @@ class EditEventCommand extends Command {
    * @return A map of property setters for RecurringDetailsDTO.
    */
   private final Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>>
-  createRecurringDetailsPropertySetters() {
+      createRecurringDetailsPropertySetters() {
     Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>> setters = new HashMap<>();
     setters.put("occurrences",
         (builder, value) -> builder.setOccurrences(
@@ -303,7 +303,7 @@ class EditEventCommand extends Command {
    *
    * @param controllerUtility the controller utility object
    * @throws CalendarExportException if there is an error on exporting the calendar
-   * @throws EventConflictException if there is a conflict with the event
+   * @throws EventConflictException  if there is a conflict with the event
    */
   @Override
   void executeCommand(ControllerUtility controllerUtility)
