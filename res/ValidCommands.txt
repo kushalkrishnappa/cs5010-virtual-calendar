@@ -1,3 +1,5 @@
+create calendar --name default --timezone America/New_York
+use calendar --name default
 create event Meeting from 2025-03-15T09:00 to 2025-03-15T10:00
 create event --autoDecline Meeting from 2025-03-16T09:00 to 2025-03-17T10:00
 create event Lunch from 2025-03-20T12:00 to 2025-03-20T13:30
@@ -5,7 +7,7 @@ create event --autoDecline Doctor from 2025-03-25T14:00 to 2025-03-25T15:00
 create event Birthday on 2025-04-01T14:00
 create event --autoDecline Holiday on 2025-05-01T12:00
 create event TeamMeeting from 2025-03-17T10:00 to 2025-03-17T11:00 repeats MW for 4 times
-create event --autoDecline Yoga from 2025-03-18T18:00 to 2025-03-18T19:00 repeats TR for 6 times
+create event --autoDecline Yoga from 2026-03-18T18:00 to 2026-03-18T19:00 repeats TR for 6 times
 create event StudyGroup from 2025-03-20T15:00 to 2025-03-20T16:00 repeats RF until 2025-04-10T16:00
 create event --autoDecline BookClub from 2025-03-21T19:00 to 2025-03-21T20:00 repeats F until 2025-05-15T20:00
 create event Maintenance on 2025-04-19 repeats W for 3 times
@@ -15,8 +17,7 @@ create event EventDay on 2025-06-30 repeats S until 2025-07-01
 edit event name Meeting from 2025-03-15T09:00 to 2025-03-15T10:00 with TeamSync
 edit event location Lunch from 2025-03-20T12:00 to 2025-03-20T13:30 with Cafe123
 edit events name TeamMeeting from 2025-03-24T10:00 with StaffMeeting
-edit events location Yoga from 2025-03-25T18:00 with StudioA
-edit events name TeamMeeting with StaffBriefing
+edit events location Yoga from 2026-03-25T18:00 with StudioA
 edit events location BookClub with LibraryRoom
 print events on 2025-03-15
 print events on 2025-04-01
@@ -25,4 +26,32 @@ print events from 2025-04-01T08:00 to 2025-04-05T17:00
 export cal myCalendar.csv
 show status on 2025-03-15T09:30
 show status on 2025-04-01T14:00
+create calendar --name cal1 --timezone Asia/Kolkata
+create calendar --name cal2 --timezone Asia/Kolkata
+use calendar --name cal1
+create event event1 from 2025-01-21T12:00 to 2025-01-22T12:00
+create event recurEvent from 2025-01-22T14:00 to 2025-01-22T15:00 repeats WFM for 5 times
+print events from 2025-01-01T00:00 to 2025-03-01T00:00
+copy event recurEvent on 2025-01-24T14:00 --target cal2 to 2025-05-12T19:00
+use calendar --name cal2
+print events on 2025-05-12
+create calendar --name boston --timezone America/New_York
+use calendar --name cal1
+copy event recurEvent on 2025-01-24T14:00 --target boston to 2025-05-12T19:00
+use calendar --name boston 
+print events on 2025-05-12
+use calendar --name cal1
+copy events on 2025-01-22 --target cal2 to 2025-02-22
+copy events on 2025-01-22 --target boston to 2025-02-22
+use calendar --name cal2
+print events on 2025-02-22
+use calendar --name boston
+print events on 2025-02-22
+use calendar --name cal1
+copy events between 2025-01-22 and 2025-01-29 --target cal2 to 2025-07-01
+copy events between 2025-01-22 and 2025-01-29 --target boston to 2025-07-01
+use calendar --name cal2
+print events from 2025-07-01T00:00 to 2025-07-30T00:00
+use calendar --name boston
+print events from 2025-07-01T00:00 to 2025-07-30T00:00
 exit
