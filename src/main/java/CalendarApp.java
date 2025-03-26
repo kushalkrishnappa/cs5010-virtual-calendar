@@ -24,7 +24,6 @@ public class CalendarApp {
     // create the model
     IView view;
     IController controller;
-//    IModel model = new CalendarModel();
 
     if (args.length < 2) {
       promptUsageError();
