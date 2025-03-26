@@ -14,9 +14,11 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 
+
 /**
- * PrintEventsCommand class implements Command and execute the command to print events on a specific
- * date or in a specific interval.
+ * This class represents an implementation of the abstract Command class to print events on a
+ * specific date or in a specific interval. It parses the command, executes the print operation, and
+ * prompts the result.
  */
 class PrintEventsCommand extends Command {
 
@@ -29,7 +31,8 @@ class PrintEventsCommand extends Command {
   private List<EventDTO> eventsOnDate;
 
   /**
-   * Constructor for PrintEventsCommand.
+   * This constructor for PrintEventsCommand initializes the onDate, startTime, endTime, and
+   * eventsOnDate.
    */
   PrintEventsCommand() {
     onDate = null;
@@ -38,6 +41,15 @@ class PrintEventsCommand extends Command {
     eventsOnDate = null;
   }
 
+  /**
+   * This method starts parsing the print events command from the Scanner object. It checks if the
+   * command contains `events` keyword and the `on` or `from` keyword before calling the appropriate
+   * method to continue the parsing.
+   *
+   * @param commandScanner a Scanner object that reads the command (File or console input)
+   * @return this command object
+   * @throws ParseCommandException if the command provided is invalid
+   */
   @Override
   Command parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
@@ -105,6 +117,15 @@ class PrintEventsCommand extends Command {
 
   }
 
+  /**
+   * This method makes call to model to get the events on a specific date or in a specific interval.
+   * It uses the controller utility to get the events. If the onDate is not null, it gets the events
+   * on that date, otherwise it gets the events in the specified interval.
+   *
+   * @param controllerUtility the controller utility object
+   * @throws CalendarExportException if the calendar export fails
+   * @throws EventConflictException  if there is an event conflict
+   */
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
@@ -119,10 +140,17 @@ class PrintEventsCommand extends Command {
     }
   }
 
+  /**
+   * Prompt the result of the print events command. It formats the output to show the events in a
+   * specific date or in a specific interval. The output format is:
+   * <p>
+   * [startDate] [startTime - EndTime] [NotRecurring] name location [startDate] [ ALL DAY EVENT]
+   * [Recurring]  name location
+   *
+   * @param controllerUtility the controller utility object
+   */
   @Override
   void promptResult(ControllerUtility controllerUtility) {
-    // [startDate] [startTime - EndTime] [NotRecurring] name location
-    // [startDate] [ ALL DAY EVENT] [Recurring]  name location
     StringBuilder eventOutput = new StringBuilder();
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

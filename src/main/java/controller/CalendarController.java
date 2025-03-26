@@ -18,7 +18,12 @@ import model.IModel;
 import view.IView;
 
 /**
- * Controller for the calendar application. It handles user input and executes commands.
+ * This class represents the controller of the calendar application. Commands from the CLI and
+ * Headless interactions are gathered and processed before dispatching the request to model to
+ * perform operations on the calendar events.
+ *
+ * <p>This also handles the context of creating and editing the calendar. This provides the context
+ * of multiple calendars to the view.
  */
 public class CalendarController implements IController {
 
@@ -89,7 +94,7 @@ public class CalendarController implements IController {
   }
 
   /**
-   * Constructor for the CalendarController.
+   * Constructor for initializing the class attributes for the controller.
    *
    * @param modelFactory The model factory for the calendar application
    * @param view         The view for the calendar application
@@ -105,6 +110,11 @@ public class CalendarController implements IController {
     exitFlag = false;
   }
 
+  /**
+   * This method will start the controller and will run the command line interface in interactive
+   * mode or headless mode. This will also handle the command line arguments and will dispatch the
+   * request to the model to perform operations on the calendar events.
+   */
   @Override
   public void run() {
     Objects.requireNonNull(mode, "mode cannot be null");
@@ -138,7 +148,7 @@ public class CalendarController implements IController {
   private void promptUserInput() {
     if (mode == ControllerMode.INTERACTIVE) {
       view.displayMessage("calApp [" +
-          (Objects.nonNull(currentCalendar)? currentCalendar : "No calendar in use")
+          (Objects.nonNull(currentCalendar) ? currentCalendar : "No calendar in use")
           + "]> ");
     }
   }
@@ -155,9 +165,8 @@ public class CalendarController implements IController {
     }
   }
 
-
   /**
-   * Execute the command from the Scanner object.
+   * On execute, the command will be created and parsed before executing it.
    *
    * @param lineScanner Scanner object that contains the command
    */

@@ -19,8 +19,9 @@ import java.util.function.BiConsumer;
 import model.CalendarDayOfWeek;
 
 /**
- * EditEventCommand class implements Command and execute the command to edit an event or a series of
- * events.
+ * This class represents an implementation of the abstract Command class to edit an event in the
+ * calendar. It allows the user to update the properties of an event such as name, start time, end
+ * time, description, location, and recurrence details.
  */
 class EditEventCommand extends Command {
 
@@ -45,7 +46,9 @@ class EditEventCommand extends Command {
   private Integer updatedEvents;
 
   /**
-   * Constructor for EditEventCommand.
+   * The constructor for EditEventCommand class initializes the eventName, startTime, endTime to
+   * null. Setters for eventDTO and recurringDetailsDTO are created. It also initializes the
+   * eventBuilder and recurringDetailsDTOBuilder.
    */
   EditEventCommand() {
     eventName = null;
@@ -81,6 +84,11 @@ class EditEventCommand extends Command {
     return setters;
   }
 
+  /**
+   * Create a map of property setters for EventDTO.
+   *
+   * @return A map of property setters for EventDTO.
+   */
   private final Map<String, BiConsumer<EventDTOBuilder, String>> createPropertySetters() {
     Map<String, BiConsumer<EventDTOBuilder, String>> setters = new HashMap<>();
     setters.put("name",
@@ -101,6 +109,15 @@ class EditEventCommand extends Command {
     return setters;
   }
 
+  /**
+   * This method parses the command provided by the user. It reads the command from the scanner and
+   * determines the type of command (edit calendar, edit event, or edit events). It then calls the
+   * appropriate method to continue parsing the command.
+   *
+   * @param commandScanner a Scanner object that reads the command (File or console input)
+   * @return the command object
+   * @throws ParseCommandException if the command provided is invalid
+   */
   @Override
   Command parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
@@ -125,6 +142,13 @@ class EditEventCommand extends Command {
     return this;
   }
 
+  /**
+   * Parse the command to edit a specific event. Reading from  the scanner, it determines the
+   * properties to be updated. It also checks if the command is in the correct format.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void editSpannedEvent(Scanner commandScanner) throws ParseCommandException {
     setPropertySetters(commandScanner);
 
@@ -167,6 +191,12 @@ class EditEventCommand extends Command {
     parseNewPropertyValue(next);
   }
 
+  /**
+   * This method sets the property setters for the event and recurring details DTOs.
+   *
+   * @param commandScanner the scanner object that reads the command
+   * @throws ParseCommandException if the command provided is invalid
+   */
   private void setPropertySetters(Scanner commandScanner) throws ParseCommandException {
     String propertyName = commandScanner.next();
     eventDTOPropertySetter = eventDTOPropertySetters.get(propertyName);
@@ -179,6 +209,14 @@ class EditEventCommand extends Command {
     }
   }
 
+  /**
+   * This method parses the command to read an optional quoted string. If string is enclosed in
+   * quotes, it removes the quotes and returns the string.
+   *
+   * @param commandScanner the scanner object that reads the command
+   * @return the token read from the scanner
+   * @throws ParseCommandException if the command provided is invalid
+   */
   private String parseOptionalQuoted(Scanner commandScanner) throws ParseCommandException {
     String token = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
     if (token == null) {
@@ -187,6 +225,14 @@ class EditEventCommand extends Command {
     return token.startsWith("\"") ? token.substring(1, token.length() - 1) : token;
   }
 
+  /**
+   * Parse the command to edit recurring events. It reads the command from the scanner and
+   * determines the properties to be updated. It also checks if the command is in the correct
+   * format.
+   *
+   * @param commandScanner Scanner object to parse the command
+   * @throws ParseCommandException If the command is not in the correct format
+   */
   private void editRecurringEvents(Scanner commandScanner) throws ParseCommandException {
     eventBuilder.setIsRecurring(true);
     setPropertySetters(commandScanner);
@@ -228,6 +274,13 @@ class EditEventCommand extends Command {
     }
   }
 
+  /**
+   * This method parses the new property value provided by the user. If the value is in quotes, it
+   * removes the quotes and sets the value to the corresponding property setter.
+   *
+   * @param next the next token read from the scanner
+   * @throws ParseCommandException if the command provided is invalid
+   */
   private void parseNewPropertyValue(String next) throws ParseCommandException {
     if (next.startsWith("\"") && next.endsWith("\"")) {
       next = next.substring(1, next.length() - 1);
@@ -244,6 +297,14 @@ class EditEventCommand extends Command {
     }
   }
 
+  /**
+   * Execute the edit event command on the model. It updates the event with the new properties
+   * provided by the user.
+   *
+   * @param controllerUtility the controller utility object
+   * @throws CalendarExportException if there is an error on exporting the calendar
+   * @throws EventConflictException if there is a conflict with the event
+   */
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
@@ -259,6 +320,11 @@ class EditEventCommand extends Command {
   }
 
 
+  /**
+   * Prompt the result of the edit event command with a message.
+   *
+   * @param controllerUtility the controller utility object
+   */
   @Override
   void promptResult(ControllerUtility controllerUtility) {
     if (updatedEvents > 0) {

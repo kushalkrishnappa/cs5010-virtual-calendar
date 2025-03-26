@@ -60,10 +60,10 @@ public class CopyEventCommand extends Command {
    * command contains `event` or `events` keyword before calling the appropriate method continuing
    * the parsing.
    *
-   * @param commandScanner a Scanner object that reads the command (File or console input).
+   * @param commandScanner a Scanner object that reads the command (File or console input)
    * @return the command object of type CopyEventCommand
-   * @throws ParseCommandException    if the command provided is invalid.
-   * @throws InvalidTimeZoneException if the time zone provided is invalid.
+   * @throws ParseCommandException    if the command provided is invalid
+   * @throws InvalidTimeZoneException if the time zone provided is invalid
    */
   @Override
   Command parseCommand(Scanner commandScanner)
@@ -95,9 +95,9 @@ public class CopyEventCommand extends Command {
    * source calendar's `start dateTime` before calling the method to parse the target calendar
    * details.
    *
-   * @param commandScanner the Scanner object that reads the command (File or console input).
-   * @throws ParseCommandException    if the command provided is invalid.
-   * @throws InvalidTimeZoneException if the time zone provided is invalid.
+   * @param commandScanner the Scanner object that reads the command (File or console input)
+   * @throws ParseCommandException    if the command provided is invalid
+   * @throws InvalidTimeZoneException if the time zone provided is invalid
    */
   private void parseCopySingleEvent(Scanner commandScanner)
       throws ParseCommandException, InvalidTimeZoneException {
@@ -127,9 +127,9 @@ public class CopyEventCommand extends Command {
    * source calendar's `start date` and `end date` before calling the method to parse the target
    * calendar details.
    *
-   * @param commandScanner the Scanner object that reads the command (File or console input).
-   * @throws ParseCommandException    if the command provided is invalid.
-   * @throws InvalidTimeZoneException if the time zone provided is invalid.
+   * @param commandScanner the Scanner object that reads the command (File or console input)
+   * @throws ParseCommandException    if the command provided is invalid
+   * @throws InvalidTimeZoneException if the time zone provided is invalid
    */
   private void parseCopyMultipleEvents(Scanner commandScanner)
       throws ParseCommandException, InvalidTimeZoneException {
@@ -150,9 +150,9 @@ public class CopyEventCommand extends Command {
    * Parse the copy command for multiple events on a date. It parses the source calendar's `start
    * date` before calling the method to parse the target calendar.
    *
-   * @param commandScanner the Scanner object that reads the command (File or console input).
-   * @throws ParseCommandException    if the command provided is invalid.
-   * @throws InvalidTimeZoneException if the time zone provided is invalid.
+   * @param commandScanner the Scanner object that reads the command (File or console input)
+   * @throws ParseCommandException    if the command provided is invalid
+   * @throws InvalidTimeZoneException if the time zone provided is invalid
    */
   private void parseCopyEventsOnDate(Scanner commandScanner)
       throws ParseCommandException, InvalidTimeZoneException {
@@ -167,9 +167,9 @@ public class CopyEventCommand extends Command {
    * Parse the copy command for multiple events between two dates. It parses the source calendar's
    * `start date`, `end date`, and the target calendar details.
    *
-   * @param commandScanner the Scanner object that reads the command (File or console input).
-   * @throws ParseCommandException    if the command provided is invalid.
-   * @throws InvalidTimeZoneException if the time zone provided is invalid.
+   * @param commandScanner the Scanner object that reads the command (File or console input)
+   * @throws ParseCommandException    if the command provided is invalid
+   * @throws InvalidTimeZoneException if the time zone provided is invalid
    */
   private void parseCopyEventsBetweenDates(Scanner commandScanner)
       throws ParseCommandException, InvalidTimeZoneException {
@@ -193,8 +193,8 @@ public class CopyEventCommand extends Command {
    * Parse the target calendar details. It parses the `--target` keyword, the target calendar name,
    * and the `to` keyword before parsing the target calendar's start date or start dateTime.
    *
-   * @param commandScanner the Scanner object that reads the command (File or console input).
-   * @throws ParseCommandException if the command provided is invalid.
+   * @param commandScanner the Scanner object that reads the command (File or console input)
+   * @throws ParseCommandException if the command provided is invalid
    */
   private void parseTargetCalendarDetails(Scanner commandScanner)
       throws ParseCommandException {
@@ -229,9 +229,9 @@ public class CopyEventCommand extends Command {
    * Parse the optional quoted string from the command. If the string is enclosed in double quotes,
    * removes the quotes and returns the string else, returns the string as it is.
    *
-   * @param commandScanner the Scanner object that reads the command (File or console input).
+   * @param commandScanner the Scanner object that reads the command (File or console input)
    * @return the token parsed from the command
-   * @throws ParseCommandException if the command provided is invalid.
+   * @throws ParseCommandException if the command provided is invalid
    */
   private String parseOptionalQuoted(Scanner commandScanner) throws ParseCommandException {
     String token = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
@@ -245,9 +245,9 @@ public class CopyEventCommand extends Command {
    * Parse the date from the command. It parses the date in the format `yyyy-MM-dd` and returns the
    * date.
    *
-   * @param commandScanner the Scanner object that reads the command (File or console input).
+   * @param commandScanner the Scanner object that reads the command (File or console input)
    * @return the date parsed from the command
-   * @throws ParseCommandException if the command provided is invalid.
+   * @throws ParseCommandException if the command provided is invalid
    */
   private LocalDate parseDate(Scanner commandScanner)
       throws ParseCommandException {
@@ -264,9 +264,9 @@ public class CopyEventCommand extends Command {
    * Parse the dateTime from the command. It parses the dateTime in the format `yyyy-MM-dd HH:mm`
    * and returns the dateTime.
    *
-   * @param commandScanner the Scanner object that reads the command (File or console input).
+   * @param commandScanner the Scanner object that reads the command (File or console input)
    * @return the dateTime parsed from the command
-   * @throws ParseCommandException if the command provided is invalid.
+   * @throws ParseCommandException if the command provided is invalid
    */
   private LocalDateTime parseDateTime(Scanner commandScanner)
       throws ParseCommandException {
