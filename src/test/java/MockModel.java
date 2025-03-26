@@ -41,6 +41,7 @@ class MockModel implements IModel {
   boolean setIsBusyReturn;
   List<EventDTO> setGetEventsInRange;
   List<EventDTO> setGetEventsOnDate;
+  List<EventDTO> setGetAllEvents;
 
   // flags to control the event counts on the date and in the range
   Integer eventsOnDateCount;
@@ -81,6 +82,7 @@ class MockModel implements IModel {
     setIsBusyReturn = false;
     setGetEventsInRange = null;
     setGetEventsOnDate = null;
+    setGetAllEvents = null;
 
     eventsOnDateCount = 0;
     eventsInRangeCount = 0;
@@ -228,7 +230,7 @@ class MockModel implements IModel {
   @Override
   public List<EventDTO> getAllEvents() {
     getAllEventsCalled = true;
-    return List.of();
+    return Objects.nonNull(setGetAllEvents) ? setGetAllEvents : List.of();
   }
 
   @Override

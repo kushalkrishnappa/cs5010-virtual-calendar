@@ -44,6 +44,33 @@ public class CreateCommandTest extends AbstractCommandTest {
   }
 
   @Test
+  public void testCalendarIsUsedWithoutSettingIt() {
+
+    String command = "print events from 2025-10-21T09:00 to 2025-10-22T09:30";
+
+    MockView mockView = new MockView(command, true);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
+    controller.run();
+
+    assertEquals("No calendar is set. "
+            + "Use \"use calendar --name <calName>\" to select a calendar",
+        mockView.displayErrorMessage.toString().split("\n")[0]);
+
+  }
+
+  @Test
+  public void testCalendarContinuesToPromptOnEnter() {
+
+    MockView mockView = new MockView( "\n\n",    true);
+    controller = new CalendarController(mockModelFactory, mockView, ControllerMode.INTERACTIVE);
+    controller.run();
+
+    assertEquals("calApp [No calendar in use]> "
+        + "calApp [No calendar in use]> "
+        + "calApp [No calendar in use]> ", mockView.displayMessage.toString());
+  }
+
+  @Test
   public void invalidCommand() {
     assertEquals("Unknown command", getErrorMessageWithInput("invalidCommand"));
   }
