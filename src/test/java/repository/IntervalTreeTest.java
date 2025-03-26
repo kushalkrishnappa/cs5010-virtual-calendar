@@ -238,10 +238,27 @@ public class IntervalTreeTest {
     assertTrue(tree.insert(event3));
     assertTrue(tree.insert(event4));
     assertTrue(tree.insert(event5));
+    assertTrue(tree.insert(event6));
+    assertTrue(tree.insert(event7));
+    assertTrue(tree.insert(event8));
+    assertTrue(tree.insert(event9));
+    assertTrue(tree.insert(event10));
 
     List<EventDTO> events = tree.findByName("event1");
     assertEquals(2, events.size());
     assertEquals(event1, events.get(0));
     assertEquals(event1, events.get(1));
+
+    events = tree.findByName("event8");
+    assertEquals(1, events.size());
+    assertEquals(event8, events.get(0));
+
+    events = tree.findByName("event9");
+    assertEquals(1, events.size());
+    assertEquals(event9, events.get(0));
+
+    events = tree.findByName("event10");
+    assertEquals(1, events.size());
+    assertEquals(event10, events.get(0));
   }
 }
