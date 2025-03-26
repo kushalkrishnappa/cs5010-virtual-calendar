@@ -10,8 +10,24 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
 
+/**
+ * This class is responsible for generating the individual occurrences of a recurring event based on
+ * the provided {@link EventDTO} and its recurring details.
+ */
 class RecurrenceService {
-  // TODO: refactor
+
+  /**
+   * Generates a list of {@link EventDTO} objects representing all occurrences of a recurring
+   * event.
+   *
+   * <p>This method calculates the start and end times for each occurrence based on the repeat
+   * days, occurrences, or until date specified in the event's recurring details.
+   *
+   * @param eventDTO the {@link EventDTO} representing the recurring event
+   * @return a list of {@link EventDTO} objects, each representing a single occurrence of the
+   *         recurring event
+   * @throws IllegalArgumentException if the recurring details are invalid or inconsistent
+   */
   static List<EventDTO> generateRecurrence(EventDTO eventDTO) {
     // check if recurring event has repeat days
     if (Objects.isNull(eventDTO.getRecurringDetails().getRepeatDays())) {
@@ -129,20 +145,21 @@ class RecurrenceService {
 
 
   /**
-   * Check for conflict and add the event to the list of recurringDateTimeRange.
+   * Add the new event start and end time to the list of recurringDateTimeRange.
    *
-   * @param currentDateTime        currentDateTime
-   * @param recurringDateTimeRange recurringDateTimeRange
-   * @param endTime                endTime
-   * @param isAllDay               isAllDay
+   * @param startDateTime          the start time
+   * @param recurringDateTimeRange the list to update
+   * @param endDateTime            the end time
+   * @param isAllDay               boolean representing if the event is all day or not
    */
-  private static void addRecurrence(LocalDateTime currentDateTime,
-      List<List<LocalDateTime>> recurringDateTimeRange, LocalDateTime endTime, Boolean isAllDay) {
+  private static void addRecurrence(LocalDateTime startDateTime,
+      List<List<LocalDateTime>> recurringDateTimeRange, LocalDateTime endDateTime,
+      Boolean isAllDay) {
     if (isAllDay) {
-      recurringDateTimeRange.add(List.of(currentDateTime, currentDateTime.plusDays(1)));
+      recurringDateTimeRange.add(List.of(startDateTime, startDateTime.plusDays(1)));
     } else {
       recurringDateTimeRange.add(
-          Arrays.asList(currentDateTime, currentDateTime.with(endTime.toLocalTime())));
+          Arrays.asList(startDateTime, startDateTime.with(endDateTime.toLocalTime())));
     }
   }
 
