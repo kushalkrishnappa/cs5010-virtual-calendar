@@ -29,17 +29,21 @@ public class CSVCalendarExporter implements ICalendarExporter {
               // Subject
               escapeCSV(event.getSubject()),
               // Start Date
-              event.getStartTime() != null ? event.getStartTime().format(calenderExportDateFormatter)
+              event.getStartTime() != null
+                  ? event.getStartTime().format(calenderExportDateFormatter)
                   : "",
               // Start Time
-              event.getStartTime() != null && !event.getIsAllDay() ? event.getStartTime()
-                  .format(calenderExportTimeFormatter) : "",
+              event.getStartTime() != null && !event.getIsAllDay()
+                  ? event.getStartTime().format(calenderExportTimeFormatter)
+                  : "",
               // End Date
-              event.getEndTime() != null ? event.getEndTime().format(calenderExportDateFormatter)
+              event.getEndTime() != null
+                  ? event.getEndTime().format(calenderExportDateFormatter)
                   : "",
               // End Time
-              event.getEndTime() != null && !event.getIsAllDay() ? event.getEndTime()
-                  .format(calenderExportTimeFormatter) : "",
+              event.getEndTime() != null && !event.getIsAllDay()
+                  ? event.getEndTime().format(calenderExportTimeFormatter)
+                  : "",
               // All Day Event
               event.getIsAllDay() ? "True" : "False",
               // Description
