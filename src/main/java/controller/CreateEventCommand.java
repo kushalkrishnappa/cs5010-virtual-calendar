@@ -72,9 +72,6 @@ class CreateEventCommand extends Command {
     }
 
     try {
-//      if (!commandScanner.next().equals("event")) {
-//        throw new ParseCommandException("Invalid command format: create event ...");
-//      }
 
       String next = commandScanner.findWithinHorizon("\"([^\"]*)\"|\\S+", 0);
       if (Objects.isNull(next)) {

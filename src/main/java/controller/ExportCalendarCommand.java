@@ -13,8 +13,8 @@ import service.IFileWriter;
 import service.StandardFileWriter;
 
 /**
- * ExportCalendarCommand class implements Command and execute the command to export the calendar to
- * a CSV file.
+ * This class represents an implementation of the abstract Command class to export calendar events
+ * to a CSV file. It parses the command, executes the export operation, and prompts the result.
  */
 class ExportCalendarCommand extends Command {
 
@@ -25,7 +25,8 @@ class ExportCalendarCommand extends Command {
   private final IFileWriter fileWriter;
 
   /**
-   * Constructor for ExportCalendarCommand.
+   * The constructor initializes the output file path and the filename and creates a new instance of
+   * StandardFileWriter.
    */
   ExportCalendarCommand() {
     outputFilePath = null;
@@ -33,6 +34,16 @@ class ExportCalendarCommand extends Command {
     fileWriter = new StandardFileWriter();
   }
 
+  /**
+   * This method starts parsing the export calendar command from the Scanner object. It checks if
+   * the command contains `cal` keyword and the filename. If the filename does not end with `.csv`,
+   * it appends `.csv` to the filename. If the filename contains a dot but does not end with `.csv`,
+   * it throws a ParseCommandException.
+   *
+   * @param commandScanner a Scanner object that reads the command (File or console input)
+   * @return this command object
+   * @throws ParseCommandException if the command provided is invalid
+   */
   @Override
   Command parseCommand(Scanner commandScanner) throws ParseCommandException {
     try {
@@ -55,6 +66,15 @@ class ExportCalendarCommand extends Command {
     return this;
   }
 
+  /**
+   * Execute the export command on the model. It uses the CSVCalendarExporter to get the CSV data
+   * from the model and writes it to a file using the StandardFileWriter. If there is an error
+   * during writing the file, it throws a CalendarExportException.
+   *
+   * @param controllerUtility the controller utility object
+   * @throws CalendarExportException if there is an error on exporting the calendar
+   * @throws EventConflictException if there is a conflict with the event
+   */
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
@@ -72,6 +92,11 @@ class ExportCalendarCommand extends Command {
     }
   }
 
+  /**
+   * Prompt the result of the export command with the output file path as message.
+   *
+   * @param controllerUtility the controller utility object
+   */
   @Override
   void promptResult(ControllerUtility controllerUtility) {
     controllerUtility.promptOutput("Calendar exported to file:\n" + outputFilePath);
