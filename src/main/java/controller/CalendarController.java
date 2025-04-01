@@ -27,11 +27,11 @@ import view.IView;
  */
 public class CalendarController implements IController {
 
-  private final ControllerMode mode;
+  ControllerMode mode;
 
-  private final IView view;
+  final IView view;
 
-  private final Supplier<IModel> modelFactory;
+  final Supplier<IModel> modelFactory;
 
   private final Map<String, CalendarEntry> calendars;
 
@@ -108,6 +108,9 @@ public class CalendarController implements IController {
     this.currentCalendar = null;
     controllerUtility = new ControllerUtility();
     exitFlag = false;
+    Objects.requireNonNull(mode, "mode cannot be null");
+    Objects.requireNonNull(view, "view cannot be null");
+    Objects.requireNonNull(modelFactory, "model cannot be null");
   }
 
   /**
@@ -117,9 +120,6 @@ public class CalendarController implements IController {
    */
   @Override
   public void run() {
-    Objects.requireNonNull(mode, "mode cannot be null");
-    Objects.requireNonNull(view, "view cannot be null");
-    Objects.requireNonNull(modelFactory, "model cannot be null");
 
     Scanner scanner = new Scanner(view.getInputStream());
     promptUserInput();

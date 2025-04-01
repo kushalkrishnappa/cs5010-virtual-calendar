@@ -5,7 +5,8 @@ package controller;
  */
 public enum ControllerMode {
   INTERACTIVE,
-  HEADLESS;
+  HEADLESS,
+  GUI;
 
   /**
    * The method converts the command line argument to the corresponding ControllerMode. If the
