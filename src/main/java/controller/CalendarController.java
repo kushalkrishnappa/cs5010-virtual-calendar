@@ -80,6 +80,10 @@ public class CalendarController implements IController {
       return calendars.get(calendar);
     }
 
+    String[] getAllCalendarNames() {
+      return calendars.keySet().toArray(new String[0]);
+    }
+
     void addCalendarEntry(String calendar, CalendarEntry calendarEntry) {
       calendars.put(calendar, calendarEntry);
     }

@@ -1,5 +1,6 @@
 package controller;
 
+import java.time.ZoneId;
 import dto.EventDTO;
 import dto.ImportResult;
 import java.io.FileNotFoundException;
@@ -25,10 +26,16 @@ public class GUIController extends CalendarController implements CalendarFeature
   public GUIController(Supplier<IModel> modelFactory, IGUIView view) {
     super(modelFactory, view, ControllerMode.GUI);
     this.view = view;
+    controllerUtility.addCalendarEntry("Default", CalendarEntry.getBuilder()
+        .setModel(controllerUtility.getModelFactory().get())
+        .setZoneId(ZoneId.systemDefault().getId())
+        .build()
+    );
   }
 
   @Override
   public void run() {
+    view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
     view.setFeatures(new CalendarFeaturesAdaptor(this));
   }
 
@@ -50,4 +57,30 @@ public class GUIController extends CalendarController implements CalendarFeature
       view.displayError("Import Error: Could not read file - " + e.getMessage());
     }
   }
+
+  @Override
+  public void createCalendar() {
+    System.out.println("Creating Calendar");
+  }
+
+  @Override
+  public void editCalendar(String calendarName) {
+    System.out.println("Editing Calendar");
+  }
+
+  @Override
+  public void exportCalendar() {
+    System.out.println("Exporting Calendar");
+  }
+
+  @Override
+  public void importCalendar() {
+    System.out.println("Importing Calendar");
+  }
+
+  @Override
+  public void switchCalendar(String calendarName) {
+    System.out.println("Switching Calendar");
+  }
+
 }
