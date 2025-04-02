@@ -7,4 +7,9 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
   public CalendarFeaturesAdaptor(CalendarFeatures controller) {
     this.controller = controller;
   }
+
+  @Override
+  public void importCalendarFromFile(String filePath) {
+    controller.importCalendarFromFile(filePath);
+  }
 }

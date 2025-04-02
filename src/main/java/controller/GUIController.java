@@ -1,7 +1,15 @@
 package controller;
 
+import dto.EventDTO;
+import dto.ImportResult;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import model.IModel;
+import service.CSVCalendarImporter;
+import service.ICalendarImporter;
 import view.IGUIView;
 
 public class GUIController extends CalendarController implements CalendarFeatures {
@@ -22,5 +30,24 @@ public class GUIController extends CalendarController implements CalendarFeature
   @Override
   public void run() {
     view.setFeatures(new CalendarFeaturesAdaptor(this));
+  }
+
+  @Override
+  public void importCalendarFromFile(String filePath) {
+    ICalendarImporter importer = new CSVCalendarImporter();
+    Consumer<EventDTO> eventConsumer = eventDto -> {
+      controllerUtility.getCurrentCalendar()
+          .model.createEvent(eventDto, true);
+    };
+
+    try (FileReader reader = new FileReader(filePath)) {
+      ImportResult importResult = importer.importEvents(reader, eventConsumer);
+      view.displayMessage(importResult.generateSummary());
+      // TODO: refresh view
+    } catch (FileNotFoundException e) {
+      view.displayError("Import Error: File not found - " + filePath);
+    } catch (IOException e) {
+      view.displayError("Import Error: Could not read file - " + e.getMessage());
+    }
   }
 }
