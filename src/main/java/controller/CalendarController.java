@@ -55,7 +55,7 @@ public class CalendarController implements IController {
   class ControllerUtility {
 
     void promptOutput(String message) {
-      if (mode == ControllerMode.INTERACTIVE) {
+      if (mode != ControllerMode.HEADLESS) {
         view.displayMessage(message + "\n");
       }
     }

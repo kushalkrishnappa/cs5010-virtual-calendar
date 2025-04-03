@@ -26,14 +26,10 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
   }
 
   @Override
-  public void exportCalendar() {
-
+  public void exportCalendar(String saveFilePath) {
+    controller.exportCalendar(saveFilePath);
   }
 
-  @Override
-  public void importCalendar() {
-
-  }
 
   @Override
   public void switchCalendar(String calendarName) {

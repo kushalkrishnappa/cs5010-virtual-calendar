@@ -122,21 +122,19 @@ public class CSVCalendarImporter implements ICalendarImporter {
         ImportEventDetails eventDetails = new ImportEventDetails();
 
         // parse line and set fields
-        try {
-          List<String> values = splitCSVLineWithEscapedQuotes(line);
-          if (values.size() != columnHeaders.size()) {
-            // skip event
-            line = br.readLine();
-            continue;
-          }
-
-          for (int i = 0; i < columnSetters.size(); i++) {
-            columnSetters.get(i).accept(eventDetails, values.get(i));
-          }
-        } catch (Exception e) {
+        List<String> values = splitCSVLineWithEscapedQuotes(line);
+        if (values.size() != columnHeaders.size()) {
           // skip event
           line = br.readLine();
           continue;
+        }
+
+        for (int i = 0; i < columnSetters.size(); i++) {
+          try {
+            columnSetters.get(i).accept(eventDetails, values.get(i));
+          } catch (Exception e) {
+            //continue
+          }
         }
 
         // update values as per our model
@@ -162,7 +160,7 @@ public class CSVCalendarImporter implements ICalendarImporter {
         .setSubject(eventDetails.subject)
         .setDescription(eventDetails.description)
         .setLocation(eventDetails.location)
-        .setIsPublic(eventDetails.privateEvent)
+        .setIsPublic(!eventDetails.privateEvent)
         .setStartTime(Objects.nonNull(eventDetails.startTime)
             ? eventDetails.startDate.atTime(eventDetails.startTime)
             : eventDetails.startDate.atStartOfDay())

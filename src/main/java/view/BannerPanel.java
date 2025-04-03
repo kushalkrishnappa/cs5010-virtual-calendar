@@ -3,9 +3,11 @@ package view;
 import controller.CalendarFeatures;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -28,9 +30,12 @@ public class BannerPanel extends JPanel {
 
   private CalendarFeatures calendarFeatures;
 
+  private static File CURRENT_DIR;
+
   public BannerPanel() {
     setLayout(new BorderLayout());
     initBannerComponents();
+    CURRENT_DIR = new File(System.getProperty("user.home"));
   }
 
   private void initBannerComponents() {
@@ -60,8 +65,6 @@ public class BannerPanel extends JPanel {
     // add dummy action listeners
     createCalendarBtn.addActionListener(e -> System.out.println("Create Calendar clicked"));
     editCalendarBtn.addActionListener(e -> System.out.println("Edit Calendar clicked"));
-    exportCalendarBtn.addActionListener(e -> System.out.println("Export Calendar clicked"));
-    importCalendarBtn.addActionListener(e -> System.out.println("Import Calendar clicked"));
     calendarSelectorDropdown.addActionListener(
         e -> System.out.println("Calendar selected: " + calendarSelectorDropdown.getSelectedItem())
     );
@@ -90,11 +93,32 @@ public class BannerPanel extends JPanel {
     editCalendarBtn.addActionListener(
         e -> calendarFeatures.editCalendar((String) calendarSelectorDropdown.getSelectedItem())
     );
-    exportCalendarBtn.addActionListener(e -> calendarFeatures.exportCalendar());
-    importCalendarBtn.addActionListener(e -> calendarFeatures.importCalendar());
+    exportCalendarBtn.addActionListener(e -> getExportCalendarClicked());
+    importCalendarBtn.addActionListener(e -> getImportCalendarClicked());
     calendarSelectorDropdown.addActionListener(
         e -> calendarFeatures.switchCalendar((String) calendarSelectorDropdown.getSelectedItem())
     );
+  }
+
+
+  private void getExportCalendarClicked() {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setCurrentDirectory(CURRENT_DIR);
+    int response = fileChooser.showSaveDialog(this.getParent());
+    if (response == JFileChooser.APPROVE_OPTION) {
+      calendarFeatures.exportCalendar(fileChooser.getSelectedFile().getAbsolutePath());
+      CURRENT_DIR = fileChooser.getSelectedFile().getParentFile();
+    }
+  }
+
+  private void getImportCalendarClicked() {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setCurrentDirectory(CURRENT_DIR);
+    int response = fileChooser.showOpenDialog(this.getParent());
+    if (response == JFileChooser.APPROVE_OPTION) {
+      calendarFeatures.importCalendarFromFile(fileChooser.getSelectedFile().getAbsolutePath());
+      CURRENT_DIR = fileChooser.getSelectedFile().getParentFile();
+    }
   }
 
   public void setCalendarSelector(String[] calendars) {

@@ -31,7 +31,17 @@ class ExportCalendarCommand extends Command {
   ExportCalendarCommand() {
     outputFilePath = null;
     filename = null;
-    fileWriter = new StandardFileWriter();
+    fileWriter = getIFileWriter();
+  }
+
+  private IFileWriter getIFileWriter() {
+    return new StandardFileWriter();
+  }
+
+  ExportCalendarCommand(String filename){
+    outputFilePath = null;
+    this.filename = filename;
+    fileWriter = getIFileWriter();
   }
 
   /**

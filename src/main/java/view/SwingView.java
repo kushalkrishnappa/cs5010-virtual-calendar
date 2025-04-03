@@ -4,6 +4,7 @@ import controller.CalendarFeatures;
 import java.awt.BorderLayout;
 import java.time.LocalDate;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class SwingView extends JFrame implements IGUIView {
 
@@ -59,12 +60,13 @@ public class SwingView extends JFrame implements IGUIView {
 
   @Override
   public void displayMessage(String output) {
-    // TODO: Implement message display
+    System.out.println(output);
+    JOptionPane.showMessageDialog(this, output, "", JOptionPane.PLAIN_MESSAGE);
   }
 
   @Override
   public void displayError(String error) {
-    // TODO: Implement error display
+    JOptionPane.showMessageDialog(this, error, "", JOptionPane.ERROR_MESSAGE);
   }
 
   @Override
