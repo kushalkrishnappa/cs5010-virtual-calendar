@@ -1,6 +1,7 @@
 package controller;
 
 import java.time.LocalDate;
+import exception.CalendarExportException;
 import java.time.ZoneId;
 import dto.EventDTO;
 import dto.ImportResult;
@@ -32,6 +33,7 @@ public class GUIController extends CalendarController implements CalendarFeature
         .setZoneId(ZoneId.systemDefault().getId())
         .build()
     );
+    controllerUtility.setCurrentCalendar("Default");
   }
 
   @Override
@@ -70,13 +72,14 @@ public class GUIController extends CalendarController implements CalendarFeature
   }
 
   @Override
-  public void exportCalendar() {
-    System.out.println("Exporting Calendar");
-  }
-
-  @Override
-  public void importCalendar() {
-    System.out.println("Importing Calendar");
+  public void exportCalendar(String saveFilePath) {
+    ExportCalendarCommand exportCalendarCommand = new ExportCalendarCommand(saveFilePath);
+    try {
+      exportCalendarCommand.executeCommand(controllerUtility);
+    } catch (CalendarExportException e){
+      view.displayError(e.getMessage());
+    }
+    exportCalendarCommand.promptResult(controllerUtility);
   }
 
   @Override

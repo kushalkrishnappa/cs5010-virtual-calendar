@@ -8,8 +8,7 @@ public interface CalendarFeatures {
   // calendar operation features
   void createCalendar();
   void editCalendar(String calendarName);
-  void exportCalendar();
-  void importCalendar();
+  void exportCalendar(String saveFilePath);
   void switchCalendar(String calendarName);
   // calendar event features
   void viewDay(LocalDate date);
