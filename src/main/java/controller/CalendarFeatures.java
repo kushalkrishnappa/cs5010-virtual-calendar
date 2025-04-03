@@ -11,4 +11,6 @@ public interface CalendarFeatures {
   void exportCalendar();
   void importCalendar();
   void switchCalendar(String calendarName);
+  // calendar event features
+  void viewDay(LocalDate date);
 }
