@@ -1,5 +1,6 @@
 package controller;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import dto.EventDTO;
 import dto.ImportResult;
@@ -81,6 +82,12 @@ public class GUIController extends CalendarController implements CalendarFeature
   @Override
   public void switchCalendar(String calendarName) {
     System.out.println("Switching Calendar");
+  }
+
+  @Override
+  public void viewDay(LocalDate date) {
+    System.out.println("View Day: " + date.toString());
+    view.showDayViewDialog(date);
   }
 
 }

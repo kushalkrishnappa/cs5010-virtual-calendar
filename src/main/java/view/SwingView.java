@@ -2,6 +2,7 @@ package view;
 
 import controller.CalendarFeatures;
 import java.awt.BorderLayout;
+import java.time.LocalDate;
 import javax.swing.JFrame;
 
 public class SwingView extends JFrame implements IGUIView {
@@ -35,6 +36,14 @@ public class SwingView extends JFrame implements IGUIView {
 
   private void layoutComponents() {
     add(bannerPanel, BorderLayout.NORTH);
+    add(operationButtonsPanel, BorderLayout.WEST);
+    add(datesPanel, BorderLayout.CENTER);
+  }
+
+  @Override
+  public void showDayViewDialog(LocalDate date) {
+    // TODO - implement a pop up dialog
+    System.out.println("Pop up a dialog");
   }
 
   @Override
@@ -45,6 +54,7 @@ public class SwingView extends JFrame implements IGUIView {
   @Override
   public void setFeatures(CalendarFeatures features) {
     bannerPanel.setFeatures(features);
+    datesPanel.setFeatures(features);
   }
 
   @Override
