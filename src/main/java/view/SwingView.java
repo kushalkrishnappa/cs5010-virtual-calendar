@@ -3,6 +3,7 @@ package view;
 import controller.CalendarFeatures;
 import java.awt.BorderLayout;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -48,8 +49,23 @@ public class SwingView extends JFrame implements IGUIView {
   }
 
   @Override
+  public void setMonthYearLabel(YearMonth monthYear) {
+    datesPanel.updateMonthYearLabel(monthYear);
+  }
+
+  @Override
+  public void setCalendarMonthDates(YearMonth yearMonth) {
+    datesPanel.updateCalendarYearMonthDates(yearMonth);
+  }
+
+  @Override
   public void setAvailableCalendars(String[] calendars) {
     bannerPanel.setCalendarSelector(calendars);
+  }
+
+  @Override
+  public void setCurrentCalendarTz(String tz) {
+    bannerPanel.setCurrentTimezone(tz);
   }
 
   @Override
@@ -60,7 +76,6 @@ public class SwingView extends JFrame implements IGUIView {
 
   @Override
   public void displayMessage(String output) {
-    System.out.println(output);
     JOptionPane.showMessageDialog(this, output, "", JOptionPane.PLAIN_MESSAGE);
   }
 

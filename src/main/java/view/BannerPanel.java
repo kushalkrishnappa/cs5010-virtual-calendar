@@ -3,6 +3,8 @@ package view;
 import controller.CalendarFeatures;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -11,6 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 
 public class BannerPanel extends JPanel {
 
@@ -27,6 +30,10 @@ public class BannerPanel extends JPanel {
   private JButton exportCalendarBtn;
 
   private JButton importCalendarBtn;
+
+  private JButton timeZoneBtn;
+
+  private JPanel timeZonePanel;
 
   private CalendarFeatures calendarFeatures;
 
@@ -47,6 +54,13 @@ public class BannerPanel extends JPanel {
     buttonsPanel.add(new JLabel("Calendar:"));
     calendarSelectorDropdown = new JComboBox<>();
     buttonsPanel.add(calendarSelectorDropdown);
+
+    timeZonePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    timeZonePanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+    timeZoneBtn = new JButton("Timezone: not set");
+    timeZoneBtn.setEnabled(false);
+    timeZonePanel.add(timeZoneBtn);
+    add(timeZonePanel, BorderLayout.EAST);
 
     // add buttons to the panel
     createButtons();
@@ -72,8 +86,8 @@ public class BannerPanel extends JPanel {
 
   private void createButtons() {
     // buttons for the calendar operations
-    createCalendarBtn = new JButton("Create Calendar");
-    editCalendarBtn = new JButton("Edit");
+    createCalendarBtn = new JButton("New Calendar");
+    editCalendarBtn = new JButton("Edit Calendar");
     exportCalendarBtn = new JButton("Export");
     importCalendarBtn = new JButton("Import");
   }
@@ -89,9 +103,42 @@ public class BannerPanel extends JPanel {
   public void setFeatures(CalendarFeatures features) {
     calendarFeatures = features;
 
-    createCalendarBtn.addActionListener(e -> calendarFeatures.createCalendar());
+    createCalendarBtn.addActionListener(
+        e -> {
+          NewCalendarDialog dialog = new NewCalendarDialog(
+              (Frame) SwingUtilities.getWindowAncestor(this),
+              null,
+              null
+          );
+          dialog.setVisible(true);
+
+          if (dialog.isConfirmed()) {
+            String calendarName = dialog.getCalendarName();
+            String timezone = dialog.getSelectedTimezone();
+            calendarFeatures.createCalendar(calendarName, timezone);
+          }
+        }
+    );
     editCalendarBtn.addActionListener(
-        e -> calendarFeatures.editCalendar((String) calendarSelectorDropdown.getSelectedItem())
+        e -> {
+          String selectedCalendar = (String) calendarSelectorDropdown.getSelectedItem();
+          String timezone = timeZoneBtn.getText().substring(10);
+
+          if (selectedCalendar != null) {
+            NewCalendarDialog dialog = new NewCalendarDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                selectedCalendar,
+                timezone
+            );
+            dialog.setVisible(true);
+
+            if (dialog.isConfirmed()) {
+              String newCalendarName = dialog.getCalendarName();
+              String newTimezone = dialog.getSelectedTimezone();
+              calendarFeatures.editCalendar(selectedCalendar, newCalendarName, newTimezone);
+            }
+          }
+        }
     );
     exportCalendarBtn.addActionListener(e -> getExportCalendarClicked());
     importCalendarBtn.addActionListener(e -> getImportCalendarClicked());
@@ -99,7 +146,6 @@ public class BannerPanel extends JPanel {
         e -> calendarFeatures.switchCalendar((String) calendarSelectorDropdown.getSelectedItem())
     );
   }
-
 
   private void getExportCalendarClicked() {
     JFileChooser fileChooser = new JFileChooser();
@@ -127,10 +173,21 @@ public class BannerPanel extends JPanel {
   }
 
   private void refreshCalendarSelector() {
+    ActionListener[] actionListeners = calendarSelectorDropdown.getActionListeners();
+    for (ActionListener actionListener : actionListeners) {
+      calendarSelectorDropdown.removeActionListener(actionListener);
+    }
     calendarSelectorDropdown.removeAllItems();
     for (String calendar : calendars) {
       calendarSelectorDropdown.addItem(calendar);
     }
+    for (ActionListener actionListener : actionListeners) {
+      calendarSelectorDropdown.addActionListener(actionListener);
+    }
+  }
+
+  public void setCurrentTimezone(String timezone) {
+    timeZoneBtn.setText("Timezone: " + timezone);
   }
 
 }
