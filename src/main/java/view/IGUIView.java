@@ -14,6 +14,8 @@ public interface IGUIView extends IView {
 
   void setAvailableCalendars(String[] calendars);
 
+  void setCurrentCalendarTz(String tz);
+
   void setFeatures(CalendarFeatures features);
 
 }

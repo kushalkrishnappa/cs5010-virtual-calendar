@@ -1,14 +1,14 @@
 package controller;
 
-import java.time.LocalDate;
-import exception.CalendarExportException;
-import java.time.YearMonth;
-import java.time.ZoneId;
 import dto.EventDTO;
 import dto.ImportResult;
+import exception.CalendarExportException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import model.IModel;
@@ -40,6 +40,7 @@ public class GUIController extends CalendarController implements CalendarFeature
   @Override
   public void run() {
     view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
+    view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
     view.setMonthYearLabel(YearMonth.now());
     view.setCalendarMonthDates(YearMonth.now());
     view.setFeatures(new CalendarFeaturesAdaptor(this));
@@ -65,13 +66,40 @@ public class GUIController extends CalendarController implements CalendarFeature
   }
 
   @Override
-  public void createCalendar() {
-    System.out.println("Creating Calendar");
+  public void createCalendar(String calendarName, String timezone) {
+    if (calendarName != null && !calendarName.isEmpty() && timezone != null
+        && !timezone.isEmpty()) {
+      try {
+        // create new calendar entry
+        controllerUtility.addCalendarEntry(calendarName, CalendarEntry.getBuilder()
+            .setModel(controllerUtility.getModelFactory().get())
+            .setZoneId(timezone)
+            .build());
+        // refresh the calendar list in the view
+        view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
+        view.setCurrentCalendarTz(timezone);
+        // show success message
+        view.displayMessage("Calendar '" + calendarName + "' created successfully!");
+      } catch (Exception e) {
+        view.displayError("Error creating calendar: " + e.getMessage());
+      }
+    }
   }
 
   @Override
-  public void editCalendar(String calendarName) {
-    System.out.println("Editing Calendar");
+  public void editCalendar(String currentCalendarName, String newCalendarName, String newTimezone) {
+    if (newCalendarName != null && !newCalendarName.isEmpty() && newTimezone != null
+    && !newTimezone.isEmpty()) {
+      try {
+        EditCalendarCommand editCommand = new EditCalendarCommand(currentCalendarName, newCalendarName, newTimezone);
+        editCommand.executeCommand(controllerUtility);
+        // refresh the calendar list in the view
+        view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
+        view.setCurrentCalendarTz(newTimezone);
+      } catch (Exception e) {
+        view.displayError("Error editing calendar: " + e.getMessage());
+      }
+    }
   }
 
   @Override
@@ -79,7 +107,7 @@ public class GUIController extends CalendarController implements CalendarFeature
     ExportCalendarCommand exportCalendarCommand = new ExportCalendarCommand(saveFilePath);
     try {
       exportCalendarCommand.executeCommand(controllerUtility);
-    } catch (CalendarExportException e){
+    } catch (CalendarExportException e) {
       view.displayError(e.getMessage());
     }
     exportCalendarCommand.promptResult(controllerUtility);
@@ -87,7 +115,8 @@ public class GUIController extends CalendarController implements CalendarFeature
 
   @Override
   public void switchCalendar(String calendarName) {
-    System.out.println("Switching Calendar");
+    controllerUtility.setCurrentCalendar(calendarName);
+    view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
   }
 
   @Override

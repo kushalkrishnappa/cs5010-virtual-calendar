@@ -64,6 +64,11 @@ public class SwingView extends JFrame implements IGUIView {
   }
 
   @Override
+  public void setCurrentCalendarTz(String tz) {
+    bannerPanel.setCurrentTimezone(tz);
+  }
+
+  @Override
   public void setFeatures(CalendarFeatures features) {
     bannerPanel.setFeatures(features);
     datesPanel.setFeatures(features);
@@ -71,7 +76,6 @@ public class SwingView extends JFrame implements IGUIView {
 
   @Override
   public void displayMessage(String output) {
-    System.out.println(output);
     JOptionPane.showMessageDialog(this, output, "", JOptionPane.PLAIN_MESSAGE);
   }
 

@@ -46,6 +46,15 @@ class EditCalendarCommand extends Command {
     this.calendarEntryBuilder = CalendarEntry.getBuilder();
   }
 
+  EditCalendarCommand(String calendarName, String newCalendarName, String newTimeZone){
+    this.calendarName = calendarName;
+    this.newCalendarName = newCalendarName;
+    this.newTimeZone = newTimeZone;
+    this.calendarEntryPropertySetters = createPropertySetters();
+    this.calendarEntryPropertySetter = null;
+    this.calendarEntryBuilder = CalendarEntry.getBuilder();
+  }
+
   /**
    * This method creates a map of property setters for the CalendarEntryBuilder. The map contains
    * the property names as keys and the corresponding setter methods as values.

@@ -17,13 +17,13 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
   }
 
   @Override
-  public void createCalendar() {
-
+  public void createCalendar(String calendarName, String timezone) {
+    controller.createCalendar(calendarName, timezone);
   }
 
   @Override
-  public void editCalendar(String calendarName) {
-
+  public void editCalendar(String currentCalendarName, String newCalendarName, String newTimezone) {
+    controller.editCalendar(currentCalendarName, newCalendarName, newTimezone);
   }
 
   @Override
@@ -34,7 +34,7 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
 
   @Override
   public void switchCalendar(String calendarName) {
-
+    controller.switchCalendar(calendarName);
   }
 
   @Override
