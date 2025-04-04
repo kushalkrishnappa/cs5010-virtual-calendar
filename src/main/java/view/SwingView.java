@@ -3,6 +3,7 @@ package view;
 import controller.CalendarFeatures;
 import java.awt.BorderLayout;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -45,6 +46,16 @@ public class SwingView extends JFrame implements IGUIView {
   public void showDayViewDialog(LocalDate date) {
     // TODO - implement a pop up dialog
     System.out.println("Pop up a dialog");
+  }
+
+  @Override
+  public void setMonthYearLabel(YearMonth monthYear) {
+    datesPanel.updateMonthYearLabel(monthYear);
+  }
+
+  @Override
+  public void setCalendarMonthDates(YearMonth yearMonth) {
+    datesPanel.updateCalendarYearMonthDates(yearMonth);
   }
 
   @Override

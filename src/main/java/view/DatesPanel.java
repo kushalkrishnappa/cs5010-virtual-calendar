@@ -54,7 +54,6 @@ public class DatesPanel extends JPanel {
   public DatesPanel() {
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    currentYearMonth = YearMonth.now(); // set the current month and year
     initComponents();
   }
 
@@ -76,42 +75,24 @@ public class DatesPanel extends JPanel {
     updateMonthNavPanel();
 
     // create and set calendar table
-    createAndSetCalendarTable();
-
-    // Set up the calendar
-    updateCalendar();
+    createCalendarTable();
 
     // Add components to the panel
     add(monthNavPanel, BorderLayout.NORTH);
     add(new JScrollPane(calendarTable), BorderLayout.CENTER);
   }
 
-  private void updateMonthYearLabel() {
-    monthYearLabel.setText(currentYearMonth.format(monthYearFormatter));
-  }
-
   private void createMonthYearLabel() {
     monthYearLabel = new JLabel("", JLabel.CENTER); // create empty label
     monthYearLabel.setFont(new Font("Sans-Serif", Font.BOLD, 14)); // set font
-    updateMonthYearLabel();
   }
 
   private void createPrevMonthBtn() {
     prevMonthBtn = new JButton("<<");
-    prevMonthBtn.addActionListener(e -> {
-      currentYearMonth = currentYearMonth.minusMonths(1);
-      updateMonthYearLabel();
-      updateCalendar();
-    });
   }
 
   private void createNextMonthBtn() {
     nextMonthBtn = new JButton(">>");
-    nextMonthBtn.addActionListener(e -> {
-      currentYearMonth = currentYearMonth.plusMonths(1);
-      updateMonthYearLabel();
-      updateCalendar();
-    });
   }
 
   private void updateMonthNavPanel() {
@@ -120,7 +101,12 @@ public class DatesPanel extends JPanel {
     monthNavPanel.add(nextMonthBtn, BorderLayout.EAST);
   }
 
-  private void createAndSetCalendarTable() {
+  public void updateMonthYearLabel(YearMonth monthYear) {
+    currentYearMonth = monthYear;
+    monthYearLabel.setText(currentYearMonth.format(monthYearFormatter));
+  }
+
+  private void createCalendarTable() {
     DefaultTableModel newTableModel = createTableModel();
     setDaysOfWeekForTableModel(newTableModel);
     tableModel = newTableModel;
@@ -160,6 +146,16 @@ public class DatesPanel extends JPanel {
   public void setFeatures(CalendarFeatures features) {
     calendarFeatures = features;
 
+    // prev month button action listener
+    prevMonthBtn.addActionListener(e -> {
+      calendarFeatures.previousMonthYear(currentYearMonth);
+    });
+
+    // next month button action listener
+    nextMonthBtn.addActionListener(e -> {
+      calendarFeatures.nextMonthYear(currentYearMonth);
+    });
+
     // add mouse listener to handle cell clicks
     calendarTable.addMouseListener(new MouseAdapter() {
       @Override
@@ -191,22 +187,22 @@ public class DatesPanel extends JPanel {
   /**
    * Update the calendar with the current month
    */
-  public void updateCalendar() {
+  public void updateCalendarYearMonthDates(YearMonth calendarYearMonth) {
 
     // clear and set new rows of the table
     tableModel.setRowCount(0);
     tableModel.setRowCount(6); // max 6 rows for a month
 
     // get the day of week for the first day of month
-    LocalDate firstDayOfMonth = currentYearMonth.atDay(1);
+    LocalDate firstDayOfMonth = calendarYearMonth.atDay(1);
     // get the calendar table cell for first day of month
     int dayOfWeek = firstDayOfMonth.getDayOfWeek().getValue() % 7;
 
     // get number of days in month
-    int daysInMonth = currentYearMonth.lengthOfMonth();
+    int daysInMonth = calendarYearMonth.lengthOfMonth();
 
     // get number of days in previous month
-    YearMonth prevMonth = currentYearMonth.minusMonths(1);
+    YearMonth prevMonth = calendarYearMonth.minusMonths(1);
     int daysInPrevMonth = prevMonth.lengthOfMonth();
 
     // fill the calendar table
@@ -223,6 +219,7 @@ public class DatesPanel extends JPanel {
     // current month's first week days (fill first week of this month's cell)
     for (int i = dayOfWeek; i < 7; i++) {
       String cellContent = dayCounter + "\n";
+      // TODO: Add event details to cell content
       tableModel.setValueAt(cellContent, row, i);
       dayCounter++;
     }
@@ -232,6 +229,7 @@ public class DatesPanel extends JPanel {
       row++;
       for (int i = 0; i < 7 && dayCounter <= daysInMonth; i++) {
         String cellContent = dayCounter + "\n";
+        // TODO: Add event details to cell content
         tableModel.setValueAt(cellContent, row, i);
         dayCounter++;
       }

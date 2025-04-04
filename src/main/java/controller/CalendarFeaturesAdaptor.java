@@ -1,6 +1,7 @@
 package controller;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 public class CalendarFeaturesAdaptor implements CalendarFeatures {
 
@@ -39,6 +40,16 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
   @Override
   public void viewDay(LocalDate date) {
     controller.viewDay(date);
+  }
+
+  @Override
+  public void nextMonthYear(YearMonth yearMonth) {
+    controller.nextMonthYear(yearMonth);
+  }
+
+  @Override
+  public void previousMonthYear(YearMonth yearMonth) {
+    controller.previousMonthYear(yearMonth);
   }
 
 }

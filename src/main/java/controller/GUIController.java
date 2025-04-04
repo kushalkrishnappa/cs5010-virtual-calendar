@@ -2,6 +2,7 @@ package controller;
 
 import java.time.LocalDate;
 import exception.CalendarExportException;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import dto.EventDTO;
 import dto.ImportResult;
@@ -39,6 +40,8 @@ public class GUIController extends CalendarController implements CalendarFeature
   @Override
   public void run() {
     view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
+    view.setMonthYearLabel(YearMonth.now());
+    view.setCalendarMonthDates(YearMonth.now());
     view.setFeatures(new CalendarFeaturesAdaptor(this));
   }
 
@@ -91,6 +94,20 @@ public class GUIController extends CalendarController implements CalendarFeature
   public void viewDay(LocalDate date) {
     System.out.println("View Day: " + date.toString());
     view.showDayViewDialog(date);
+  }
+
+  @Override
+  public void nextMonthYear(YearMonth yearMonth) {
+    YearMonth nextMonth = yearMonth.plusMonths(1);
+    view.setMonthYearLabel(nextMonth);
+    view.setCalendarMonthDates(nextMonth);
+  }
+
+  @Override
+  public void previousMonthYear(YearMonth yearMonth) {
+    YearMonth previousMonth = yearMonth.minusMonths(1);
+    view.setMonthYearLabel(previousMonth);
+    view.setCalendarMonthDates(previousMonth);
   }
 
 }
