@@ -9,6 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -47,6 +49,7 @@ public class DatesPanel extends JPanel {
   private YearMonth currentYearMonth;
 
   private CalendarFeatures calendarFeatures;
+  private String currentTimeZone;
 
   /**
    * Constructor initializes the calendar panel
@@ -283,6 +286,11 @@ public class DatesPanel extends JPanel {
     }
   }
 
+  public void setCurrentTimezone(String tz) {
+    this.currentTimeZone = tz;
+    calendarTable.repaint();
+  }
+
   /**
    * Custom renderer for calendar cells
    */
@@ -347,7 +355,7 @@ public class DatesPanel extends JPanel {
     }
 
     private void highlightCurrentDay(int day, boolean isCurrentMonth) {
-      LocalDate today = LocalDate.now();
+      LocalDate today = ZonedDateTime.now(ZoneId.of(currentTimeZone)).toLocalDate();
       if (day == today.getDayOfMonth() &&
           currentYearMonth.getMonthValue() == today.getMonthValue() &&
           currentYearMonth.getYear() == today.getYear() &&

@@ -1,9 +1,11 @@
 package view;
 
 import controller.CalendarFeatures;
+import controller.EventData;
 import java.awt.BorderLayout;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -43,9 +45,11 @@ public class SwingView extends JFrame implements IGUIView {
   }
 
   @Override
-  public void showDayViewDialog(LocalDate date) {
-    // TODO - implement a pop up dialog
-    System.out.println("Pop up a dialog");
+  public void showDayViewDialog(LocalDate date, List<EventData> events) {
+    // TODO: Pop a Day View Dialog
+    // DayViewDialog dialog = new DayViewDialog(this, date, events);
+    DayDialog dayDialog = new DayDialog(this, date, events);
+    dayDialog.setVisible(true);
   }
 
   @Override
@@ -66,12 +70,18 @@ public class SwingView extends JFrame implements IGUIView {
   @Override
   public void setCurrentCalendarTz(String tz) {
     bannerPanel.setCurrentTimezone(tz);
+    datesPanel.setCurrentTimezone(tz);
   }
 
   @Override
   public void setFeatures(CalendarFeatures features) {
     bannerPanel.setFeatures(features);
     datesPanel.setFeatures(features);
+  }
+
+  @Override
+  public void setCurrentCalendar(String calendarName) {
+    bannerPanel.setCurrentCalendar(calendarName);
   }
 
   @Override
