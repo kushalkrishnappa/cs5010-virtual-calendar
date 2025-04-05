@@ -2,6 +2,7 @@ package controller;
 
 import dto.EventDTO;
 import dto.ImportResult;
+import dto.RecurringDetailsDTO;
 import exception.CalendarExportException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,8 +10,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import model.IModel;
 import service.CSVCalendarImporter;
 import service.ICalendarImporter;
@@ -77,6 +82,8 @@ public class GUIController extends CalendarController implements CalendarFeature
             .build());
         // refresh the calendar list in the view
         view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
+        // set the current calendar to the new one
+        view.setCurrentCalendar(calendarName);
         view.setCurrentCalendarTz(timezone);
         // show success message
         view.displayMessage("Calendar '" + calendarName + "' created successfully!");
@@ -89,13 +96,24 @@ public class GUIController extends CalendarController implements CalendarFeature
   @Override
   public void editCalendar(String currentCalendarName, String newCalendarName, String newTimezone) {
     if (newCalendarName != null && !newCalendarName.isEmpty() && newTimezone != null
-    && !newTimezone.isEmpty()) {
+        && !newTimezone.isEmpty()) {
+      if (newCalendarName.equals(currentCalendarName)) {
+        newCalendarName = null;
+      } else if (Arrays.asList(controllerUtility.getAllCalendarNames()).contains(newCalendarName)) {
+        view.displayError("Calendar name already exists.");
+        return;
+      }
       try {
-        EditCalendarCommand editCommand = new EditCalendarCommand(currentCalendarName, newCalendarName, newTimezone);
+        EditCalendarCommand editCommand = new EditCalendarCommand(
+            currentCalendarName,
+            newCalendarName,
+            newTimezone.equals(controllerUtility.getCurrentCalendar().zoneId.getId())
+                ? null
+                : newTimezone);
         editCommand.executeCommand(controllerUtility);
         // refresh the calendar list in the view
         view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
-        view.setCurrentCalendarTz(newTimezone);
+        view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
       } catch (Exception e) {
         view.displayError("Error editing calendar: " + e.getMessage());
       }
@@ -116,13 +134,17 @@ public class GUIController extends CalendarController implements CalendarFeature
   @Override
   public void switchCalendar(String calendarName) {
     controllerUtility.setCurrentCalendar(calendarName);
+    view.setCurrentCalendar(calendarName);
     view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
   }
 
   @Override
   public void viewDay(LocalDate date) {
     System.out.println("View Day: " + date.toString());
-    view.showDayViewDialog(date);
+    List<EventDTO> eventsOnDate = controllerUtility.getCurrentCalendar()
+        .model.getEventsOnDate(date);
+    List<EventData> events = convertEventDTOsToEventData(eventsOnDate);
+    view.showDayViewDialog(date, events);
   }
 
   @Override
@@ -137,6 +159,41 @@ public class GUIController extends CalendarController implements CalendarFeature
     YearMonth previousMonth = yearMonth.minusMonths(1);
     view.setMonthYearLabel(previousMonth);
     view.setCalendarMonthDates(previousMonth);
+  }
+
+  private List<EventData> convertEventDTOsToEventData(List<EventDTO> eventsDTOs) {
+    List<EventData> events = new ArrayList<>();
+
+    for (EventDTO dto : eventsDTOs) {
+      events.add(
+          new EventData(
+              dto.getSubject(),
+              dto.getStartTime(),
+              dto.getEndTime(),
+              dto.getDescription(),
+              dto.getLocation(),
+              dto.getIsPublic(),
+              dto.getIsAllDay(),
+              dto.getIsRecurring(),
+              createRecurringDTOToRecurringData(dto.getRecurringDetails())
+          )
+      );
+    }
+    return events;
+  }
+
+  private RecurrenceData createRecurringDTOToRecurringData(
+      RecurringDetailsDTO recurringDetailsDto) {
+    if (recurringDetailsDto == null) {
+      return null;
+    }
+    return new RecurrenceData(
+        recurringDetailsDto.getOccurrences(),
+        recurringDetailsDto.getRepeatDays().stream().map(
+            calendarDayOfWeek -> CalendarWeekDays.valueOf(calendarDayOfWeek.name())
+        ).collect(Collectors.toSet()),
+        recurringDetailsDto.getUntilDate()
+    );
   }
 
 }

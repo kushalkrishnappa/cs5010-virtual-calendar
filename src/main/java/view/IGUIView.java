@@ -1,12 +1,14 @@
 package view;
 
 import controller.CalendarFeatures;
+import controller.EventData;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.List;
 
 public interface IGUIView extends IView {
 
-  void showDayViewDialog(LocalDate date);
+  void showDayViewDialog(LocalDate date, List<EventData> events);
 
   void setMonthYearLabel(YearMonth monthYear);
 
@@ -18,4 +20,5 @@ public interface IGUIView extends IView {
 
   void setFeatures(CalendarFeatures features);
 
+  void setCurrentCalendar(String calendarName);
 }

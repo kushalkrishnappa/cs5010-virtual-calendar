@@ -190,4 +190,7 @@ public class BannerPanel extends JPanel {
     timeZoneBtn.setText("Timezone: " + timezone);
   }
 
+  public void setCurrentCalendar(String calendarName) {
+    calendarSelectorDropdown.setSelectedItem(calendarName);
+  }
 }

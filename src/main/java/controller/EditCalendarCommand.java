@@ -159,7 +159,6 @@ class EditCalendarCommand extends Command {
   @Override
   void executeCommand(ControllerUtility controllerUtility)
       throws CalendarExportException, EventConflictException {
-
     CalendarEntry calendarEntry = controllerUtility.removeCalendarEntry(calendarName);
     if (Objects.isNull(calendarEntry)) {
       throw new IllegalArgumentException("Calendar with the provided name doesn't exists");
@@ -178,11 +177,11 @@ class EditCalendarCommand extends Command {
         .build();
 
     if (Objects.nonNull(newCalendarName)) {
-      controllerUtility.addCalendarEntry(newCalendarName, calendarEntry);
+      controllerUtility.addCalendarEntry(newCalendarName, updatedCalendarEntry);
+      controllerUtility.setCurrentCalendar(newCalendarName);
     } else {
       controllerUtility.addCalendarEntry(calendarName, updatedCalendarEntry);
     }
-
   }
 
   /**
