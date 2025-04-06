@@ -56,4 +56,9 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
   public void createEvent(EventData eventData) {
     controller.createEvent(eventData);
   }
+
+  @Override
+  public void editEvent(EventData existingEventData, EventData newEventData) {
+    controller.editEvent(existingEventData, newEventData);
+  }
 }

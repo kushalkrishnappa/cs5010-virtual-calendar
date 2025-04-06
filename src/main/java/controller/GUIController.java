@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -239,4 +240,69 @@ public class GUIController extends CalendarController implements CalendarFeature
       view.displayError("Error creating event: " + e.getMessage());
     }
   }
+
+  @Override
+  public void editEvent(EventData existingEventData, EventData newEventData) {
+    try {
+      Boolean isRecurringDetailsChanged = computeIsRecurringDetailsChanged(existingEventData,
+          newEventData);
+      EditEventCommand editEventCommand = new EditEventCommand(
+          existingEventData.getSubject(),
+          existingEventData.getStartTime(),
+          existingEventData.getEndTime(),
+          newEventData.getSubject(),
+          newEventData.getStartTime(),
+          newEventData.getEndTime(),
+          newEventData.getDescription(),
+          newEventData.getLocation(),
+          newEventData.getPublic(),
+          isRecurringDetailsChanged,
+          newEventData.getAllDay(),
+          Boolean.TRUE.equals(isRecurringDetailsChanged)
+              ? newEventData.getRecurringDetails().getRepeatDays().stream().map(
+                  calendarWeekDays ->
+                      CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
+              .collect(Collectors.toSet())
+              : null,
+          Boolean.TRUE.equals(isRecurringDetailsChanged)
+              ? newEventData.getRecurringDetails().getUntilDate()
+              : null,
+          Boolean.TRUE.equals(isRecurringDetailsChanged)
+              ? newEventData.getRecurringDetails().getOccurrences()
+              : null
+      );
+      editEventCommand.executeCommand(controllerUtility);
+      editEventCommand.promptResult(controllerUtility);
+      LocalDate date = newEventData.getStartTime().toLocalDate();
+      List<EventDTO> eventsOnDate = controllerUtility.getCurrentCalendar()
+          .model.getEventsOnDate(date);
+      List<EventData> events = convertEventDTOsToEventData(eventsOnDate);
+      view.showDayViewDialog(date, events);
+    } catch (Exception exception) {
+      // TODO: catch proper exceptions
+      view.displayError("Error creating event: " + exception.getMessage());
+    }
+  }
+
+  private Boolean computeIsRecurringDetailsChanged(EventData existingEventData,
+      EventData newEventData) {
+    return newEventData.getRecurring()
+        ? newEventData.getRecurringDetails().getRepeatDays().stream().map(
+            calendarWeekDays ->
+                CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
+        .collect(Collectors.toSet())
+        .containsAll(existingEventData.getRecurringDetails().getRepeatDays())
+        && Objects.nonNull(newEventData.getRecurringDetails().getOccurrences())
+        && Objects.nonNull(existingEventData.getRecurringDetails().getOccurrences())
+        && newEventData.getRecurringDetails().getOccurrences()
+        .equals(existingEventData.getRecurringDetails().getOccurrences())
+        && Objects.nonNull(newEventData.getRecurringDetails().getUntilDate())
+        && Objects.nonNull(existingEventData.getRecurringDetails().getUntilDate())
+        && newEventData.getRecurringDetails().getUntilDate()
+        .isEqual(existingEventData.getRecurringDetails().getUntilDate())
+        ? null
+        : true
+        : null;
+  }
+
 }

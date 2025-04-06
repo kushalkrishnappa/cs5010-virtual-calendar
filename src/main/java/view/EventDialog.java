@@ -76,12 +76,95 @@ public class EventDialog extends JDialog {
     this.isEditMode = false;
     this.calendarFeatures = calendarFeatures;
     this.setLayout(new BorderLayout());
+
     initComponents();
     populateInitialValues();
     layoutComponents();
 
     setLocationRelativeTo(owner);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+  }
+
+  public EventDialog(JDialog owner, CalendarFeatures calendarFeatures, EventData eventToEdit) {
+    super(owner, "Edit Event", true);
+    this.isEditMode = true;
+    this.calendarFeatures = calendarFeatures;
+    this.originalEvent = eventToEdit;
+    this.setLayout(new BorderLayout());
+
+    initComponents();
+    populateFromEvent(eventToEdit);
+    layoutComponents();
+
+    setLocationRelativeTo(owner);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+  }
+
+  private void populateFromEvent(EventData event) {
+    subjectField.setText(event.getSubject());
+    locationField.setText(event.getLocation() != null ? event.getLocation() : "");
+    descriptionArea.setText(event.getDescription() != null ? event.getDescription() : "");
+
+    isPublicCheckBox.setSelected(event.getPublic() != null ? event.getPublic() : false);
+    isAllDayCheckBox.setSelected(event.getAllDay() != null ? event.getAllDay() : false);
+
+    startDateField.setText(event.getStartTime().toLocalDate().format(DATE_FORMATTER));
+    endDateField.setText(event.getEndTime().toLocalDate().format(DATE_FORMATTER));
+    if (!event.getAllDay()) {
+      startTimeField.setText(event.getStartTime().toLocalTime().format(TIME_FORMATTER));
+      endTimeField.setText(event.getEndTime().toLocalTime().format(TIME_FORMATTER));
+    } else {
+      startTimeField.setEnabled(false);
+      endTimeField.setEnabled(false);
+    }
+
+    boolean isRecurring = event.getRecurring() != null ? event.getRecurring() : false;
+    isRecurringCheckBox.setSelected(isRecurring);
+    recurrencePanel.setVisible(isRecurring);
+
+    if (isRecurring && event.getRecurringDetails() != null) {
+      RecurrenceData recurrenceData = event.getRecurringDetails();
+
+      // Set repeat days
+      if (recurrenceData.getRepeatDays() != null) {
+        for (CalendarWeekDays day : recurrenceData.getRepeatDays()) {
+          switch (day) {
+            case M:
+              mondayCheckBox.setSelected(true);
+              break;
+            case T:
+              tuesdayCheckBox.setSelected(true);
+              break;
+            case W:
+              wednesdayCheckBox.setSelected(true);
+              break;
+            case R:
+              thursdayCheckBox.setSelected(true);
+              break;
+            case F:
+              fridayCheckBox.setSelected(true);
+              break;
+            case S:
+              saturdayCheckBox.setSelected(true);
+              break;
+            case U:
+              sundayCheckBox.setSelected(true);
+              break;
+          }
+        }
+      }
+
+      // Set occurrences or until date
+      if (recurrenceData.getOccurrences() != null) {
+        occurrencesRadioButton.setSelected(true);
+        occurrencesField.setText(recurrenceData.getOccurrences().toString());
+        untilDateField.setEnabled(false);
+      } else if (recurrenceData.getUntilDate() != null) {
+        untilDateRadioButton.setSelected(true);
+        untilDateField.setText(recurrenceData.getUntilDate().toLocalDate().format(DATE_FORMATTER));
+        occurrencesField.setEnabled(false);
+      }
+    }
   }
 
   private void populateInitialValues() {
@@ -505,7 +588,7 @@ public class EventDialog extends JDialog {
         .build();
 
     if (isEditMode) {
-      // TODO:
+      calendarFeatures.editEvent(originalEvent, eventData);
     } else {
       calendarFeatures.createEvent(eventData);
     }

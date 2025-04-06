@@ -304,4 +304,19 @@ public class EventDTO {
     return Objects.hash(subject, startTime, endTime, description, location, isPublic, isAllDay,
         isRecurring, recurringDetails);
   }
+
+  @Override
+  public String toString() {
+    return "EventDTO{" +
+        "subject='" + subject + '\'' +
+        ", startTime=" + startTime +
+        ", endTime=" + endTime +
+        ", description='" + description + '\'' +
+        ", location='" + location + '\'' +
+        ", isPublic=" + isPublic +
+        ", isAllDay=" + isAllDay +
+        ", isRecurring=" + isRecurring +
+        ", recurringDetails=" + recurringDetails +
+        '}';
+  }
 }
