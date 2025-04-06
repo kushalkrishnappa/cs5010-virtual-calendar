@@ -83,7 +83,6 @@ public class DayDialog extends JDialog {
 
     // TODO: Add action listeners to these buttons
     newEventButton.addActionListener(e -> {
-      System.out.println("New Event button clicked");
       EventDialog eventDialog = new EventDialog(this, calendarFeatures, date);
       eventDialog.setVisible(true);
     });
@@ -160,7 +159,6 @@ public class DayDialog extends JDialog {
     add(scrollPane, BorderLayout.CENTER);
   }
 
-
   private DefaultTableModel createTableModel() {
     String[] columnNames = {"Time", "Event", "Location", "Description"};
     return new DefaultTableModel(columnNames, 0) {
@@ -183,7 +181,6 @@ public class DayDialog extends JDialog {
     return null;
     // TODO: Implement the event details dialog
   }
-
 
   private void loadEventsToTable() {
     tableModel.setRowCount(0); // Clear existing rows

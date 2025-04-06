@@ -75,13 +75,6 @@ public class BannerPanel extends JPanel {
     add(topSeparator, BorderLayout.NORTH);
     add(buttonsPanel, BorderLayout.CENTER);
     add(bottomSeparator, BorderLayout.SOUTH);
-
-    // add dummy action listeners
-    createCalendarBtn.addActionListener(e -> System.out.println("Create Calendar clicked"));
-    editCalendarBtn.addActionListener(e -> System.out.println("Edit Calendar clicked"));
-    calendarSelectorDropdown.addActionListener(
-        e -> System.out.println("Calendar selected: " + calendarSelectorDropdown.getSelectedItem())
-    );
   }
 
   private void createButtons() {
@@ -103,51 +96,42 @@ public class BannerPanel extends JPanel {
   public void setFeatures(CalendarFeatures features) {
     calendarFeatures = features;
 
-    createCalendarBtn.addActionListener(
-        e -> {
-          NewCalendarDialog dialog = new NewCalendarDialog(
-              (Frame) SwingUtilities.getWindowAncestor(this),
-              null,
-              null
-          );
-          dialog.setVisible(true);
-
-          if (dialog.isConfirmed()) {
-            String calendarName = dialog.getCalendarName();
-            String timezone = dialog.getSelectedTimezone();
-            calendarFeatures.createCalendar(calendarName, timezone);
-          }
-        }
-    );
-    editCalendarBtn.addActionListener(
-        e -> {
-          String selectedCalendar = (String) calendarSelectorDropdown.getSelectedItem();
-          String timezone = timeZoneBtn.getText().substring(10);
-
-          if (selectedCalendar != null) {
-            NewCalendarDialog dialog = new NewCalendarDialog(
-                (Frame) SwingUtilities.getWindowAncestor(this),
-                selectedCalendar,
-                timezone
-            );
-            dialog.setVisible(true);
-
-            if (dialog.isConfirmed()) {
-              String newCalendarName = dialog.getCalendarName();
-              String newTimezone = dialog.getSelectedTimezone();
-              calendarFeatures.editCalendar(selectedCalendar, newCalendarName, newTimezone);
-            }
-          }
-        }
-    );
-    exportCalendarBtn.addActionListener(e -> getExportCalendarClicked());
-    importCalendarBtn.addActionListener(e -> getImportCalendarClicked());
+    createCalendarBtn.addActionListener(e -> calendarFeatures.requestCalendarCreation());
+    editCalendarBtn.addActionListener(e -> calendarFeatures.requestCalendarEdit());
+    exportCalendarBtn.addActionListener(e -> calendarFeatures.requestCalendarExport());
+    importCalendarBtn.addActionListener(e -> calendarFeatures.requestCalendarImport());
     calendarSelectorDropdown.addActionListener(
         e -> calendarFeatures.switchCalendar((String) calendarSelectorDropdown.getSelectedItem())
     );
   }
 
-  private void getExportCalendarClicked() {
+  public void showCalendarDialog(Boolean isEditMode) {
+    String selectedCalendar = null;
+    String selectedTimezone = null;
+    if (isEditMode) {
+      selectedCalendar = (String) calendarSelectorDropdown.getSelectedItem();
+      selectedTimezone = timeZoneBtn.getText().substring(10);
+    }
+
+    NewCalendarDialog dialog = new NewCalendarDialog(
+        (Frame) SwingUtilities.getWindowAncestor(this),
+        selectedCalendar,
+        selectedTimezone
+    );
+    dialog.setVisible(true);
+
+    if (dialog.isConfirmed()) {
+      String newCalendarName = dialog.getCalendarName();
+      String newtTimezone = dialog.getSelectedTimezone();
+      if (isEditMode) {
+        calendarFeatures.editCalendar(selectedCalendar, newCalendarName, newtTimezone);
+      } else {
+        calendarFeatures.createCalendar(newCalendarName, newtTimezone);
+      }
+    }
+  }
+
+  public void showExportCalendarDialog() {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setCurrentDirectory(CURRENT_DIR);
     int response = fileChooser.showSaveDialog(this.getParent());
@@ -157,7 +141,7 @@ public class BannerPanel extends JPanel {
     }
   }
 
-  private void getImportCalendarClicked() {
+  public void showImportCalendarDialog() {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setCurrentDirectory(CURRENT_DIR);
     int response = fileChooser.showOpenDialog(this.getParent());

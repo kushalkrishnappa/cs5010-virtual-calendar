@@ -73,22 +73,22 @@ public class GUIController extends CalendarController implements CalendarFeature
   }
 
   @Override
-  public void createCalendar(String calendarName, String timezone) {
-    if (calendarName != null && !calendarName.isEmpty() && timezone != null
-        && !timezone.isEmpty()) {
+  public void createCalendar(String newCalendarName, String newTimezone) {
+    if (newCalendarName != null && !newCalendarName.isEmpty() && newTimezone != null
+        && !newTimezone.isEmpty()) {
       try {
         // create new calendar entry
-        controllerUtility.addCalendarEntry(calendarName, CalendarEntry.getBuilder()
+        controllerUtility.addCalendarEntry(newCalendarName, CalendarEntry.getBuilder()
             .setModel(controllerUtility.getModelFactory().get())
-            .setZoneId(timezone)
+            .setZoneId(newTimezone)
             .build());
         // refresh the calendar list in the view
         view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
         // set the current calendar to the new one
-        view.setCurrentCalendar(calendarName);
-        view.setCurrentCalendarTz(timezone);
+        view.setCurrentCalendar(newCalendarName);
+        view.setCurrentCalendarTz(newTimezone);
         // show success message
-        view.displayMessage("Calendar '" + calendarName + "' created successfully!");
+        view.displayMessage("Calendar '" + newCalendarName + "' created successfully!");
       } catch (Exception e) {
         view.displayError("Error creating calendar: " + e.getMessage());
       }
@@ -99,6 +99,7 @@ public class GUIController extends CalendarController implements CalendarFeature
   public void editCalendar(String currentCalendarName, String newCalendarName, String newTimezone) {
     if (newCalendarName != null && !newCalendarName.isEmpty() && newTimezone != null
         && !newTimezone.isEmpty()) {
+      String updatedCalendarName = newCalendarName;
       if (newCalendarName.equals(currentCalendarName)) {
         newCalendarName = null;
       } else if (Arrays.asList(controllerUtility.getAllCalendarNames()).contains(newCalendarName)) {
@@ -115,6 +116,7 @@ public class GUIController extends CalendarController implements CalendarFeature
         editCommand.executeCommand(controllerUtility);
         // refresh the calendar list in the view
         view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
+        view.setCurrentCalendar(updatedCalendarName);
         view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
       } catch (Exception e) {
         view.displayError("Error editing calendar: " + e.getMessage());
@@ -141,8 +143,27 @@ public class GUIController extends CalendarController implements CalendarFeature
   }
 
   @Override
+  public void requestCalendarCreation() {
+    view.showNewCalendarDialog();
+  }
+
+  @Override
+  public void requestCalendarEdit() {
+    view.showEditCalendarDialog();
+  }
+
+  @Override
+  public void requestCalendarExport() {
+    view.showExportCalendarDialog();
+  }
+
+  @Override
+  public void requestCalendarImport() {
+    view.showImportCalendarDialog();
+  }
+
+  @Override
   public void viewDay(LocalDate date) {
-    System.out.println("View Day: " + date.toString());
     List<EventDTO> eventsOnDate = controllerUtility.getCurrentCalendar()
         .model.getEventsOnDate(date);
     List<EventData> events = convertEventDTOsToEventData(eventsOnDate);

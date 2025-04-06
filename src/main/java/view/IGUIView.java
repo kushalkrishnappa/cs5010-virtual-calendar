@@ -21,4 +21,12 @@ public interface IGUIView extends IView {
   void setFeatures(CalendarFeatures features);
 
   void setCurrentCalendar(String calendarName);
+
+  void showNewCalendarDialog();
+
+  void showEditCalendarDialog();
+
+  void showImportCalendarDialog();
+
+  void showExportCalendarDialog();
 }

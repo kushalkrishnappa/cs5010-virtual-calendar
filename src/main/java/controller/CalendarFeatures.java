@@ -8,10 +8,14 @@ public interface CalendarFeatures {
   void importCalendarFromFile(String filePath);
 
   // calendar operation features
-  void createCalendar(String calendarName, String timezone);
+  void createCalendar(String newCalendarName, String newTimezone);
   void editCalendar(String currentCalendarName, String newCalendarName, String newTimezone);
   void exportCalendar(String saveFilePath);
   void switchCalendar(String calendarName);
+  void requestCalendarCreation();
+  void requestCalendarEdit();
+  void requestCalendarExport();
+  void requestCalendarImport();
 
   // calendar view features
   void viewDay(LocalDate date);
