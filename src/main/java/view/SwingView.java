@@ -17,6 +17,10 @@ public class SwingView extends JFrame implements IGUIView {
 
   private DatesPanel datesPanel;
 
+  private CalendarFeatures calendarFeatures;
+
+  private DayDialog dayDialog;
+
   public SwingView() {
     // setup the main JFrame
     setTitle("Calendar Application");
@@ -48,7 +52,10 @@ public class SwingView extends JFrame implements IGUIView {
   public void showDayViewDialog(LocalDate date, List<EventData> events) {
     // TODO: Pop a Day View Dialog
     // DayViewDialog dialog = new DayViewDialog(this, date, events);
-    DayDialog dayDialog = new DayDialog(this, date, events);
+    if (dayDialog != null) {
+      dayDialog.dispose();
+    }
+    dayDialog = new DayDialog(this, calendarFeatures, date, events);
     dayDialog.setVisible(true);
   }
 
@@ -75,6 +82,7 @@ public class SwingView extends JFrame implements IGUIView {
 
   @Override
   public void setFeatures(CalendarFeatures features) {
+    this.calendarFeatures = features;
     bannerPanel.setFeatures(features);
     datesPanel.setFeatures(features);
   }

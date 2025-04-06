@@ -17,4 +17,7 @@ public interface CalendarFeatures {
   void viewDay(LocalDate date);
   void nextMonthYear(YearMonth yearMonth);
   void previousMonthYear(YearMonth yearMonth);
+
+  // event operations
+  void createEvent(EventData eventData);
 }

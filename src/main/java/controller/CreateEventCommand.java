@@ -38,6 +38,12 @@ class CreateEventCommand extends Command {
 
   private Integer occurrences;
 
+  private String description;
+
+  private String location;
+
+  private Boolean isPublic;
+
   /**
    * Constructor for CreateEventCommand.
    */
@@ -51,6 +57,25 @@ class CreateEventCommand extends Command {
     repeatDays = null;
     untilDate = null;
     occurrences = null;
+  }
+
+  public CreateEventCommand(String eventName, Boolean autoDecline, LocalDateTime startTime,
+      LocalDateTime endTime, String description, String location, Boolean isPublic,
+      Boolean isRecurring, Boolean isAllDay,
+      Set<CalendarDayOfWeek> repeatDays,
+      LocalDateTime untilDate, Integer occurrences) {
+    this.eventName = eventName;
+    this.autoDecline = autoDecline;
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.description = description;
+    this.location = location;
+    this.isPublic = isPublic;
+    this.isRecurring = isRecurring;
+    this.isAllDay = isAllDay;
+    this.repeatDays = repeatDays;
+    this.untilDate = untilDate;
+    this.occurrences = occurrences;
   }
 
   @Override
@@ -299,6 +324,11 @@ class CreateEventCommand extends Command {
             .setStartTime(startTime)
             .setEndTime(endTime)
             .setIsAllDay(isAllDay)
+            .setIsPublic(Objects.nonNull(isPublic)
+                ? isPublic
+                : false)
+            .setDescription(description)
+            .setLocation(location)
             .setIsRecurring(isRecurring)
             .setRecurringDetails(
                 isRecurring

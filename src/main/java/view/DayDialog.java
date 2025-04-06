@@ -41,12 +41,14 @@ public class DayDialog extends JDialog {
 
   private JButton editButton;
 
-  private CalendarFeatures features;
+  private CalendarFeatures calendarFeatures;
 
-  public DayDialog(Frame owner, LocalDate date, List<EventData> events) {
+  public DayDialog(Frame owner, CalendarFeatures calendarFeatures, LocalDate date,
+      List<EventData> events) {
     super(owner, date.format(DATE_FORMATTER), true);
     this.date = date;
     this.events = events;
+    this.calendarFeatures = calendarFeatures;
 
     initComponents();
     loadEventsToTable();
@@ -70,6 +72,7 @@ public class DayDialog extends JDialog {
     createButtonsFooter();
   }
 
+
   private void createButtonsFooter() {
     JPanel buttonPanel = new JPanel();
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -80,6 +83,8 @@ public class DayDialog extends JDialog {
     // TODO: Add action listeners to these buttons
     newEventButton.addActionListener(e -> {
       System.out.println("New Event button clicked");
+      EventDialog eventDialog = new EventDialog(this, calendarFeatures, date);
+      eventDialog.setVisible(true);
     });
     editButton.addActionListener(e -> {
       System.out.println("Edit Event button clicked");
@@ -116,7 +121,7 @@ public class DayDialog extends JDialog {
     eventsTable.setFillsViewportHeight(true);
 
     // set widths of the columns
-    eventsTable.getColumnModel().getColumn(0).setPreferredWidth(120); // Time
+    eventsTable.getColumnModel().getColumn(0).setPreferredWidth(130); // Time
     eventsTable.getColumnModel().getColumn(1).setPreferredWidth(150); // Event
     eventsTable.getColumnModel().getColumn(2).setPreferredWidth(150); // Location
     eventsTable.getColumnModel().getColumn(3).setPreferredWidth(250); // Description
@@ -174,9 +179,15 @@ public class DayDialog extends JDialog {
       Object[] rowData = {
           event.getAllDay()
               ? "All day"
-              : event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a"))
-                  + " - "
-                  + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a")),
+              : event.getEndTime().isAfter(event.getStartTime())
+                  ? "<html>"
+                  + event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yy h:mm a"))
+                  + "<br>"
+                  + event.getEndTime().format(DateTimeFormatter.ofPattern("dd-MM-yy h:mm a"))
+                  + "</html>"
+                  : event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a"))
+                      + " - "
+                      + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a")),
           event.getSubject(),
           event.getLocation(),
           event.getDescription()
