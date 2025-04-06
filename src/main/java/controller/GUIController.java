@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import model.CalendarDayOfWeek;
 import model.IModel;
 import service.CSVCalendarImporter;
 import service.ICalendarImporter;
@@ -166,17 +167,17 @@ public class GUIController extends CalendarController implements CalendarFeature
 
     for (EventDTO dto : eventsDTOs) {
       events.add(
-          new EventData(
-              dto.getSubject(),
-              dto.getStartTime(),
-              dto.getEndTime(),
-              dto.getDescription(),
-              dto.getLocation(),
-              dto.getIsPublic(),
-              dto.getIsAllDay(),
-              dto.getIsRecurring(),
-              createRecurringDTOToRecurringData(dto.getRecurringDetails())
-          )
+          EventData.getBuilder()
+              .setSubject(dto.getSubject())
+              .setDescription(dto.getDescription())
+              .setLocation(dto.getLocation())
+              .setIsRecurring(dto.getIsRecurring())
+              .setIsPublic(dto.getIsPublic())
+              .setStartTime(dto.getStartTime())
+              .setEndTime(dto.getEndTime())
+              .setIsAllDay(dto.getIsAllDay())
+              .setRecurringDetails(createRecurringDTOToRecurringData(dto.getRecurringDetails()))
+              .build()
       );
     }
     return events;
@@ -196,4 +197,46 @@ public class GUIController extends CalendarController implements CalendarFeature
     );
   }
 
+  @Override
+  public void createEvent(EventData eventData) {
+    if (eventData.getRecurring() && eventData.getRecurringDetails().getRepeatDays().isEmpty()) {
+      view.displayError("Select a repeat week day");
+      return;
+    }
+    try {
+      CreateEventCommand createEventCommand = new CreateEventCommand(
+          eventData.getSubject(),
+          true,
+          eventData.getStartTime(),
+          eventData.getEndTime(),
+          eventData.getDescription(),
+          eventData.getLocation(),
+          eventData.getPublic(),
+          eventData.getRecurring(),
+          eventData.getAllDay(),
+          eventData.getRecurring()
+              ? eventData.getRecurringDetails().getRepeatDays().stream().map(
+                  calendarWeekDays ->
+                      CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
+              .collect(Collectors.toSet())
+              : null,
+          eventData.getRecurring()
+              ? eventData.getRecurringDetails().getUntilDate()
+              : null,
+          eventData.getRecurring()
+              ? eventData.getRecurringDetails().getOccurrences()
+              : null
+      );
+      createEventCommand.executeCommand(controllerUtility);
+      createEventCommand.promptResult(controllerUtility);
+      LocalDate date = eventData.getStartTime().toLocalDate();
+      List<EventDTO> eventsOnDate = controllerUtility.getCurrentCalendar()
+          .model.getEventsOnDate(date);
+      List<EventData> events = convertEventDTOsToEventData(eventsOnDate);
+      view.showDayViewDialog(date, events);
+    } catch (Exception e) {
+      // TODO: catch proper exceptions
+      view.displayError("Error creating event: " + e.getMessage());
+    }
+  }
 }

@@ -52,4 +52,8 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
     controller.previousMonthYear(yearMonth);
   }
 
+  @Override
+  public void createEvent(EventData eventData) {
+    controller.createEvent(eventData);
+  }
 }

@@ -38,7 +38,7 @@ public class EventData {
    * @param isRecurring      Whether the event is recurring or not
    * @param recurringDetails The recurring details of the event
    */
-  public EventData(
+  private EventData(
       String subject,
       LocalDateTime startTime,
       LocalDateTime endTime,
@@ -57,6 +57,93 @@ public class EventData {
     this.isAllDay = isAllDay;
     this.isRecurring = isRecurring;
     this.recurringDetails = recurringDetails;
+  }
+
+  public static EventDataBuilder getBuilder() {
+    return new EventDataBuilder();
+  }
+
+  public static class EventDataBuilder {
+
+    private String subject;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private String description;
+    private String location;
+    private Boolean isPublic;
+    private Boolean isAllDay;
+    private Boolean isRecurring;
+    private RecurrenceData recurringDetails;
+
+    private EventDataBuilder() {
+      this.subject = null;
+      this.startTime = null;
+      this.endTime = null;
+      this.description = null;
+      this.location = null;
+      this.isPublic = null;
+      this.isAllDay = null;
+      this.isRecurring = null;
+      this.recurringDetails = null;
+    }
+
+    public EventDataBuilder setSubject(String subject) {
+      this.subject = subject;
+      return this;
+    }
+
+    public EventDataBuilder setStartTime(LocalDateTime startTime) {
+      this.startTime = startTime;
+      return this;
+    }
+
+    public EventDataBuilder setEndTime(LocalDateTime endTime) {
+      this.endTime = endTime;
+      return this;
+    }
+
+    public EventDataBuilder setDescription(String description) {
+      this.description = description;
+      return this;
+    }
+
+    public EventDataBuilder setLocation(String location) {
+      this.location = location;
+      return this;
+    }
+
+    public EventDataBuilder setIsPublic(Boolean isPublic) {
+      this.isPublic = isPublic;
+      return this;
+    }
+
+    public EventDataBuilder setIsAllDay(Boolean isAllDay) {
+      this.isAllDay = isAllDay;
+      return this;
+    }
+
+    public EventDataBuilder setIsRecurring(Boolean isRecurring) {
+      this.isRecurring = isRecurring;
+      return this;
+    }
+
+    public EventDataBuilder setRecurringDetails(RecurrenceData recurringDetails) {
+      this.recurringDetails = recurringDetails;
+      return this;
+    }
+
+    public EventData build() {
+      return new EventData(
+          this.subject,
+          this.startTime,
+          this.endTime,
+          this.description,
+          this.location,
+          this.isPublic,
+          this.isAllDay,
+          this.isRecurring,
+          this.recurringDetails);
+    }
   }
 
   public String getSubject() {
