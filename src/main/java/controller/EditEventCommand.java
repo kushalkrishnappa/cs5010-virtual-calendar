@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import model.CalendarDayOfWeek;
 
@@ -45,6 +46,7 @@ class EditEventCommand extends Command {
 
   private Integer updatedEvents;
 
+
   /**
    * The constructor for EditEventCommand class initializes the eventName, startTime, endTime to
    * null. Setters for eventDTO and recurringDetailsDTO are created. It also initializes the
@@ -60,6 +62,36 @@ class EditEventCommand extends Command {
     recurringDetailsDTOBuilder = RecurringDetailsDTO.getBuilder();
   }
 
+  public EditEventCommand(String currEventName, LocalDateTime currStartTime,
+      LocalDateTime currEndTime, String eventName, LocalDateTime startTime,
+      LocalDateTime endTime, String description, String location, Boolean isPublic,
+      Boolean isRecurring, Boolean isAllDay,
+      Set<CalendarDayOfWeek> repeatDays,
+      LocalDateTime untilDate, Integer occurrences) {
+    this.eventName = currEventName;
+    this.startTime = currStartTime;
+    this.endTime = currEndTime;
+    this.eventDTOPropertySetters = createPropertySetters();
+    eventBuilder = EventDTO.getBuilder();
+    recurringDetailsDTOPropertySetters = createRecurringDetailsPropertySetters();
+    recurringDetailsDTOBuilder = RecurringDetailsDTO.getBuilder();
+
+    eventBuilder.setSubject(eventName)
+        .setStartTime(startTime)
+        .setEndTime(endTime)
+        .setDescription(description)
+        .setLocation(location)
+        .setIsPublic(isPublic)
+        .setIsRecurring(isRecurring)
+        .setIsAllDay(isAllDay);
+
+    if (Objects.nonNull(isRecurring) && isRecurring) {
+      recurringDetailsDTOPropertySetter = recurringDetailsDTOPropertySetters.get("occurrences");
+      recurringDetailsDTOBuilder.setRepeatDays(repeatDays)
+          .setOccurrences(Objects.nonNull(occurrences) ? occurrences : null)
+          .setUntilDate(Objects.nonNull(untilDate) ? untilDate : null);
+    }
+  }
 
   /**
    * Create a map of property setters for RecurringDetailsDTO.
@@ -67,7 +99,7 @@ class EditEventCommand extends Command {
    * @return A map of property setters for RecurringDetailsDTO.
    */
   private final Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>>
-      createRecurringDetailsPropertySetters() {
+  createRecurringDetailsPropertySetters() {
     Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>> setters = new HashMap<>();
     setters.put("occurrences",
         (builder, value) -> builder.setOccurrences(

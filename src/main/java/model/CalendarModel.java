@@ -268,9 +268,11 @@ public class CalendarModel implements IModel {
                 parametersToUpdate.getIsPublic(),
                 existingEvent.getIsPublic()))
         .setIsAllDay(
-            Objects.nonNull(parametersToUpdate.getEndTime())
-                ? false
-                : existingEvent.getIsAllDay())
+            Objects.nonNull(parametersToUpdate.getIsAllDay())
+                ? parametersToUpdate.getIsAllDay()
+                : Objects.nonNull(parametersToUpdate.getEndTime())
+                    ? false
+                    : existingEvent.getIsAllDay())
         .setIsRecurring(
             Objects.requireNonNullElse(
                 parametersToUpdate.getIsRecurring(),

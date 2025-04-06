@@ -10,6 +10,7 @@ import java.awt.Frame;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.Function;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -88,6 +89,11 @@ public class DayDialog extends JDialog {
     });
     editButton.addActionListener(e -> {
       System.out.println("Edit Event button clicked");
+      runAgainstSelectedEvent(eventData -> {
+        EventDialog eventDialog = new EventDialog(this, calendarFeatures, eventData);
+        eventDialog.setVisible(true);
+        return null;
+      });
     });
 
     buttonPanel.add(newEventButton);
@@ -130,7 +136,7 @@ public class DayDialog extends JDialog {
       @Override
       public void mouseClicked(java.awt.event.MouseEvent e) {
         if (e.getClickCount() == 2) {
-          viewEventDetails();
+          runAgainstSelectedEvent(eventData -> viewEventDetails(eventData));
         }
       }
     });
@@ -154,6 +160,7 @@ public class DayDialog extends JDialog {
     add(scrollPane, BorderLayout.CENTER);
   }
 
+
   private DefaultTableModel createTableModel() {
     String[] columnNames = {"Time", "Event", "Location", "Description"};
     return new DefaultTableModel(columnNames, 0) {
@@ -164,13 +171,19 @@ public class DayDialog extends JDialog {
     };
   }
 
-  private void viewEventDetails() {
+  private void runAgainstSelectedEvent(Function<EventData, Void> function) {
     int selectedRow = eventsTable.getSelectedRow();
     if (selectedRow >= 0 && selectedRow < events.size()) {
       EventData event = events.get(selectedRow);
-      // TODO: Implement the event details dialog
+      function.apply(event);
     }
   }
+
+  private Void viewEventDetails(EventData eventData) {
+    return null;
+    // TODO: Implement the event details dialog
+  }
+
 
   private void loadEventsToTable() {
     tableModel.setRowCount(0); // Clear existing rows

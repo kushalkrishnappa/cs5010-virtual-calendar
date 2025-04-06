@@ -20,4 +20,6 @@ public interface CalendarFeatures {
 
   // event operations
   void createEvent(EventData eventData);
+
+  void editEvent(EventData existingEventData, EventData newEventData);
 }
