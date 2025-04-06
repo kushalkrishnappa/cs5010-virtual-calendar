@@ -44,13 +44,6 @@ public class OperationButtonsPanel extends JPanel {
 
     // Set preferred size for the side panel
     setPreferredSize(new Dimension(150, 400));
-
-    // add dummy action listeners
-    createEventBtn.addActionListener(e -> System.out.println("Create Event clicked"));
-    editEventBtn.addActionListener(e -> System.out.println("Edit Event clicked"));
-    copyEventsBtn.addActionListener(e -> System.out.println("Copy Events clicked"));
-    showStatusBtn.addActionListener(e -> System.out.println("Busy Status clicked"));
-    printEventsBtn.addActionListener(e -> System.out.println("Print Events clicked"));
   }
 
   private void createButtons() {

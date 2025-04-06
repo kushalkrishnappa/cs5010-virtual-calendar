@@ -93,6 +93,26 @@ public class SwingView extends JFrame implements IGUIView {
   }
 
   @Override
+  public void showNewCalendarDialog() {
+    bannerPanel.showCalendarDialog(false);
+  }
+
+  @Override
+  public void showEditCalendarDialog() {
+    bannerPanel.showCalendarDialog(true);
+  }
+
+  @Override
+  public void showImportCalendarDialog() {
+    bannerPanel.showImportCalendarDialog();
+  }
+
+  @Override
+  public void showExportCalendarDialog() {
+    bannerPanel.showExportCalendarDialog();
+  }
+
+  @Override
   public void displayMessage(String output) {
     JOptionPane.showMessageDialog(this, output, "", JOptionPane.PLAIN_MESSAGE);
   }
