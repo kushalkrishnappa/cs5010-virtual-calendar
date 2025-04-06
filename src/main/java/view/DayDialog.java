@@ -120,11 +120,10 @@ public class DayDialog extends JDialog {
     eventsTable.setGridColor(Color.LIGHT_GRAY);
     eventsTable.setFillsViewportHeight(true);
 
-    // set widths of the columns
-    eventsTable.getColumnModel().getColumn(0).setPreferredWidth(130); // Time
-    eventsTable.getColumnModel().getColumn(1).setPreferredWidth(150); // Event
-    eventsTable.getColumnModel().getColumn(2).setPreferredWidth(150); // Location
-    eventsTable.getColumnModel().getColumn(3).setPreferredWidth(250); // Description
+    eventsTable.getColumnModel().getColumn(0); // Time
+    eventsTable.getColumnModel().getColumn(1); // Event
+    eventsTable.getColumnModel().getColumn(2); // Location
+    eventsTable.getColumnModel().getColumn(3); // Description
 
     // Add event listener for double-click on event
     eventsTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -179,7 +178,7 @@ public class DayDialog extends JDialog {
       Object[] rowData = {
           event.getAllDay()
               ? "All day"
-              : event.getEndTime().isAfter(event.getStartTime())
+              : event.getEndTime().toLocalDate().isAfter(event.getStartTime().toLocalDate())
                   ? "<html>"
                   + event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yy h:mm a"))
                   + "<br>"
