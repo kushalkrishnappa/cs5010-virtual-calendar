@@ -113,6 +113,14 @@ public class SwingView extends JFrame implements IGUIView {
   }
 
   @Override
+  public void displayRecurringEventOptions(String[] options) {
+    String choice = RadioDialogOptions.show(dayDialog, "", options);
+    if (choice != null) {
+      calendarFeatures.selectedRecurringEventOption(choice);
+    }
+  }
+
+  @Override
   public void displayMessage(String output) {
     JOptionPane.showMessageDialog(this, output, "", JOptionPane.PLAIN_MESSAGE);
   }

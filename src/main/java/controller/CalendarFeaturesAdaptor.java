@@ -81,4 +81,9 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
   public void editEvent(EventData existingEventData, EventData newEventData) {
     controller.editEvent(existingEventData, newEventData);
   }
+
+  @Override
+  public void selectedRecurringEventOption(String choice) {
+    controller.selectedRecurringEventOption(choice);
+  }
 }

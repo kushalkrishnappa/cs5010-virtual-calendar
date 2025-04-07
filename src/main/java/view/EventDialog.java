@@ -66,8 +66,8 @@ public class EventDialog extends JDialog {
   private JButton cancelButton;
 
   private EventData originalEvent;
-  private boolean isEditMode;
-  private CalendarFeatures calendarFeatures;
+  private final boolean isEditMode;
+  private final CalendarFeatures calendarFeatures;
   private LocalDate initialDate;
 
   public EventDialog(JDialog owner, CalendarFeatures calendarFeatures, LocalDate initialDate) {
@@ -107,6 +107,7 @@ public class EventDialog extends JDialog {
 
     isPublicCheckBox.setSelected(event.getPublic() != null ? event.getPublic() : false);
     isAllDayCheckBox.setSelected(event.getAllDay() != null ? event.getAllDay() : false);
+    handleAllDayCheckBox();
 
     startDateField.setText(event.getStartTime().toLocalDate().format(DATE_FORMATTER));
     endDateField.setText(event.getEndTime().toLocalDate().format(DATE_FORMATTER));
@@ -593,6 +594,5 @@ public class EventDialog extends JDialog {
       calendarFeatures.createEvent(eventData);
     }
 
-    dispose();
   }
 }
