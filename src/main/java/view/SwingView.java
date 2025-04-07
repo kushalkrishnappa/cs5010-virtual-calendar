@@ -21,10 +21,12 @@ public class SwingView extends JFrame implements IGUIView {
 
   private DayDialog dayDialog;
 
+  private EventDialog eventDialog;
+
   public SwingView() {
     // setup the main JFrame
     setTitle("Calendar Application");
-    setSize(1000, 650);
+    setSize(1000, 700);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
 
@@ -44,17 +46,16 @@ public class SwingView extends JFrame implements IGUIView {
 
   private void layoutComponents() {
     add(bannerPanel, BorderLayout.NORTH);
-    add(operationButtonsPanel, BorderLayout.WEST);
+    add(operationButtonsPanel, BorderLayout.SOUTH);
     add(datesPanel, BorderLayout.CENTER);
   }
 
   @Override
   public void showDayViewDialog(LocalDate date, List<EventData> events) {
-    // TODO: Pop a Day View Dialog
-    // DayViewDialog dialog = new DayViewDialog(this, date, events);
     if (dayDialog != null) {
       dayDialog.dispose();
     }
+    eventDialog.dispose();
     dayDialog = new DayDialog(this, calendarFeatures, date, events);
     dayDialog.setVisible(true);
   }
@@ -78,6 +79,7 @@ public class SwingView extends JFrame implements IGUIView {
   public void setCurrentCalendarTz(String tz) {
     bannerPanel.setCurrentTimezone(tz);
     datesPanel.setCurrentTimezone(tz);
+    operationButtonsPanel.setCurrentTimezone(tz);
   }
 
   @Override
@@ -85,6 +87,7 @@ public class SwingView extends JFrame implements IGUIView {
     this.calendarFeatures = features;
     bannerPanel.setFeatures(features);
     datesPanel.setFeatures(features);
+    operationButtonsPanel.setFeatures(features);
   }
 
   @Override
@@ -133,5 +136,29 @@ public class SwingView extends JFrame implements IGUIView {
   @Override
   public Readable getInputStream() {
     throw new UnsupportedOperationException("Not supported in GUI mode.");
+  }
+
+  @Override
+  public void showCreateEventDialog(LocalDate localDate) {
+    if (dayDialog != null && dayDialog.isVisible()) {
+      eventDialog = new EventDialog(dayDialog, calendarFeatures, localDate);
+    } else {
+      eventDialog = new EventDialog(this, calendarFeatures, localDate);
+    }
+
+    eventDialog.setVisible(true);
+  }
+
+  @Override
+  public void showEditEventDialog(EventData eventData) {
+    eventDialog = new EventDialog(dayDialog, calendarFeatures, eventData);
+    eventDialog.setVisible(true);
+  }
+
+  @Override
+  public void showEventDetailsDialog(EventData eventData) {
+    eventDialog = new EventDialog(dayDialog, calendarFeatures, eventData);
+    eventDialog.showNonEditableDialog();
+    eventDialog.setVisible(true);
   }
 }

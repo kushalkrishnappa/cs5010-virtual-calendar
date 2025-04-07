@@ -45,21 +45,25 @@ public class GUIController extends CalendarController implements CalendarFeature
   public GUIController(Supplier<IModel> modelFactory, IGUIView view) {
     super(modelFactory, view, ControllerMode.GUI);
     this.view = view;
+  }
+
+  @Override
+  public void run() {
+    createDefaultCalendar();
+    view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
+    view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
+    view.setMonthYearLabel(YearMonth.now());
+    view.setCalendarMonthDates(YearMonth.now());
+    view.setFeatures(new CalendarFeaturesAdaptor(this));
+  }
+
+  private void createDefaultCalendar() {
     controllerUtility.addCalendarEntry("Default", CalendarEntry.getBuilder()
         .setModel(controllerUtility.getModelFactory().get())
         .setZoneId(ZoneId.systemDefault().getId())
         .build()
     );
     controllerUtility.setCurrentCalendar("Default");
-  }
-
-  @Override
-  public void run() {
-    view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
-    view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
-    view.setMonthYearLabel(YearMonth.now());
-    view.setCalendarMonthDates(YearMonth.now());
-    view.setFeatures(new CalendarFeaturesAdaptor(this));
   }
 
   @Override
@@ -406,4 +410,18 @@ public class GUIController extends CalendarController implements CalendarFeature
     return null;
   }
 
+  @Override
+  public void requestEventCreation(LocalDate localDate) {
+    view.showCreateEventDialog(localDate);
+  }
+
+  @Override
+  public void requestEventEdit(EventData eventData) {
+    view.showEditEventDialog(eventData);
+  }
+
+  @Override
+  public void requestEventViewDetails(EventData eventData) {
+    view.showEventDetailsDialog(eventData);
+  }
 }

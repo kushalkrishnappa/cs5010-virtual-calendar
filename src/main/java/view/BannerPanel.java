@@ -55,11 +55,7 @@ public class BannerPanel extends JPanel {
     calendarSelectorDropdown = new JComboBox<>();
     buttonsPanel.add(calendarSelectorDropdown);
 
-    timeZonePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    timeZonePanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-    timeZoneBtn = new JButton("Timezone: not set");
-    timeZoneBtn.setEnabled(false);
-    timeZonePanel.add(timeZoneBtn);
+    createTimezoneButton();
     add(timeZonePanel, BorderLayout.EAST);
 
     // add buttons to the panel
@@ -75,6 +71,14 @@ public class BannerPanel extends JPanel {
     add(topSeparator, BorderLayout.NORTH);
     add(buttonsPanel, BorderLayout.CENTER);
     add(bottomSeparator, BorderLayout.SOUTH);
+  }
+
+  private void createTimezoneButton() {
+    timeZonePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    timeZonePanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+    timeZoneBtn = new JButton("Timezone: not set");
+    timeZoneBtn.setEnabled(false);
+    timeZonePanel.add(timeZoneBtn);
   }
 
   private void createButtons() {

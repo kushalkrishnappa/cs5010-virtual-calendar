@@ -49,6 +49,7 @@ public class DatesPanel extends JPanel {
   private YearMonth currentYearMonth;
 
   private CalendarFeatures calendarFeatures;
+
   private String currentTimeZone;
 
   /**

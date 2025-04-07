@@ -22,6 +22,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -98,6 +99,55 @@ public class EventDialog extends JDialog {
 
     setLocationRelativeTo(owner);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+  }
+
+  public EventDialog(JFrame owner, CalendarFeatures calendarFeatures, LocalDate initialDate) {
+    super(owner, "Create New Event", true);
+    this.initialDate = initialDate;
+    this.isEditMode = false;
+    this.calendarFeatures = calendarFeatures;
+    this.setLayout(new BorderLayout());
+
+    initComponents();
+    populateInitialValues();
+    layoutComponents();
+
+    setLocationRelativeTo(owner);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+  }
+
+  public void showNonEditableDialog() {
+    setTitle("Event Details");
+    setModal(true);
+    setResizable(false);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+    // Disable all fields and buttons
+    subjectField.setEditable(false);
+    locationField.setEditable(false);
+    descriptionArea.setEditable(false);
+    startDateField.setEditable(false);
+    startTimeField.setEditable(false);
+    endDateField.setEditable(false);
+    endTimeField.setEditable(false);
+    isAllDayCheckBox.setEnabled(false);
+    isPublicCheckBox.setEnabled(false);
+    isRecurringCheckBox.setEnabled(false);
+
+    mondayCheckBox.setEnabled(false);
+    tuesdayCheckBox.setEnabled(false);
+    wednesdayCheckBox.setEnabled(false);
+    thursdayCheckBox.setEnabled(false);
+    fridayCheckBox.setEnabled(false);
+    saturdayCheckBox.setEnabled(false);
+    sundayCheckBox.setEnabled(false);
+    occurrencesRadioButton.setEnabled(false);
+    untilDateRadioButton.setEnabled(false);
+    occurrencesField.setEditable(false);
+    untilDateField.setEditable(false);
+
+    saveButton.setVisible(false);
+    cancelButton.setText("Close");
   }
 
   private void populateFromEvent(EventData event) {
@@ -190,7 +240,6 @@ public class EventDialog extends JDialog {
     untilDateField.setText(today.plusMonths(1).format(DATE_FORMATTER));
     untilDateField.setEnabled(false);
   }
-
 
   private void initComponents() {
     createEventFields();

@@ -34,7 +34,8 @@ public class NewCalendarDialog extends JDialog {
 
   private String editTimezone;
 
-  private static final String[] TIMEZONES = ZoneId.getAvailableZoneIds().toArray(new String[0]);
+  private static final String[] TIMEZONES = ZoneId.getAvailableZoneIds().stream().sorted()
+      .toArray(String[]::new);
 
   public NewCalendarDialog(Frame parent, String calendarName, String timezone) {
     super(parent, calendarName == null ? "New Calendar" : "Edit Calendar", true);
