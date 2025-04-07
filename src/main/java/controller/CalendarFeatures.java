@@ -26,4 +26,6 @@ public interface CalendarFeatures {
   void createEvent(EventData eventData);
 
   void editEvent(EventData existingEventData, EventData newEventData);
+
+  void selectedRecurringEventOption(String choice);
 }

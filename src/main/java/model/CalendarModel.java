@@ -129,7 +129,8 @@ public class CalendarModel implements IModel {
         existingEvent, parametersToUpdate);
 
     // changing recurring details
-    if (Objects.isNull(parametersToUpdate.getIsRecurring())) {
+    if (Objects.nonNull(parametersToUpdate.getIsRecurring())
+        && parametersToUpdate.getIsRecurring()) {
       // and if was already a part of recurring event
       if (existingEvent.getIsRecurring()) {
         throw new IllegalArgumentException(
@@ -141,12 +142,12 @@ public class CalendarModel implements IModel {
     EventDTO updatedEvent = updatedEventBuilder.build();
     EventValidator.validateEvent(updatedEvent);
     // any event conflict except the one to be updated
-    if (conflictDetector.getConflicts(updatedEvent).stream()
+    if (!existingEvent.getIsRecurring() && conflictDetector.getConflicts(updatedEvent).stream()
         .anyMatch(event -> !event.equals(existingEvent))) {
       throw new EventConflictException("Updated event has conflict with existing event");
     }
 
-    if (updatedEvent.getIsRecurring()) {
+    if (!existingEvent.getIsRecurring() && updatedEvent.getIsRecurring()) {
       List<EventDTO> eventsToAdd = RecurrenceService.generateRecurrence(updatedEvent);
       eventsToAdd.forEach(eventService::createEvent);
     } else {

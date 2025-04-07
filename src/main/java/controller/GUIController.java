@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -26,6 +27,14 @@ import view.IGUIView;
 public class GUIController extends CalendarController implements CalendarFeatures {
 
   private final IGUIView view;
+
+  private static final String editThisEvent = "This event only";
+  private static final String editThisAndFollowingEvents =
+      "This and following events with same name";
+  private static final String editAllEvents = "All events with same name";
+  private EventData existingEventData;
+  private EventData newEventData;
+  private Boolean isRecurringDetailsChanged;
 
   /**
    * Constructor for initializing the class attributes for the controller.
@@ -264,34 +273,61 @@ public class GUIController extends CalendarController implements CalendarFeature
 
   @Override
   public void editEvent(EventData existingEventData, EventData newEventData) {
+
+    isRecurringDetailsChanged = computeIsRecurringDetailsChanged(existingEventData,
+        newEventData);
+    if (existingEventData.getRecurring()) {
+      this.existingEventData = existingEventData;
+      this.newEventData = newEventData;
+      if (Boolean.TRUE.equals(isRecurringDetailsChanged)) {
+        view.displayRecurringEventOptions(
+            new String[]{editThisAndFollowingEvents, editAllEvents});
+      } else {
+        view.displayRecurringEventOptions(
+            new String[]{editThisEvent, editThisAndFollowingEvents, editAllEvents});
+      }
+    } else {
+      invokeEditEventCommand(existingEventData, newEventData, isRecurringDetailsChanged,
+          existingEventData.getStartTime(), existingEventData.getEndTime());
+    }
+
+  }
+
+  private void invokeEditEventCommand(EventData existingEventData, EventData newEventData,
+      Boolean isRecurringDetailsChanged, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    EditEventCommand editEventCommand = new EditEventCommand(
+        existingEventData.getSubject(),
+        startDateTime,
+        endDateTime,
+        newEventData.getSubject().equals(existingEventData.getSubject())
+            ? null : newEventData.getSubject(),
+        newEventData.getStartTime().isEqual(existingEventData.getStartTime())
+            ? null : newEventData.getStartTime(),
+        newEventData.getEndTime().isEqual(existingEventData.getEndTime())
+            ? null : newEventData.getEndTime(),
+        newEventData.getDescription().equals(existingEventData.getDescription())
+            ? null : newEventData.getDescription(),
+        newEventData.getLocation().equals(existingEventData.getLocation())
+            ? null : newEventData.getLocation(),
+        newEventData.getPublic().equals(existingEventData.getPublic())
+            ? null : newEventData.getPublic(),
+        isRecurringDetailsChanged,
+        newEventData.getAllDay().equals(existingEventData.getAllDay())
+            ? null : newEventData.getAllDay(),
+        Boolean.TRUE.equals(isRecurringDetailsChanged)
+            ? newEventData.getRecurringDetails().getRepeatDays().stream().map(
+                calendarWeekDays ->
+                    CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
+            .collect(Collectors.toSet())
+            : null,
+        Boolean.TRUE.equals(isRecurringDetailsChanged)
+            ? newEventData.getRecurringDetails().getUntilDate()
+            : null,
+        Boolean.TRUE.equals(isRecurringDetailsChanged)
+            ? newEventData.getRecurringDetails().getOccurrences()
+            : null
+    );
     try {
-      Boolean isRecurringDetailsChanged = computeIsRecurringDetailsChanged(existingEventData,
-          newEventData);
-      EditEventCommand editEventCommand = new EditEventCommand(
-          existingEventData.getSubject(),
-          existingEventData.getStartTime(),
-          existingEventData.getEndTime(),
-          newEventData.getSubject(),
-          newEventData.getStartTime(),
-          newEventData.getEndTime(),
-          newEventData.getDescription(),
-          newEventData.getLocation(),
-          newEventData.getPublic(),
-          isRecurringDetailsChanged,
-          newEventData.getAllDay(),
-          Boolean.TRUE.equals(isRecurringDetailsChanged)
-              ? newEventData.getRecurringDetails().getRepeatDays().stream().map(
-                  calendarWeekDays ->
-                      CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
-              .collect(Collectors.toSet())
-              : null,
-          Boolean.TRUE.equals(isRecurringDetailsChanged)
-              ? newEventData.getRecurringDetails().getUntilDate()
-              : null,
-          Boolean.TRUE.equals(isRecurringDetailsChanged)
-              ? newEventData.getRecurringDetails().getOccurrences()
-              : null
-      );
       editEventCommand.executeCommand(controllerUtility);
       editEventCommand.promptResult(controllerUtility);
       LocalDate date = newEventData.getStartTime().toLocalDate();
@@ -305,25 +341,69 @@ public class GUIController extends CalendarController implements CalendarFeature
     }
   }
 
-  private Boolean computeIsRecurringDetailsChanged(EventData existingEventData,
-      EventData newEventData) {
-    return newEventData.getRecurring()
-        ? newEventData.getRecurringDetails().getRepeatDays().stream().map(
+  @Override
+  public void selectedRecurringEventOption(String choice) {
+    switch (choice) {
+      case editThisEvent:
+        invokeEditEventCommand(existingEventData, newEventData, null,
+            existingEventData.getStartTime(), existingEventData.getEndTime());
+        break;
+      case editThisAndFollowingEvents:
+        invokeEditEventCommand(existingEventData, newEventData, isRecurringDetailsChanged,
+            existingEventData.getStartTime(), null);
+        break;
+      case editAllEvents:
+        invokeEditEventCommand(existingEventData, newEventData, isRecurringDetailsChanged,
+            null, null);
+        break;
+    }
+  }
+
+  private Boolean isWeekDaysUpdated(EventData existingEventData, EventData newEventData) {
+    return !newEventData.getRecurringDetails().getRepeatDays().stream().map(
             calendarWeekDays ->
                 CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
         .collect(Collectors.toSet())
-        .containsAll(existingEventData.getRecurringDetails().getRepeatDays())
-        && Objects.nonNull(newEventData.getRecurringDetails().getOccurrences())
-        && Objects.nonNull(existingEventData.getRecurringDetails().getOccurrences())
-        && newEventData.getRecurringDetails().getOccurrences()
-        .equals(existingEventData.getRecurringDetails().getOccurrences())
-        && Objects.nonNull(newEventData.getRecurringDetails().getUntilDate())
-        && Objects.nonNull(existingEventData.getRecurringDetails().getUntilDate())
-        && newEventData.getRecurringDetails().getUntilDate()
-        .isEqual(existingEventData.getRecurringDetails().getUntilDate())
-        ? null
-        : true
-        : null;
+        .equals(existingEventData.getRecurringDetails().getRepeatDays().stream().map(
+                calendarWeekDays ->
+                    CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
+            .collect(Collectors.toSet()));
+  }
+
+  private boolean isOccurrenceOrUntilDateUpdated(EventData existingEventData,
+      EventData newEventData) {
+    if (Objects.nonNull(existingEventData.getRecurringDetails().getOccurrences())) {
+      // is existing occurrence changed
+      if (Objects.nonNull(newEventData.getRecurringDetails().getUntilDate())) {
+        return true;
+      }
+      return !existingEventData.getRecurringDetails().getOccurrences()
+          .equals(newEventData.getRecurringDetails().getOccurrences());
+    } else {
+      // is existing until date changed
+      if (Objects.nonNull(newEventData.getRecurringDetails().getOccurrences())) {
+        return true;
+      }
+      return !existingEventData.getRecurringDetails().getUntilDate()
+          .isEqual(newEventData.getRecurringDetails().getUntilDate());
+    }
+  }
+
+  private Boolean computeIsRecurringDetailsChanged(EventData existingEventData,
+      EventData newEventData) {
+    if (newEventData.getRecurring()) {
+      if (!existingEventData.getRecurring()) {
+        return true;
+      }
+      if (isWeekDaysUpdated(existingEventData, newEventData)) {
+        return true;
+      }
+      if (isOccurrenceOrUntilDateUpdated(existingEventData, newEventData)) {
+        return true;
+      }
+    }
+
+    return null;
   }
 
 }
