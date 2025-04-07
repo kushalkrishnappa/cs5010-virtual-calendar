@@ -2,6 +2,7 @@ package view;
 
 import controller.CalendarFeatures;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
@@ -52,7 +53,7 @@ public class BannerPanel extends JPanel {
 
     // calendar selector dropdown
     buttonsPanel.add(new JLabel("Calendar:"));
-    calendarSelectorDropdown = new JComboBox<>();
+    createFixedWidthComboBox();
     buttonsPanel.add(calendarSelectorDropdown);
 
     createTimezoneButton();
@@ -71,6 +72,14 @@ public class BannerPanel extends JPanel {
     add(topSeparator, BorderLayout.NORTH);
     add(buttonsPanel, BorderLayout.CENTER);
     add(bottomSeparator, BorderLayout.SOUTH);
+  }
+
+  private void createFixedWidthComboBox() {
+    JComboBox<String> comboBox = new JComboBox<>();
+    comboBox.setRenderer(new DropdownToolTipRenderer());
+    comboBox.setPreferredSize(new Dimension(150, comboBox.getPreferredSize().height));
+    comboBox.setMaximumSize(new Dimension(150, comboBox.getPreferredSize().height));
+    calendarSelectorDropdown = comboBox;
   }
 
   private void createTimezoneButton() {
