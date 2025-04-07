@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -95,6 +96,15 @@ public class NewCalendarDialog extends JDialog {
   private void createTimezoneComboBox(JPanel formPanel) {
     formPanel.add(new JLabel("Timezone:"));
     timezoneComboBox = new JComboBox<>(TIMEZONES);
+
+    // Add tooltip support for timezone combo box
+    timezoneComboBox.setRenderer(new DropdownToolTipRenderer());
+
+    // Set fixed width for timezone combo box
+    timezoneComboBox.setPreferredSize(
+        new Dimension(200, timezoneComboBox.getPreferredSize().height));
+    timezoneComboBox.setMaximumSize(new Dimension(200, timezoneComboBox.getPreferredSize().height));
+
     timezoneComboBox.setSelectedItem(
         editMode
             ? editTimezone
