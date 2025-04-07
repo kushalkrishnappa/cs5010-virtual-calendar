@@ -31,4 +31,10 @@ public interface IGUIView extends IView {
   void showExportCalendarDialog();
 
   void displayRecurringEventOptions(String[] options);
+
+  void showCreateEventDialog(LocalDate localDate);
+
+  void showEditEventDialog(EventData eventData);
+
+  void showEventDetailsDialog(EventData eventData);
 }
