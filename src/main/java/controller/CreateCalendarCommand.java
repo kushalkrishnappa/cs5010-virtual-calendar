@@ -32,6 +32,11 @@ class CreateCalendarCommand extends Command {
     zoneIdString = null;
   }
 
+  CreateCalendarCommand(String calendarName, String zoneIdString) {
+    this.calendarName = calendarName;
+    this.zoneIdString = zoneIdString;
+  }
+
   /**
    * This method starts parsing the create calendar command from the Scanner object. It checks if
    * the create calendar command contains `--name` or `--timezone` keyword before calling the
