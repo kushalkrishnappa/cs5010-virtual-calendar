@@ -23,24 +23,18 @@ public class CalendarAppTest {
     System.setOut(new PrintStream(outputStream));
   }
 
-  @Test
-  public void testNoArgumentsPassed() {
-    CalendarApp.main(new String[0]);
-    assertEquals("Usage: java CalendarApp.java --mode [interactive | headless filepath]\n",
-        errorStream.toString().replace("\r\n", "\n"));
-  }
 
   @Test
   public void testModeFlagNotSetHeadless() {
     CalendarApp.main(new String[]{"headless", "filename.txt"});
-    assertEquals("Usage: java CalendarApp.java --mode [interactive | headless filepath]\n",
+    assertEquals("Usage: java CalendarApp.java [--mode [interactive | headless filepath]]\n",
         errorStream.toString().replace("\r\n", "\n"));
   }
 
   @Test
   public void testModeFlagNotSetInteractive() {
     CalendarApp.main(new String[]{"interactive", "mode"});
-    assertEquals("Usage: java CalendarApp.java --mode [interactive | headless filepath]\n",
+    assertEquals("Usage: java CalendarApp.java [--mode [interactive | headless filepath]]\n",
         errorStream.toString().replace("\r\n", "\n"));
   }
 
@@ -98,6 +92,13 @@ public class CalendarAppTest {
     String fileName = "src/test/resources/NoSuchFileExists.txt";
     CalendarApp.main(new String[]{"--mode", "hEadlEss", fileName});
     assertEquals("File not found: " + fileName + "\n",
+        errorStream.toString().replace("\r\n", "\n"));
+  }
+
+  @Test
+  public void testModeNotSpecified() {
+    CalendarApp.main(new String[]{"--mode"});
+    assertEquals("Usage: java CalendarApp.java [--mode [interactive | headless filepath]]\n",
         errorStream.toString().replace("\r\n", "\n"));
   }
 }
