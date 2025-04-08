@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -115,9 +114,6 @@ public class GUIController extends CalendarController implements CalendarFeature
       String updatedCalendarName = newCalendarName;
       if (newCalendarName.equals(currentCalendarName)) {
         newCalendarName = null;
-      } else if (Arrays.asList(controllerUtility.getAllCalendarNames()).contains(newCalendarName)) {
-        view.displayError("Calendar name already exists.");
-        return;
       }
       try {
         EditCalendarCommand editCommand = new EditCalendarCommand(
