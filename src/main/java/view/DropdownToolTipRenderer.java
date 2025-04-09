@@ -5,6 +5,9 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComponent;
 import javax.swing.JList;
 
+/**
+ * This class represents the custom rendered for the dropdown list in the calendar GUI.
+ */
 public class DropdownToolTipRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index,

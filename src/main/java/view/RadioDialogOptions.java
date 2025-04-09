@@ -11,8 +11,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+/**
+ * This class represents a utility for displaying radio button options in a dialog.
+ */
 public class RadioDialogOptions {
 
+  /**
+   * This method displays a dialog with radio button options and returns the selected option.
+   *
+   * @param parentComponent the parent component for the dialog
+   * @param title the title of the dialog
+   * @param options the array of option strings to be displayed as radio buttons
+   * @return the selected option string or null if the user cancels
+   */
   public static String show(Component parentComponent, String title, String[] options) {
 
     // create a Panel to hold the radio buttons

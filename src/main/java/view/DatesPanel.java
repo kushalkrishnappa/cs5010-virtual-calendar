@@ -22,9 +22,9 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-
 /**
- * CalendarPanel displays the monthly calendar view with days and events for the selected month
+ * This class represents the calendar panel of the GUI. It displays the calendar for a specific
+ * month and allows navigation between months. It also handles user interactions such as
  */
 public class DatesPanel extends JPanel {
 
@@ -53,7 +53,8 @@ public class DatesPanel extends JPanel {
   private String currentTimeZone;
 
   /**
-   * Constructor initializes the calendar panel
+   * This constructor initializes the DatesPanel and sets up the layout and components. It creates
+   * the month navigation panel and the calendar table.
    */
   public DatesPanel() {
     setLayout(new BorderLayout());
@@ -61,9 +62,6 @@ public class DatesPanel extends JPanel {
     initComponents();
   }
 
-  /**
-   * Initialize panel components
-   */
   private void initComponents() {
     // month navigation and display
     monthNavPanel = new JPanel(new BorderLayout());
@@ -145,9 +143,10 @@ public class DatesPanel extends JPanel {
   }
 
   /**
-   * Set features for controller communication
+   * Set the calendar features to be used for handling user interactions and events. This method
+   * maps the calendar features to the buttons and mouse events in the calendar table.
    *
-   * @param features The calendar features
+   * @param features the calendar features to be set
    */
   public void setFeatures(CalendarFeatures features) {
     calendarFeatures = features;
@@ -173,15 +172,15 @@ public class DatesPanel extends JPanel {
           if (value != null) {
             String cellValue = value.toString();
             if (!cellValue.isEmpty()) {
-              // Extract day number from cell value
+              // extract day number from cell value
               String dayStr = cellValue.split("\n")[0].trim();
               try {
                 int day = Integer.parseInt(dayStr);
-                // Calculate the actual date to handle days from previous/next months
+                // calculate the actual date to handle days from previous/next months
                 LocalDate selectedDate = getDateFromCell(row, col, day);
                 calendarFeatures.viewDay(selectedDate);
               } catch (NumberFormatException ex) {
-                // Not a valid day cell
+                // not a valid day cell, so we pass heh, heh.
               }
             }
           }
@@ -191,7 +190,10 @@ public class DatesPanel extends JPanel {
   }
 
   /**
-   * Update the calendar with the current month
+   * Update the calendar table with the dates for the specified YearMonth. This method clears the
+   * existing table data and fills it with the new dates for the specified month.
+   *
+   * @param calendarYearMonth The YearMonth to be displayed in the calendar table
    */
   public void updateCalendarYearMonthDates(YearMonth calendarYearMonth) {
 
@@ -293,7 +295,8 @@ public class DatesPanel extends JPanel {
   }
 
   /**
-   * Custom renderer for calendar cells
+   * This class represents the custom cell renderer for the calendar table. It renders the cells in
+   * the calendar table with nice style and calm gray color and makes calendar look beautiful.
    */
   class CalendarCellRenderer extends DefaultTableCellRenderer {
 
