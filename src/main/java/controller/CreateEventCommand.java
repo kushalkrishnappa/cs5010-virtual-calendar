@@ -59,6 +59,22 @@ class CreateEventCommand extends Command {
     occurrences = null;
   }
 
+  /**
+   * Constructs a create command with its fields set.
+   *
+   * @param eventName   the event name
+   * @param autoDecline the auto decline
+   * @param startTime   the start time
+   * @param endTime     the end time
+   * @param description the description
+   * @param location    the location
+   * @param isPublic    is the event public
+   * @param isRecurring is the event recurring
+   * @param isAllDay    is the event all day
+   * @param repeatDays  the repeat days
+   * @param untilDate   the until date
+   * @param occurrences the occurrences
+   */
   public CreateEventCommand(String eventName, Boolean autoDecline, LocalDateTime startTime,
       LocalDateTime endTime, String description, String location, Boolean isPublic,
       Boolean isRecurring, Boolean isAllDay,

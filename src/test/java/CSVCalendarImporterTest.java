@@ -18,6 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 import service.CSVCalendarImporter;
 
+/**
+ * Test class for the {@link CSVCalendarImporter} class.
+ */
 public class CSVCalendarImporterTest {
 
   private CSVCalendarImporter importer;

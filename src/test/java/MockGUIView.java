@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import view.IGUIView;
 
+/**
+ * Mock for the {@link IGUIView} interface.
+ */
 public class MockGUIView implements IGUIView {
 
   boolean showDayViewDialogCalled;
@@ -40,10 +43,16 @@ public class MockGUIView implements IGUIView {
   String lastDisplayMessage;
   List<String> lastDisplayRecurringEventOptions;
 
+  /**
+   * Instantiates a new MockGUIView.
+   */
   public MockGUIView() {
     reset();
   }
 
+  /**
+   * Resets all the fields to initial state.
+   */
   public void reset() {
     showDayViewDialogCalled = false;
     setMonthYearLabelCalled = false;
@@ -62,6 +71,20 @@ public class MockGUIView implements IGUIView {
     showEventDetailsDialogCalled = false;
     displayMessageCalled = false;
     displayErrorCalled = false;
+
+    lastSetCurrentCalendar = null;
+    lastSetCurrentCalendarTz = null;
+    lastCreateEventDialogDate = null;
+    lastEditEventDialogData = null;
+    lastEventDetailsDialogData = null;
+    lastSetFeatures = null;
+    lastDisplayErrorMessage = null;
+    lastShowDayViewDialogDate = null;
+    lastShowDayViewDialogEvents = null;
+    lastSetMonthYearLabelMonthYear = null;
+    lastSetCalendarMonthDatesMonthYear = null;
+    lastDisplayMessage = null;
+    lastDisplayRecurringEventOptions = null;
   }
 
   @Override

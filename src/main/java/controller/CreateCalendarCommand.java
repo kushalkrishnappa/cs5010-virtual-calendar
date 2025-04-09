@@ -32,6 +32,12 @@ class CreateCalendarCommand extends Command {
     zoneIdString = null;
   }
 
+  /**
+   * Instantiates a new Create calendar command with the fields set.
+   *
+   * @param calendarName the calendar name
+   * @param zoneIdString the zone id string
+   */
   CreateCalendarCommand(String calendarName, String zoneIdString) {
     this.calendarName = calendarName;
     this.zoneIdString = zoneIdString;
@@ -44,7 +50,7 @@ class CreateCalendarCommand extends Command {
    *
    * @param commandScanner a Scanner object that reads the command (File or console input).
    * @return this command object
-   * @throws ParseCommandException if the command provided is invalid
+   * @throws ParseCommandException    if the command provided is invalid
    * @throws InvalidTimeZoneException if the time zone provided is invalid
    */
   @Override

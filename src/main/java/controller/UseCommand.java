@@ -18,10 +18,18 @@ public class UseCommand extends Command {
 
   private String calendarName;
 
+  /**
+   * Instantiates a new Use command.
+   */
   UseCommand() {
     calendarName = null;
   }
 
+  /**
+   * Instantiates a new Use command with the provided calendar name.
+   *
+   * @param calendarName the calendar name
+   */
   UseCommand(String calendarName) {
     this.calendarName = calendarName;
   }
