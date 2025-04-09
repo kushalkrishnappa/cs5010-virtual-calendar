@@ -47,6 +47,13 @@ class EditCalendarCommand extends Command {
     this.calendarEntryBuilder = CalendarEntry.getBuilder();
   }
 
+  /**
+   * Constructs an edit calendar command with its fields set.
+   *
+   * @param calendarName    the calendar name
+   * @param newCalendarName the new calendar name
+   * @param newTimeZone     the new time zone
+   */
   EditCalendarCommand(String calendarName, String newCalendarName, String newTimeZone) {
     this.calendarName = calendarName;
     this.newCalendarName = newCalendarName;

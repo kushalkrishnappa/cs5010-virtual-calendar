@@ -3,6 +3,9 @@ package controller;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+/**
+ * Class to store recurrence data of an event. To be used with {@link EventData}.
+ */
 public class RecurrenceData {
 
   private final Integer occurrences;

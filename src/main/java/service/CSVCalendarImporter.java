@@ -16,12 +16,19 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+/**
+ * This strategy reads a csv file, containing events specified according to the Google CSV import
+ * rules.
+ */
 public class CSVCalendarImporter implements ICalendarImporter {
 
   private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
   private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
   private final Map<String, BiConsumer<ImportEventDetails, String>> fieldSetters;
 
+  /**
+   * Instantiates a new CSV calendar importer.
+   */
   public CSVCalendarImporter() {
     this.fieldSetters = createPropertySetters();
   }
@@ -38,7 +45,12 @@ public class CSVCalendarImporter implements ICalendarImporter {
     String location;
     Boolean privateEvent;
 
-    public ImportEventDetails() {
+    /**
+     * Instantiates a new Import event details.
+     *
+     * <p>This is used for storing the parsed event details form the file.
+     */
+    private ImportEventDetails() {
       this.subject = null;
       this.startDate = null;
       this.startTime = null;
@@ -155,7 +167,6 @@ public class CSVCalendarImporter implements ICalendarImporter {
       }
 
     }
-    //
 
     return new ImportResult(successCount, totalCount, null);
   }
@@ -190,7 +201,15 @@ public class CSVCalendarImporter implements ICalendarImporter {
         .build();
   }
 
-  public static List<String> splitCSVLineWithEscapedQuotes(String line) {
+  /**
+   * Helper method to parse a line of csv file and generate a list of tokens.
+   *
+   * <p>It handles quoted elements in a csv line.
+   *
+   * @param line each line of the csv file
+   * @return a list of string element tokens in the csv line
+   */
+  private static List<String> splitCSVLineWithEscapedQuotes(String line) {
     List<String> tokens = new ArrayList<>();
     boolean inQuotes = false;
     StringBuilder currentToken = new StringBuilder();

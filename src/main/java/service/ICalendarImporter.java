@@ -19,9 +19,9 @@ public interface ICalendarImporter {
    * @param eventConsumer a Consumer function that takes a successfully parsed EventDTO and
    *                      processes it
    * @return an ImportResult object containing the count of successfully processed records (i.e.,
-   * parsed and accepted by the consumer without error) and the total records attempted
+   *         parsed and accepted by the consumer without error) and the total records attempted
    * @throws IOException if a I/O error occurs while reading the source
    */
   ImportResult importEvents(Reader reader, Consumer<EventDTO> eventConsumer)
-      throws IOException; // Modified signature
+      throws IOException;
 }

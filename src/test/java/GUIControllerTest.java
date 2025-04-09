@@ -32,6 +32,9 @@ import org.junit.Before;
 import org.junit.Test;
 import service.ICalendarImporter;
 
+/**
+ * Test cases for {@link GUIController} class.
+ */
 public class GUIControllerTest {
 
   MockGUIView view;
@@ -621,7 +624,6 @@ public class GUIControllerTest {
 
   // edit event
 
-
   private EventData createExistingNonRecurringEventData(LocalDate date) {
     return EventData.getBuilder()
         .setSubject("Existing Event")
@@ -1150,8 +1152,10 @@ public class GUIControllerTest {
     assertNotNull(null, model.editEventReceived.parametersToUpdate.getRecurringDetails());
     assertEquals(Set.of(CalendarDayOfWeek.W),
         model.editEventReceived.parametersToUpdate.getRecurringDetails().getRepeatDays());
-    assertEquals(newOccurrence, model.editEventReceived.parametersToUpdate.getRecurringDetails().getOccurrences());
-    assertEquals(null, model.editEventReceived.parametersToUpdate.getRecurringDetails().getUntilDate());
+    assertEquals(newOccurrence,
+        model.editEventReceived.parametersToUpdate.getRecurringDetails().getOccurrences());
+    assertEquals(null,
+        model.editEventReceived.parametersToUpdate.getRecurringDetails().getUntilDate());
 
     assertFalse(view.displayRecurringEventOptionsCalled);
     assertTrue(model.getEventsOnDateCalled);
@@ -1164,7 +1168,8 @@ public class GUIControllerTest {
   @Test
   public void testEditNoChangeInRecurrenceDetails() {
     LocalDate date = LocalDate.of(2025, 6, 1);
-    EventData existing = createExistingRecurringEventData(date, Set.of(CalendarWeekDays.W), null, 5);
+    EventData existing = createExistingRecurringEventData(date, Set.of(CalendarWeekDays.W), null,
+        5);
     Set<CalendarWeekDays> newDays = Set.of(CalendarWeekDays.W);
     Integer newOccurrence = 5;
     EventData changed = createNewRecurringEventDataWithRecurrenceChange(date, newDays, null,

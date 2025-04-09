@@ -62,6 +62,26 @@ class EditEventCommand extends Command {
     recurringDetailsDTOBuilder = RecurringDetailsDTO.getBuilder();
   }
 
+  /**
+   * Constructs an edit event command with its fields set.
+   *
+   * <p>Only set the fields that need to be updated.
+   *
+   * @param currEventName the current event name
+   * @param currStartTime the current start time
+   * @param currEndTime   the current end time
+   * @param eventName     the new event name, if this field is to be updated
+   * @param startTime     the new start time, if this field is to be updated
+   * @param endTime       the new end time, if this field is to be updated
+   * @param description   the new description, if this field is to be updated
+   * @param location      the new location, if this field is to be updated
+   * @param isPublic      the new is public, if this field is to be updated
+   * @param isRecurring   the new is recurring, if this field is to be updated
+   * @param isAllDay      the new is all day, if this field is to be updated
+   * @param repeatDays    the new repeat days, if this field is to be updated
+   * @param untilDate     the new until date, if this field is to be updated
+   * @param occurrences   the new occurrences, if this field is to be updated
+   */
   public EditEventCommand(String currEventName, LocalDateTime currStartTime,
       LocalDateTime currEndTime, String eventName, LocalDateTime startTime,
       LocalDateTime endTime, String description, String location, Boolean isPublic,
