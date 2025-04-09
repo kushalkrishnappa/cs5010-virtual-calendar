@@ -10,6 +10,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -171,6 +173,9 @@ public class EventDialog extends JDialog {
 
     boolean isRecurring = event.getRecurring() != null ? event.getRecurring() : false;
     isRecurringCheckBox.setSelected(isRecurring);
+    if (isRecurring) {
+      isRecurringCheckBox.setEnabled(false);
+    }
     recurrencePanel.setVisible(isRecurring);
 
     if (isRecurring && event.getRecurringDetails() != null) {
@@ -312,10 +317,13 @@ public class EventDialog extends JDialog {
 
     untilDateField.getDocument()
         .addDocumentListener(new DateFieldDocumentListener(untilDateField, DATE_FORMATTER, false));
+    occurrencesField.getDocument()
+        .addDocumentListener(new IntegerFieldDocumentListener(occurrencesField));
     isRecurringCheckBox.addActionListener(e -> handleRecurringCheckBox());
     occurrencesRadioButton.addActionListener(e -> occurrencesField.setEnabled(true));
     untilDateRadioButton.addActionListener(e -> untilDateField.setEnabled(true));
-
+    occurrencesField.addMouseListener(new SelectRadioButtonOnClick(occurrencesRadioButton));
+    untilDateField.addMouseListener(new SelectRadioButtonOnClick(untilDateRadioButton));
 
   }
 
@@ -612,7 +620,12 @@ public class EventDialog extends JDialog {
       LocalDate untilDate = null;
 
       if (occurrencesRadioButton.isSelected()) {
-        occurrences = Integer.parseInt(occurrencesField.getText().trim());
+        try {
+          occurrences = Integer.parseInt(occurrencesField.getText().trim());
+        } catch (NumberFormatException exception) {
+          //pass
+          return;
+        }
         recurrenceData = new RecurrenceData(occurrences, repeatDays, null);
       } else if (untilDateRadioButton.isSelected()) {
         try {
@@ -643,5 +656,55 @@ public class EventDialog extends JDialog {
       calendarFeatures.createEvent(eventData);
     }
 
+  }
+
+  private static class SelectRadioButtonOnClick extends MouseAdapter {
+
+    JRadioButton radioButton;
+
+    public SelectRadioButtonOnClick(
+        JRadioButton occurrencesRadioButton) {
+      this.radioButton = occurrencesRadioButton;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+      radioButton.setSelected(true);
+    }
+
+  }
+
+  private class IntegerFieldDocumentListener implements DocumentListener {
+
+    JTextField intField;
+
+    public IntegerFieldDocumentListener(
+        JTextField occurrencesField) {
+      this.intField = occurrencesField;
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+      processTextChange();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+      processTextChange();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+      processTextChange();
+    }
+
+    private void processTextChange() {
+      try {
+        Integer.parseInt(intField.getText());
+        intField.setBackground(Color.WHITE);
+      } catch (NumberFormatException exception) {
+        intField.setBackground(new Color(250, 200, 200));
+      }
+    }
   }
 }

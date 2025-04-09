@@ -7,8 +7,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     CreateEventTest.class,
-    EditEventWithKeyTest.class,})
-// TODO:   EditEventWithNameTest.class,})
+    EditEventWithKeyTest.class,
+    EditEventWithNameTest.class})
 public class CalendarModelTest {
   // the class remains empty
 }

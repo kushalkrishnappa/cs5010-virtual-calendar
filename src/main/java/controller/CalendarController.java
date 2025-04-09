@@ -49,6 +49,8 @@ public class CalendarController implements IController {
 
   private boolean exitFlag;
 
+  String enteredCommand;
+
   /**
    * Utility class for the controller.
    */
@@ -128,7 +130,8 @@ public class CalendarController implements IController {
     Scanner scanner = new Scanner(view.getInputStream());
     promptUserInput();
     while (scanner.hasNextLine()) {
-      Scanner lineScanner = new Scanner(scanner.nextLine());
+      enteredCommand = scanner.nextLine();
+      Scanner lineScanner = new Scanner(enteredCommand);
       if (!lineScanner.hasNext()) {
         promptUserInput();
         continue;
@@ -163,10 +166,11 @@ public class CalendarController implements IController {
    * @param message The error message to be displayed.
    */
   private void promptError(String message) {
-    view.displayError(message);
     if (mode == ControllerMode.HEADLESS) {
       exitFlag = true;
+      view.displayError("Error executing command: " + enteredCommand + "\n");
     }
+    view.displayError(message);
   }
 
   /**

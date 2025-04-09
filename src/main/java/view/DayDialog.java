@@ -81,7 +81,6 @@ public class DayDialog extends JDialog {
     newEventButton = new JButton("New Event");
     editButton = new JButton("Edit Event");
 
-    // TODO: Add action listeners to these buttons
     newEventButton.addActionListener(e -> {
       calendarFeatures.requestEventCreation(date);
     });

@@ -26,7 +26,8 @@ public class CalendarControllerHeadlessModeTest {
     MockView mockView = new MockView("");
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.HEADLESS);
     controller.run();
-    assertEquals("exit command was not specified in the passed file\n",
+    assertEquals("Error executing command: use calendar --name default\n"
+            + "exit command was not specified in the passed file\n",
         mockView.displayErrorMessage.toString());
     assertEquals("",
         mockView.displayMessage.toString());
@@ -37,7 +38,8 @@ public class CalendarControllerHeadlessModeTest {
     MockView mockView = new MockView("invalid command");
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.HEADLESS);
     controller.run();
-    assertEquals("Unknown command\n",
+    assertEquals("Error executing command: invalid command\n"
+            + "Unknown command\n",
         mockView.displayErrorMessage.toString());
     assertEquals("",
         mockView.displayMessage.toString());
@@ -49,7 +51,8 @@ public class CalendarControllerHeadlessModeTest {
     MockView mockView = new MockView("show status on 2025-10-21T12:00\n");
     controller = new CalendarController(mockModelFactory, mockView, ControllerMode.HEADLESS);
     controller.run();
-    assertEquals("exit command was not specified in the passed file\n",
+    assertEquals("Error executing command: show status on 2025-10-21T12:00\n"
+            + "exit command was not specified in the passed file\n",
         mockView.displayErrorMessage.toString());
     assertEquals("",
         mockView.displayMessage.toString());

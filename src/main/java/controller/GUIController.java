@@ -4,6 +4,7 @@ import dto.EventDTO;
 import dto.ImportResult;
 import dto.RecurringDetailsDTO;
 import exception.CalendarExportException;
+import exception.EventConflictException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -279,8 +280,10 @@ public class GUIController extends CalendarController implements CalendarFeature
           .model.getEventsOnDate(date);
       List<EventData> events = convertEventDTOsToEventData(eventsOnDate);
       view.showDayViewDialog(date, events);
-    } catch (Exception e) {
-      // TODO: catch proper exceptions
+    } catch (EventConflictException e){
+      view.displayError("The event conflicts with another existing event.");
+    }
+    catch (Exception e) {
       view.displayError("Error creating event: " + e.getMessage());
     }
   }
@@ -350,7 +353,6 @@ public class GUIController extends CalendarController implements CalendarFeature
       List<EventData> events = convertEventDTOsToEventData(eventsOnDate);
       view.showDayViewDialog(date, events);
     } catch (Exception exception) {
-      // TODO: catch proper exceptions
       view.displayError("Error creating event: " + exception.getMessage());
     }
   }
