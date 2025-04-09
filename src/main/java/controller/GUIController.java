@@ -35,6 +35,8 @@ public class GUIController extends CalendarController implements CalendarFeature
   private EventData newEventData;
   private Boolean isRecurringDetailsChanged;
 
+  private ICalendarImporter importer;
+
   /**
    * Constructor for initializing the class attributes for the controller.
    *
@@ -44,6 +46,11 @@ public class GUIController extends CalendarController implements CalendarFeature
   public GUIController(Supplier<IModel> modelFactory, IGUIView view) {
     super(modelFactory, view, ControllerMode.GUI);
     this.view = view;
+    importer = new CSVCalendarImporter();
+  }
+
+  public void setImporter(ICalendarImporter importer) {
+    this.importer = importer;
   }
 
   @Override
@@ -67,7 +74,6 @@ public class GUIController extends CalendarController implements CalendarFeature
 
   @Override
   public void importCalendarFromFile(String filePath) {
-    ICalendarImporter importer = new CSVCalendarImporter();
     Consumer<EventDTO> eventConsumer = eventDto -> {
       controllerUtility.getCurrentCalendar()
           .model.createEvent(eventDto, true);
@@ -89,7 +95,8 @@ public class GUIController extends CalendarController implements CalendarFeature
         && !newTimezone.isEmpty()) {
       try {
         // create new calendar entry
-        CreateCalendarCommand createCalendarCommand = new CreateCalendarCommand(newCalendarName, newTimezone);
+        CreateCalendarCommand createCalendarCommand = new CreateCalendarCommand(newCalendarName,
+            newTimezone);
         createCalendarCommand.executeCommand(controllerUtility);
 
         // refresh the calendar list in the view
@@ -130,6 +137,8 @@ public class GUIController extends CalendarController implements CalendarFeature
       } catch (Exception e) {
         view.displayError("Error editing calendar: " + e.getMessage());
       }
+    } else {
+      view.displayError("Please enter value in fields");
     }
   }
 
@@ -138,17 +147,22 @@ public class GUIController extends CalendarController implements CalendarFeature
     ExportCalendarCommand exportCalendarCommand = new ExportCalendarCommand(saveFilePath);
     try {
       exportCalendarCommand.executeCommand(controllerUtility);
+      exportCalendarCommand.promptResult(controllerUtility);
     } catch (CalendarExportException e) {
       view.displayError(e.getMessage());
     }
-    exportCalendarCommand.promptResult(controllerUtility);
   }
 
   @Override
   public void switchCalendar(String calendarName) {
-    controllerUtility.setCurrentCalendar(calendarName);
-    view.setCurrentCalendar(calendarName);
-    view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
+    try {
+      UseCommand command = new UseCommand(calendarName);
+      command.executeCommand(controllerUtility);
+      view.setCurrentCalendar(calendarName);
+      view.setCurrentCalendarTz(controllerUtility.getCurrentCalendar().zoneId.getId());
+    } catch (Exception e) {
+      view.displayError("Error switching calendar: " + e.getMessage());
+    }
   }
 
   @Override
@@ -274,8 +288,8 @@ public class GUIController extends CalendarController implements CalendarFeature
   @Override
   public void editEvent(EventData existingEventData, EventData newEventData) {
 
-    isRecurringDetailsChanged = computeIsRecurringDetailsChanged(existingEventData,
-        newEventData);
+    isRecurringDetailsChanged =
+        computeIsRecurringDetailsChanged(existingEventData, newEventData) ? true : null;
     if (existingEventData.getRecurring()) {
       this.existingEventData = existingEventData;
       this.newEventData = newEventData;
@@ -359,7 +373,7 @@ public class GUIController extends CalendarController implements CalendarFeature
     }
   }
 
-  private Boolean isWeekDaysUpdated(EventData existingEventData, EventData newEventData) {
+  private boolean isWeekDaysUpdated(EventData existingEventData, EventData newEventData) {
     return !newEventData.getRecurringDetails().getRepeatDays().stream().map(
             calendarWeekDays ->
                 CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
@@ -389,7 +403,7 @@ public class GUIController extends CalendarController implements CalendarFeature
     }
   }
 
-  private Boolean computeIsRecurringDetailsChanged(EventData existingEventData,
+  private boolean computeIsRecurringDetailsChanged(EventData existingEventData,
       EventData newEventData) {
     if (newEventData.getRecurring()) {
       if (!existingEventData.getRecurring()) {
@@ -403,7 +417,7 @@ public class GUIController extends CalendarController implements CalendarFeature
       }
     }
 
-    return null;
+    return false;
   }
 
   @Override

@@ -18,6 +18,14 @@ public class UseCommand extends Command {
 
   private String calendarName;
 
+  UseCommand() {
+    calendarName = null;
+  }
+
+  UseCommand(String calendarName) {
+    this.calendarName = calendarName;
+  }
+
   /**
    * This method starts parsing the `use` command from the Scanner object. It checks if the `use`
    * command contains `calendar` keyword and --name tag before calling the appropriate method
@@ -73,7 +81,7 @@ public class UseCommand extends Command {
    *
    * @param controllerUtility the controller utility object
    * @throws CalendarExportException if there is an error on exporting the calendar
-   * @throws EventConflictException if there is a conflict with the event
+   * @throws EventConflictException  if there is a conflict with the event
    */
   @Override
   void executeCommand(ControllerUtility controllerUtility)
