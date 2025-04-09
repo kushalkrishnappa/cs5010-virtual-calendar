@@ -181,5 +181,4 @@ public class EventData {
   public RecurrenceData getRecurringDetails() {
     return recurringDetails;
   }
-
 }

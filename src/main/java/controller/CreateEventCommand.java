@@ -324,9 +324,7 @@ class CreateEventCommand extends Command {
             .setStartTime(startTime)
             .setEndTime(endTime)
             .setIsAllDay(isAllDay)
-            .setIsPublic(Objects.nonNull(isPublic)
-                ? isPublic
-                : null)
+            .setIsPublic(isPublic)
             .setDescription(description)
             .setLocation(location)
             .setIsRecurring(isRecurring)

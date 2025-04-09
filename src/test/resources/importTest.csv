@@ -1,0 +1,11 @@
+Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location,Private
+"event1",03/20/2025,,03/21/2025,,True,,,True
+"event1",03/25/2025,,03/26/2025,,True,,,True
+"event1",03/27/2025,,03/28/2025,,True,,,True
+"event1",04/01/2025,,04/02/2025,,True,,,True
+"event1",04/03/2025,,04/04/2025,,True,,,True
+"event1",04/08/2025,,04/09/2025,,True,,,True
+"event1",04/10/2025,,04/11/2025,,True,,,True
+"event1",04/15/2025,,04/16/2025,,True,,,True
+"event1",04/17/2025,,04/18/2025,,True,,,True
+event2,04/20/2025,,04/21/2025,,,,,True
