@@ -122,6 +122,8 @@ public class DatesPanel extends JPanel {
     calendarTable.setShowGrid(true);
     calendarTable.setGridColor(Color.LIGHT_GRAY);
     calendarTable.setFillsViewportHeight(true);
+    calendarTable.setFocusable(Boolean.FALSE);
+
     // custom renderer for calendar cells
     calendarTable.setDefaultRenderer(Object.class, new CalendarCellRenderer());
     // the table columns cannot be moved to left and right
@@ -223,7 +225,6 @@ public class DatesPanel extends JPanel {
     // current month's first week days (fill first week of this month's cell)
     for (int i = dayOfWeek; i < 7; i++) {
       String cellContent = dayCounter + "\n";
-      // TODO: Add event details to cell content
       tableModel.setValueAt(cellContent, row, i);
       dayCounter++;
     }
@@ -233,7 +234,6 @@ public class DatesPanel extends JPanel {
       row++;
       for (int i = 0; i < 7 && dayCounter <= daysInMonth; i++) {
         String cellContent = dayCounter + "\n";
-        // TODO: Add event details to cell content
         tableModel.setValueAt(cellContent, row, i);
         dayCounter++;
       }
