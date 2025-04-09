@@ -55,7 +55,9 @@ public class SwingView extends JFrame implements IGUIView {
     if (dayDialog != null) {
       dayDialog.dispose();
     }
-    eventDialog.dispose();
+    if (eventDialog != null) {
+      eventDialog.dispose();
+    }
     dayDialog = new DayDialog(this, calendarFeatures, date, events);
     dayDialog.setVisible(true);
   }

@@ -8,6 +8,7 @@ import exception.CalendarExportException;
 import exception.EventConflictException;
 import exception.ParseCommandException;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +47,7 @@ class EditCalendarCommand extends Command {
     this.calendarEntryBuilder = CalendarEntry.getBuilder();
   }
 
-  EditCalendarCommand(String calendarName, String newCalendarName, String newTimeZone){
+  EditCalendarCommand(String calendarName, String newCalendarName, String newTimeZone) {
     this.calendarName = calendarName;
     this.newCalendarName = newCalendarName;
     this.newTimeZone = newTimeZone;
@@ -163,7 +164,9 @@ class EditCalendarCommand extends Command {
     if (Objects.isNull(calendarEntry)) {
       throw new IllegalArgumentException("Calendar with the provided name doesn't exists");
     }
-
+    if (Arrays.asList(controllerUtility.getAllCalendarNames()).contains(newCalendarName)) {
+      throw new IllegalArgumentException("Calendar with the provided name already exists");
+    }
     CalendarEntry updatedCalendarEntry = calendarEntryBuilder.setModel(
             Objects.nonNull(newTimeZone)
                 ? shiftCalendarTimezone(calendarEntry.model, calendarEntry.zoneId,

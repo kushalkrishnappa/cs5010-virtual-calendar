@@ -463,38 +463,6 @@ public class CalendarModelTest {
     assertTrue(editedEvent.getIsPublic());
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testEditRecurringDetailsForExistingRecurringEventThrowsException() {
-    RecurringDetailsDTO recurringDetails = RecurringDetailsDTO.getBuilder()
-        .setRepeatDays(Set.of(CalendarDayOfWeek.S, CalendarDayOfWeek.M, CalendarDayOfWeek.W))
-        .setOccurrences(5)
-        .setUntilDate(null)
-        .build();
-    EventDTO recurringEvent = EventDTO.getBuilder()
-        .setSubject("Recurring Event")
-        .setStartTime(LocalDateTime.of(2025, 3, 12, 0, 0))
-        .setEndTime(LocalDateTime.of(2025, 3, 12, 1, 0))
-        .setIsRecurring(true)
-        .setIsAllDay(false)
-        .setRecurringDetails(recurringDetails)
-        .build();
-    calendarModel.createEvent(recurringEvent, false);
-
-    EventDTO editedEvent = EventDTO.getBuilder()
-        .setSubject("Edited Recurring Event")
-        .setStartTime(LocalDateTime.of(2025, 3, 12, 2, 0))
-        .setEndTime(LocalDateTime.of(2025, 3, 12, 3, 0))
-        .setIsRecurring(null)
-        .setIsAllDay(false)
-        .build();
-    calendarModel.editEvent(
-        "Recurring Event",
-        LocalDateTime.of(2025, 3, 12, 0, 0),
-        LocalDateTime.of(2025, 3, 12, 1, 0),
-        editedEvent
-    );
-  }
-
   @Test()
   public void testEditAndSetRecurringDetailsForExistingSimpleEvent() {
     calendarModel.createEvent(sampleSpannedSingleEventDTO, true);

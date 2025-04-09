@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -77,7 +76,6 @@ public class GUIController extends CalendarController implements CalendarFeature
     try (FileReader reader = new FileReader(filePath)) {
       ImportResult importResult = importer.importEvents(reader, eventConsumer);
       view.displayMessage(importResult.generateSummary());
-      // TODO: refresh view
     } catch (FileNotFoundException e) {
       view.displayError("Import Error: File not found - " + filePath);
     } catch (IOException e) {
@@ -91,10 +89,9 @@ public class GUIController extends CalendarController implements CalendarFeature
         && !newTimezone.isEmpty()) {
       try {
         // create new calendar entry
-        controllerUtility.addCalendarEntry(newCalendarName, CalendarEntry.getBuilder()
-            .setModel(controllerUtility.getModelFactory().get())
-            .setZoneId(newTimezone)
-            .build());
+        CreateCalendarCommand createCalendarCommand = new CreateCalendarCommand(newCalendarName, newTimezone);
+        createCalendarCommand.executeCommand(controllerUtility);
+
         // refresh the calendar list in the view
         view.setAvailableCalendars(controllerUtility.getAllCalendarNames());
         // set the current calendar to the new one
@@ -105,6 +102,8 @@ public class GUIController extends CalendarController implements CalendarFeature
       } catch (Exception e) {
         view.displayError("Error creating calendar: " + e.getMessage());
       }
+    } else {
+      view.displayError("Please enter value in fields");
     }
   }
 
@@ -115,9 +114,6 @@ public class GUIController extends CalendarController implements CalendarFeature
       String updatedCalendarName = newCalendarName;
       if (newCalendarName.equals(currentCalendarName)) {
         newCalendarName = null;
-      } else if (Arrays.asList(controllerUtility.getAllCalendarNames()).contains(newCalendarName)) {
-        view.displayError("Calendar name already exists.");
-        return;
       }
       try {
         EditCalendarCommand editCommand = new EditCalendarCommand(

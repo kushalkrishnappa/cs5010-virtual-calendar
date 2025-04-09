@@ -137,6 +137,11 @@ public class CSVCalendarImporter implements ICalendarImporter {
           }
         }
 
+        if (Objects.isNull(eventDetails.startDate)) {
+          line = br.readLine();
+          continue;
+        }
+
         // update values as per our model
         EventDTO eventDTO = getEventDTOFromImportEventDetails(eventDetails);
 
@@ -160,7 +165,7 @@ public class CSVCalendarImporter implements ICalendarImporter {
         .setSubject(eventDetails.subject)
         .setDescription(eventDetails.description)
         .setLocation(eventDetails.location)
-        .setIsPublic(!eventDetails.privateEvent)
+        .setIsPublic(Objects.nonNull(eventDetails.privateEvent) && !eventDetails.privateEvent)
         .setStartTime(Objects.nonNull(eventDetails.startTime)
             ? eventDetails.startDate.atTime(eventDetails.startTime)
             : eventDetails.startDate.atStartOfDay())
@@ -179,7 +184,9 @@ public class CSVCalendarImporter implements ICalendarImporter {
                 : eventDetails.endDate.isEqual(eventDetails.startDate.plusDays(1))
                     ? Boolean.TRUE
                     : Boolean.FALSE
-                : Boolean.TRUE)
+                : Objects.nonNull(eventDetails.endTime)
+                    ? Boolean.FALSE
+                    : Boolean.TRUE)
         .build();
   }
 
