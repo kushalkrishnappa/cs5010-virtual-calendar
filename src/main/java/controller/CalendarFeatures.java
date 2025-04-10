@@ -129,9 +129,9 @@ public interface CalendarFeatures {
   void editEvent(EventData existingEventData, EventData newEventData);
 
   /**
-   * This feature allows the user to create a recurring event in the calendar. The user can specify
-   * the details of the recurring event in the event dialog. The event will be added to the calendar
-   * and displayed in the day view dialog.
+   * This is a callback handler to accept the user's choice of the recurring event options while
+   * editing the recurring event. Typical choices are "Edit this event", "edit all events", "edit
+   * this and following events".
    *
    * @param choice the choice of the user for the recurring event options
    */
