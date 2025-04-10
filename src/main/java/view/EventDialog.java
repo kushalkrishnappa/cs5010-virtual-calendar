@@ -83,9 +83,9 @@ public class EventDialog extends JDialog {
    * and initial date. It is used for creating an event. It sets up the layout and components of the
    * dialog.
    *
-   * @param owner the owner frame of the dialog
+   * @param owner            the owner frame of the dialog
    * @param calendarFeatures the calendar features to be used for event management
-   * @param initialDate the initial date for the event
+   * @param initialDate      the initial date for the event
    */
   public EventDialog(JDialog owner, CalendarFeatures calendarFeatures, LocalDate initialDate) {
     super(owner, "Create New Event", true);
@@ -107,9 +107,9 @@ public class EventDialog extends JDialog {
    * and initial date. It is used for editing an event. It sets up the layout and components of the
    * dialog.
    *
-   * @param owner the owner frame of the dialog
+   * @param owner            the owner frame of the dialog
    * @param calendarFeatures the calendar features to be used for event management
-   * @param eventToEdit the event to be edited
+   * @param eventToEdit      the event to be edited
    */
   public EventDialog(JDialog owner, CalendarFeatures calendarFeatures, EventData eventToEdit) {
     super(owner, "Edit Event", true);
@@ -131,9 +131,9 @@ public class EventDialog extends JDialog {
    * and initial date. It is used for creating an event. It sets up the layout and components of the
    * dialog.
    *
-   * @param owner the owner frame of the dialog
+   * @param owner            the owner frame of the dialog
    * @param calendarFeatures the calendar features to be used for event management
-   * @param initialDate the initial date for the event
+   * @param initialDate      the initial date for the event
    */
   public EventDialog(JFrame owner, CalendarFeatures calendarFeatures, LocalDate initialDate) {
     super(owner, "Create New Event", true);
@@ -150,7 +150,10 @@ public class EventDialog extends JDialog {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
   }
 
-  public void showNonEditableDialog() {
+  /**
+   * This will disable all interactive fields in the dialog.
+   */
+  void showNonEditableDialog() {
     setTitle("Event Details");
     setModal(true);
     setResizable(false);
