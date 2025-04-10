@@ -536,6 +536,17 @@ public class GUIControllerTest {
     controller.exportCalendar("export.csv");
     assertTrue(model.exportEventsWithExporterCalled);
     assertTrue(view.displayMessageCalled);
+    assertTrue(view.lastDisplayMessage.endsWith(".csv\n"));
+    assertFalse(view.displayErrorCalled);
+  }
+
+  @Test
+  public void testExportCalendarSuccessExtension() throws CalendarExportException {
+    model.exportEventsWithExporterReceived = "Exporter called";
+    controller.exportCalendar("export");
+    assertTrue(model.exportEventsWithExporterCalled);
+    assertTrue(view.displayMessageCalled);
+    assertTrue(view.lastDisplayMessage.endsWith(".csv\n"));
     assertFalse(view.displayErrorCalled);
   }
 
@@ -1209,7 +1220,7 @@ public class GUIControllerTest {
   // jump to today
 
   @Test
-  public void testRequestThisMonthView(){
+  public void testRequestThisMonthView() {
     LocalDate today = LocalDate.now();
     YearMonth current = YearMonth.of(today.getYear(), today.getMonth());
     controller.requestThisMonthView();

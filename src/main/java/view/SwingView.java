@@ -48,6 +48,7 @@ public class SwingView extends JFrame implements IGUIView {
     pack();
     setMaximumSize(new Dimension(1000, getHeight()));
     setResizable(false);
+    setLocationRelativeTo(null);
 
     // make the UI visible
     setVisible(true);
