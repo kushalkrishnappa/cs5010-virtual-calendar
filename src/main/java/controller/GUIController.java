@@ -393,7 +393,10 @@ public class GUIController extends CalendarController implements CalendarFeature
   }
 
   private boolean isWeekDaysUpdated(EventData existingEventData, EventData newEventData) {
-    return !newEventData.getRecurringDetails().getRepeatDays().stream().map(
+    return !newEventData.getRecurringDetails()
+        .getRepeatDays()
+        .stream()
+        .map(
             calendarWeekDays -> CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
         .collect(Collectors.toSet())
         .equals(existingEventData.getRecurringDetails().getRepeatDays()

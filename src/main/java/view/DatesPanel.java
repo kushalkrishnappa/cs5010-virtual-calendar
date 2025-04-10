@@ -360,10 +360,10 @@ public class DatesPanel extends JPanel {
 
     private void highlightCurrentDay(int day, boolean isCurrentMonth) {
       LocalDate today = ZonedDateTime.now(ZoneId.of(currentTimeZone)).toLocalDate();
-      if (day == today.getDayOfMonth() &&
-          currentYearMonth.getMonthValue() == today.getMonthValue() &&
-          currentYearMonth.getYear() == today.getYear() &&
-          isCurrentMonth) {
+      if (day == today.getDayOfMonth()
+          && currentYearMonth.getMonthValue() == today.getMonthValue()
+          && currentYearMonth.getYear() == today.getYear()
+          && isCurrentMonth) {
         setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
       } else {
         setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));

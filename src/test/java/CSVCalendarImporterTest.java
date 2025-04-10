@@ -44,8 +44,10 @@ public class CSVCalendarImporterTest {
   @Test
   public void testImportSuccessfulAllFields() throws IOException {
     String csv =
-        "Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location,Private\n"
-            + "Meeting,04/10/2025,02:00 PM,04/10/2025,03:00 PM,False,\"Discuss project details\",\"Conference Room 1\",False";
+        "Subject,Start Date,Start Time,End Date,End Time,"
+            + "All Day Event,Description,Location,Private\n"
+            + "Meeting,04/10/2025,02:00 PM,04/10/2025,03:00 PM,"
+            + "False,\"Discuss project details\",\"Conference Room 1\",False";
     ImportResult result = importer.importEvents(createReader(csv), eventConsumer);
 
     assertEquals(1, result.getSuccessCount());
@@ -165,7 +167,8 @@ public class CSVCalendarImporterTest {
   @Test
   public void testImportSuccessfulQuotedFieldsWithCommasAndQuotes() throws IOException {
     String csv = "Subject,Start Date,Location,Description\n"
-        + "\"Review, Final\",10/10/2025,\"Main St, Bldg A\",\"Notes contain \"\"quotes\"\" inside\"";
+        + "\"Review, Final\",10/10/2025,\"Main St, Bldg A\","
+        + "\"Notes contain \"\"quotes\"\" inside\"";
     ImportResult result = importer.importEvents(createReader(csv), eventConsumer);
 
     assertEquals(1, result.getSuccessCount());
