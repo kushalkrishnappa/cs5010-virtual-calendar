@@ -83,7 +83,8 @@ public class DatesPanel extends JPanel {
     // add components to the panel
     add(monthNavPanel, BorderLayout.NORTH);
     JScrollPane tableComp = new JScrollPane(calendarTable);
-    tableComp.setPreferredSize(new Dimension(tableComp.getPreferredSize().width, 80*6+25));
+    tableComp.setPreferredSize(
+        new Dimension(tableComp.getPreferredSize().width, 80 * 6 + 25));
     add(tableComp, BorderLayout.CENTER);
   }
 

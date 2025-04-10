@@ -54,4 +54,9 @@ use calendar --name cal2
 print events from 2025-07-01T00:00 to 2025-07-30T00:00
 use calendar --name boston
 print events from 2025-07-01T00:00 to 2025-07-30T00:00
+export cal Boston.csv
+use calendar --name cal1
+export cal cal1.csv
+use calendar --name cal1
+export cal cal2.csv
 exit
