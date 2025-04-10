@@ -40,13 +40,14 @@ public class SwingView extends JFrame implements IGUIView {
     setSize(1000, 1000);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
-    setMaximumSize(new Dimension(1000, getHeight()));
 
     // init the components
     initComponents();
     layoutComponents();
 
     pack();
+    setMaximumSize(new Dimension(1000, getHeight()));
+    setResizable(false);
 
     // make the UI visible
     setVisible(true);
