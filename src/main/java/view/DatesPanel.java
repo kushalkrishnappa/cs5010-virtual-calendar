@@ -259,7 +259,7 @@ public class DatesPanel extends JPanel {
   }
 
   /**
-   * Get the actual date for a cell based on its position and displayed day
+   * Get the actual date for a cell based on its position and displayed day.
    *
    * @param row          The row of the cell
    * @param col          The column of the cell

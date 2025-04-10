@@ -43,7 +43,7 @@ class ExportCalendarCommand extends Command {
    *
    * @param filename the filename to which the events need to be exported
    */
-  ExportCalendarCommand(String filename){
+  ExportCalendarCommand(String filename) {
     outputFilePath = null;
     this.filename = filename;
     fileWriter = getIFileWriter();

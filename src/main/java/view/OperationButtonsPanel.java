@@ -15,7 +15,7 @@ import javax.swing.JPanel;
  */
 public class OperationButtonsPanel extends JPanel {
 
-  private JPanel OperationButtonsPanel;
+  private JPanel operationButtonsPanel;
 
   private JButton createEventBtn;
 
@@ -29,18 +29,18 @@ public class OperationButtonsPanel extends JPanel {
   public OperationButtonsPanel() {
     setLayout(new BorderLayout());
     initOperationsComponents();
-    add(OperationButtonsPanel);
+    add(operationButtonsPanel);
   }
 
   private void initOperationsComponents() {
 
-    OperationButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    OperationButtonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+    operationButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    operationButtonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
     // create buttons for the calendar event operations
     createNewEventButton();
 
-    OperationButtonsPanel.add(createEventBtn);
+    operationButtonsPanel.add(createEventBtn);
   }
 
   private void createNewEventButton() {

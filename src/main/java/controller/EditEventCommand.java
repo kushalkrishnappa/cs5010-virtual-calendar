@@ -119,7 +119,7 @@ class EditEventCommand extends Command {
    * @return A map of property setters for RecurringDetailsDTO.
    */
   private final Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>>
-  createRecurringDetailsPropertySetters() {
+      createRecurringDetailsPropertySetters() {
     Map<String, BiConsumer<RecurringDetailsDTOBuilder, String>> setters = new HashMap<>();
     setters.put("occurrences",
         (builder, value) -> builder.setOccurrences(

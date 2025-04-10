@@ -3,10 +3,19 @@ package controller;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
+/**
+ * This Class is a class adaptor for {@link GUIController} to be presented as
+ * {@link CalendarFeatures}.
+ */
 public class CalendarFeaturesAdaptor implements CalendarFeatures {
 
-  final private CalendarFeatures controller;
+  private final CalendarFeatures controller;
 
+  /**
+   * Instantiates a new Calendar features adaptor.
+   *
+   * @param controller the controller
+   */
   public CalendarFeaturesAdaptor(CalendarFeatures controller) {
     this.controller = controller;
   }
@@ -30,7 +39,6 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
   public void exportCalendar(String saveFilePath) {
     controller.exportCalendar(saveFilePath);
   }
-
 
   @Override
   public void switchCalendar(String calendarName) {
