@@ -13,7 +13,7 @@ import javax.swing.JPanel;
  * This is the footer panel of the calendar GUI. It contains the buttons for creating a new event.
  * Any other operations can be added to this panel in the future.
  */
-public class OperationButtonsPanel extends JPanel {
+public class FooterPanel extends JPanel {
 
   private JPanel operationButtonsPanel;
 
@@ -32,7 +32,7 @@ public class OperationButtonsPanel extends JPanel {
   /**
    * This constructor initializes the OperationButtonsPanel and adds the new event button to it.
    */
-  public OperationButtonsPanel() {
+  public FooterPanel() {
     setLayout(new BorderLayout());
     initOperationsComponents();
     add(operationButtonsPanel);
