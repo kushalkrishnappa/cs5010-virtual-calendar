@@ -109,4 +109,9 @@ public class CalendarFeaturesAdaptor implements CalendarFeatures {
   public void requestEventViewDetails(EventData eventData) {
     controller.requestEventViewDetails(eventData);
   }
+
+  @Override
+  public void requestThisMonthView() {
+    controller.requestThisMonthView();
+  }
 }

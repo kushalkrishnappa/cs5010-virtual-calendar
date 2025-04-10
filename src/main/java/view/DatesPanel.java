@@ -4,6 +4,7 @@ import controller.CalendarFeatures;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -79,9 +80,12 @@ public class DatesPanel extends JPanel {
     // create and set calendar table
     createCalendarTable();
 
-    // Add components to the panel
+    // add components to the panel
     add(monthNavPanel, BorderLayout.NORTH);
-    add(new JScrollPane(calendarTable), BorderLayout.CENTER);
+    JScrollPane tableComp = new JScrollPane(calendarTable);
+    tableComp.setPreferredSize(new Dimension(tableComp.getPreferredSize().width, 80*6+20));
+    tableComp.setMaximumSize(new Dimension(tableComp.getPreferredSize().width, 80*6+20));
+    add(tableComp, BorderLayout.CENTER);
   }
 
   private void createMonthYearLabel() {

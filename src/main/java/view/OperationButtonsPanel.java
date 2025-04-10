@@ -19,9 +19,15 @@ public class OperationButtonsPanel extends JPanel {
 
   private JButton createEventBtn;
 
+  private JButton todayBtn;
+
   private CalendarFeatures calendarFeatures;
 
   private String currentTimezone;
+
+  private JButton timeZoneBtn;
+
+  private JPanel timeZonePanel;
 
   /**
    * This constructor initializes the OperationButtonsPanel and adds the new event button to it.
@@ -37,10 +43,32 @@ public class OperationButtonsPanel extends JPanel {
     operationButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     operationButtonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
+    // create timezone button
+    createTimezoneButton();
     // create buttons for the calendar event operations
     createNewEventButton();
+    // create today button
+    createTodayBtn();
 
+    add(timeZonePanel, BorderLayout.WEST);
+    operationButtonsPanel.add(todayBtn);
     operationButtonsPanel.add(createEventBtn);
+  }
+
+  private void createTimezoneButton() {
+    timeZonePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    timeZonePanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+    timeZoneBtn = new JButton("Timezone: not set");
+    timeZoneBtn.setEnabled(false);
+    timeZonePanel.add(timeZoneBtn);
+  }
+
+  private void createTodayBtn() {
+    todayBtn = new JButton("Today");
+
+    todayBtn.addActionListener(e -> {
+      calendarFeatures.requestThisMonthView();
+    });
   }
 
   private void createNewEventButton() {
@@ -69,5 +97,6 @@ public class OperationButtonsPanel extends JPanel {
    */
   public void setCurrentTimezone(String tz) {
     this.currentTimezone = tz;
+    timeZoneBtn.setText("Timezone: " + tz);
   }
 }

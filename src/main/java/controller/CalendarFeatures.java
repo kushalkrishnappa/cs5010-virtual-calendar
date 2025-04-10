@@ -159,4 +159,9 @@ public interface CalendarFeatures {
    * @param eventData the event data to be displayed in the dialog
    */
   void requestEventViewDetails(EventData eventData);
+
+  /**
+   * The feature allows the user to jump to the current year and month in the calendar timezone.
+   */
+  void requestThisMonthView();
 }
