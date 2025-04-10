@@ -130,7 +130,7 @@ public interface CalendarFeatures {
 
   /**
    * This is a callback handler to accept the user's choice of the recurring event options while
-   * editing the recurring event. Typical choices are "edit this event", "edit all events", "edit
+   * editing the recurring event. Typical choices are "Edit this event", "edit all events", "edit
    * this and following events".
    *
    * @param choice the choice of the user for the recurring event options
