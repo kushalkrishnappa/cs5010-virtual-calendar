@@ -45,7 +45,7 @@ class ExportCalendarCommand extends Command {
    */
   ExportCalendarCommand(String filename) {
     outputFilePath = null;
-    this.filename = filename;
+    this.filename = filename.endsWith(".csv") ? filename : filename + ".csv";
     fileWriter = getIFileWriter();
   }
 
