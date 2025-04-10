@@ -37,9 +37,7 @@ public class BannerPanel extends JPanel {
 
   private JButton importCalendarBtn;
 
-  private JButton timeZoneBtn;
-
-  private JPanel timeZonePanel;
+  private String currentTimezone;
 
   private CalendarFeatures calendarFeatures;
 
@@ -65,9 +63,6 @@ public class BannerPanel extends JPanel {
     createFixedWidthComboBox();
     buttonsPanel.add(calendarSelectorDropdown);
 
-    createTimezoneButton();
-    add(timeZonePanel, BorderLayout.EAST);
-
     // add buttons to the panel
     createButtons();
     // add buttons to the panel
@@ -89,14 +84,6 @@ public class BannerPanel extends JPanel {
     comboBox.setPreferredSize(new Dimension(150, comboBox.getPreferredSize().height));
     comboBox.setMaximumSize(new Dimension(150, comboBox.getPreferredSize().height));
     calendarSelectorDropdown = comboBox;
-  }
-
-  private void createTimezoneButton() {
-    timeZonePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    timeZonePanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-    timeZoneBtn = new JButton("Timezone: not set");
-    timeZoneBtn.setEnabled(false);
-    timeZonePanel.add(timeZoneBtn);
   }
 
   private void createButtons() {
@@ -145,7 +132,7 @@ public class BannerPanel extends JPanel {
     String selectedTimezone = null;
     if (isEditMode) {
       selectedCalendar = (String) calendarSelectorDropdown.getSelectedItem();
-      selectedTimezone = timeZoneBtn.getText().substring(10);
+      selectedTimezone = currentTimezone;
     }
 
     NewCalendarDialog dialog = new NewCalendarDialog(
@@ -228,7 +215,7 @@ public class BannerPanel extends JPanel {
    * @param timezone the timezone to be set
    */
   public void setCurrentTimezone(String timezone) {
-    timeZoneBtn.setText("Timezone: " + timezone);
+    currentTimezone = timezone;
   }
 
   /**

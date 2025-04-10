@@ -3,6 +3,7 @@ package view;
 import controller.CalendarFeatures;
 import controller.EventData;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -36,13 +37,16 @@ public class SwingView extends JFrame implements IGUIView {
   public SwingView() {
     // setup the main JFrame
     setTitle("Calendar Application");
-    setSize(950, 700);
+    setSize(1000, 1000);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
+    setMaximumSize(new Dimension(1000, getHeight()));
 
     // init the components
     initComponents();
     layoutComponents();
+
+    pack();
 
     // make the UI visible
     setVisible(true);

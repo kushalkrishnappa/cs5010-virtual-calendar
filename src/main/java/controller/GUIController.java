@@ -455,4 +455,13 @@ public class GUIController extends CalendarController implements CalendarFeature
   public void requestEventViewDetails(EventData eventData) {
     view.showEventDetailsDialog(eventData);
   }
+
+  @Override
+  public void requestThisMonthView() {
+    ZoneId currentZone = controllerUtility.getCurrentCalendar().zoneId;
+    LocalDate now = LocalDate.now(currentZone);
+    YearMonth yearMonth = YearMonth.from(now);
+    view.setMonthYearLabel(yearMonth);
+    view.setCalendarMonthDates(yearMonth);
+  }
 }

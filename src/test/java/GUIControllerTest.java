@@ -1205,4 +1205,18 @@ public class GUIControllerTest {
     assertTrue(view.displayMessageCalled);
     assertFalse(view.displayErrorCalled);
   }
+
+  // jump to today
+
+  @Test
+  public void testRequestThisMonthView(){
+    LocalDate today = LocalDate.now();
+    YearMonth current = YearMonth.of(today.getYear(), today.getMonth());
+    controller.requestThisMonthView();
+
+    assertTrue(view.setMonthYearLabelCalled);
+    assertEquals(current, view.lastSetMonthYearLabelMonthYear);
+    assertTrue(view.setCalendarMonthDatesCalled);
+    assertEquals(current, view.lastSetCalendarMonthDatesMonthYear);
+  }
 }
