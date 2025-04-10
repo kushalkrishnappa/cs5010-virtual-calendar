@@ -180,18 +180,17 @@ public class DayDialog extends JDialog {
   private void loadEventsToTable() {
     tableModel.setRowCount(0); // Clear existing rows
     for (EventData event : events) {
-      Object[] rowData = {
-          event.getAllDay()
-              ? "All day"
-              : event.getEndTime().toLocalDate().isAfter(event.getStartTime().toLocalDate())
-                  ? "<html>"
-                  + event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yy h:mm a"))
-                  + "<br>"
-                  + event.getEndTime().format(DateTimeFormatter.ofPattern("dd-MM-yy h:mm a"))
-                  + "</html>"
-                  : event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a"))
-                      + " - "
-                      + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a")),
+      Object[] rowData = {event.getAllDay()
+          ? "All day"
+          : event.getEndTime().toLocalDate().isAfter(event.getStartTime().toLocalDate())
+              ? "<html>"
+              + event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yy h:mm a"))
+              + "<br>"
+              + event.getEndTime().format(DateTimeFormatter.ofPattern("dd-MM-yy h:mm a"))
+              + "</html>"
+              : event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a"))
+                  + " - "
+                  + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a")),
           event.getSubject(),
           event.getLocation(),
           event.getDescription()

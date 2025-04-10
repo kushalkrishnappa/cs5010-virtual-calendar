@@ -36,7 +36,7 @@ public class SwingView extends JFrame implements IGUIView {
   public SwingView() {
     // setup the main JFrame
     setTitle("Calendar Application");
-    setSize(1000, 700);
+    setSize(950, 700);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
 

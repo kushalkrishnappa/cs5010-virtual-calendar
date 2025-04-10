@@ -25,7 +25,7 @@ class RecurrenceService {
    *
    * @param eventDTO the {@link EventDTO} representing the recurring event
    * @return a list of {@link EventDTO} objects, each representing a single occurrence of the
-   * recurring event
+   *         recurring event
    * @throws IllegalArgumentException if the recurring details are invalid or inconsistent
    */
   static List<EventDTO> generateRecurrence(EventDTO eventDTO) {

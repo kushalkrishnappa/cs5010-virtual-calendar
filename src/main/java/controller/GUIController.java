@@ -387,17 +387,18 @@ public class GUIController extends CalendarController implements CalendarFeature
         invokeEditEventCommand(existingEventData, newEventData, isRecurringDetailsChanged,
             null, null);
         break;
+      default:
+        throw new IllegalArgumentException("Invalid choice: " + choice);
     }
   }
 
   private boolean isWeekDaysUpdated(EventData existingEventData, EventData newEventData) {
     return !newEventData.getRecurringDetails().getRepeatDays().stream().map(
-            calendarWeekDays ->
-                CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
+            calendarWeekDays -> CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
         .collect(Collectors.toSet())
-        .equals(existingEventData.getRecurringDetails().getRepeatDays().stream().map(
-                calendarWeekDays ->
-                    CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
+        .equals(existingEventData.getRecurringDetails().getRepeatDays()
+            .stream().map(calendarWeekDays ->
+                CalendarDayOfWeek.valueOf(calendarWeekDays.name()))
             .collect(Collectors.toSet()));
   }
 

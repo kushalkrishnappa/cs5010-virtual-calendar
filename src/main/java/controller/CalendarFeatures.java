@@ -69,7 +69,7 @@ public interface CalendarFeatures {
 
   /**
    * This feature allows the user to see a dialog that prompts to select a directory to store the
-   * exported calendar file
+   * exported calendar file.
    */
   void requestCalendarExport();
 
