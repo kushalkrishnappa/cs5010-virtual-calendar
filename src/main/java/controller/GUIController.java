@@ -24,16 +24,27 @@ import service.CSVCalendarImporter;
 import service.ICalendarImporter;
 import view.IGUIView;
 
+/**
+ * This class represents the GUI controller for the calendar application. It builds upon the
+ * existing controller and implements the CalendarFeatures interface. The GUIController is
+ * responsible for handling user interactions, managing the calendar data, and updating the view
+ * accordingly.
+ */
 public class GUIController extends CalendarController implements CalendarFeatures {
 
   private final IGUIView view;
 
   private static final String editThisEvent = "This event only";
+
   private static final String editThisAndFollowingEvents =
       "This and following events with same name";
+
   private static final String editAllEvents = "All events with same name";
+
   private EventData existingEventData;
+
   private EventData newEventData;
+
   private Boolean isRecurringDetailsChanged;
 
   private ICalendarImporter importer;
@@ -50,6 +61,11 @@ public class GUIController extends CalendarController implements CalendarFeature
     importer = new CSVCalendarImporter();
   }
 
+  /**
+   * This method sets the importer strategy dynamically.
+   *
+   * @param importer The calendar importer to be set
+   */
   public void setImporter(ICalendarImporter importer) {
     this.importer = importer;
   }
@@ -280,10 +296,9 @@ public class GUIController extends CalendarController implements CalendarFeature
           .model.getEventsOnDate(date);
       List<EventData> events = convertEventDTOsToEventData(eventsOnDate);
       view.showDayViewDialog(date, events);
-    } catch (EventConflictException e){
+    } catch (EventConflictException e) {
       view.displayError("The event conflicts with another existing event.");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       view.displayError("Error creating event: " + e.getMessage());
     }
   }

@@ -23,27 +23,35 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+/**
+ * This class represents a dialog that displays the events for a specific day. It extends JDialog
+ * and provides GUI for viewing and managing events on that day. The dialog includes a table to
+ * display the events, a header with the date, and buttons for creating and editing events.
+ */
 public class DayDialog extends JDialog {
 
   private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(
       "MMMM d, yyyy");
 
-  private LocalDate date;
+  private final LocalDate date;
 
-  private List<EventData> events;
-
-  private JPanel headerPanel;
+  private final List<EventData> events;
 
   private JTable eventsTable;
 
   private DefaultTableModel tableModel;
 
-  private JButton newEventButton;
+  private final CalendarFeatures calendarFeatures;
 
-  private JButton editButton;
-
-  private CalendarFeatures calendarFeatures;
-
+  /**
+   * This constructor initializes the DayDialog with the specified owner frame, calendar features,
+   * date, and events. It sets up the layout and components of the dialog.
+   *
+   * @param owner            the owner frame of the dialog
+   * @param calendarFeatures the calendar features to be used for event management
+   * @param date             the date for which events are to be displayed
+   * @param events           the list of events for the specified date
+   */
   public DayDialog(Frame owner, CalendarFeatures calendarFeatures, LocalDate date,
       List<EventData> events) {
     super(owner, date.format(DATE_FORMATTER), true);
@@ -73,21 +81,18 @@ public class DayDialog extends JDialog {
     createButtonsFooter();
   }
 
-
   private void createButtonsFooter() {
     JPanel buttonPanel = new JPanel();
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    newEventButton = new JButton("New Event");
-    editButton = new JButton("Edit Event");
+    JButton newEventButton = new JButton("New Event");
+    JButton editButton = new JButton("Edit Event");
 
     newEventButton.addActionListener(e -> {
       calendarFeatures.requestEventCreation(date);
     });
     editButton.addActionListener(e -> {
-      runAgainstSelectedEvent(eventData -> {
-        calendarFeatures.requestEventEdit(eventData);
-      });
+      runAgainstSelectedEvent(calendarFeatures::requestEventEdit);
     });
 
     buttonPanel.add(newEventButton);
@@ -97,7 +102,7 @@ public class DayDialog extends JDialog {
   }
 
   private void createDateAndBackButtonHeader() {
-    headerPanel = new JPanel(new BorderLayout());
+    JPanel headerPanel = new JPanel(new BorderLayout());
     headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     JLabel dateLabel = new JLabel(date.format(DATE_FORMATTER));
@@ -130,9 +135,7 @@ public class DayDialog extends JDialog {
       @Override
       public void mouseClicked(java.awt.event.MouseEvent e) {
         if (e.getClickCount() == 2) {
-          runAgainstSelectedEvent(eventData -> {
-            calendarFeatures.requestEventViewDetails(eventData);
-          });
+          runAgainstSelectedEvent(calendarFeatures::requestEventViewDetails);
         }
       }
     });
@@ -174,7 +177,6 @@ public class DayDialog extends JDialog {
     }
   }
 
-
   private void loadEventsToTable() {
     tableModel.setRowCount(0); // Clear existing rows
     for (EventData event : events) {
@@ -199,7 +201,10 @@ public class DayDialog extends JDialog {
   }
 
   /**
-   * Decorator class for the table cell renderer. This will add styling to the cells in the table.
+   * This class represents a custom cell renderer for the events table. It extends
+   * DefaultTableCellRenderer and adds some customization to the rendering of the table cells. It
+   * sets the background color, font, and border for the cells based on their state (selected or not
+   * selected) and the column type (time or event).
    */
   static class EventCellRenderer extends DefaultTableCellRenderer {
 
@@ -241,5 +246,4 @@ public class DayDialog extends JDialog {
       return cell;
     }
   }
-
 }

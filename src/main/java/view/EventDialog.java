@@ -181,7 +181,7 @@ public class EventDialog extends JDialog {
     if (isRecurring && event.getRecurringDetails() != null) {
       RecurrenceData recurrenceData = event.getRecurringDetails();
 
-      // Set repeat days
+      // set repeat days
       if (recurrenceData.getRepeatDays() != null) {
         for (CalendarWeekDays day : recurrenceData.getRepeatDays()) {
           switch (day) {
@@ -210,7 +210,7 @@ public class EventDialog extends JDialog {
         }
       }
 
-      // Set occurrences or until date
+      // set occurrences or until date
       if (recurrenceData.getOccurrences() != null) {
         occurrencesRadioButton.setSelected(true);
         occurrencesField.setText(recurrenceData.getOccurrences().toString());
@@ -224,7 +224,7 @@ public class EventDialog extends JDialog {
   }
 
   private void populateInitialValues() {
-    // Set default values for a new event
+    // set default values for a new event
     LocalDate today = initialDate != null ? initialDate : LocalDate.now();
     LocalTime now = LocalTime.now().withSecond(0).withNano(0);
     LocalTime oneHourLater = now.plusHours(1);
@@ -234,7 +234,7 @@ public class EventDialog extends JDialog {
     endDateField.setText(today.format(DATE_FORMATTER));
     endTimeField.setText(oneHourLater.format(TIME_FORMATTER));
 
-    // Set initial states
+    // set initial states
     isPublicCheckBox.setSelected(false);
     isAllDayCheckBox.setSelected(false);
     isRecurringCheckBox.setSelected(false);
@@ -252,25 +252,24 @@ public class EventDialog extends JDialog {
   }
 
   private void createButtons() {
-    // Initialize buttons
+    // initialize buttons
     saveButton = new JButton(isEditMode ? "Update" : "Create");
     cancelButton = new JButton("Cancel");
 
     saveButton.addActionListener(e -> saveEvent());
     cancelButton.addActionListener(e -> dispose());
-
   }
 
 
   private void createEventFields() {
-    // Initialize basic fields
+    // initialize basic fields
     subjectField = new JTextField(30);
     locationField = new JTextField(30);
     descriptionArea = new JTextArea(5, 30);
     descriptionArea.setLineWrap(true);
     descriptionArea.setWrapStyleWord(true);
 
-    // Initialize date and time fields
+    // initialize date and time fields
     startDateField = new JTextField(10);
     startTimeField = new JTextField(8);
     endDateField = new JTextField(10);

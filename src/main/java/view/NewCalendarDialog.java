@@ -23,13 +23,9 @@ public class NewCalendarDialog extends JDialog {
 
   private JComboBox<String> timezoneComboBox;
 
-  private JButton confirmButton;
-
-  private JButton cancelButton;
-
   private boolean confirmed = false;
 
-  private boolean editMode;
+  private final boolean editMode;
 
   private String editCalendarName;
 
@@ -114,8 +110,8 @@ public class NewCalendarDialog extends JDialog {
 
   private void createConfirmAndCancelButtons(JPanel buttonPanel) {
     // create buttons
-    confirmButton = new JButton("Confirm");
-    cancelButton = new JButton("Cancel");
+    JButton confirmButton = new JButton("Confirm");
+    JButton cancelButton = new JButton("Cancel");
     // add buttons to the panel
     buttonPanel.add(confirmButton);
     buttonPanel.add(cancelButton);

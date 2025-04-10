@@ -9,6 +9,11 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+/**
+ * This class represents the GUI view of the Calendar application. It implements the IGUIView
+ * interface and provides methods to display the calendar GUI components and handle user
+ * interactions. It extends JFrame to create a window for the application.
+ */
 public class SwingView extends JFrame implements IGUIView {
 
   private BannerPanel bannerPanel;
@@ -23,6 +28,11 @@ public class SwingView extends JFrame implements IGUIView {
 
   private EventDialog eventDialog;
 
+  /**
+   * It initializes the main JFrame which is the initial component of calendar GUI and sets up the
+   * components of the calendar GUI application. It mainly initializes the banner panel, the
+   * operation buttons panel (footer) and the dates panel (data section).
+   */
   public SwingView() {
     // setup the main JFrame
     setTitle("Calendar Application");
