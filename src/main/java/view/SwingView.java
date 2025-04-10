@@ -19,7 +19,7 @@ public class SwingView extends JFrame implements IGUIView {
 
   private BannerPanel bannerPanel;
 
-  private OperationButtonsPanel operationButtonsPanel;
+  private FooterPanel operationButtonsPanel;
 
   private DatesPanel datesPanel;
 
@@ -56,7 +56,7 @@ public class SwingView extends JFrame implements IGUIView {
 
   private void initComponents() {
     bannerPanel = new BannerPanel();
-    operationButtonsPanel = new OperationButtonsPanel();
+    operationButtonsPanel = new FooterPanel();
     datesPanel = new DatesPanel();
   }
 
