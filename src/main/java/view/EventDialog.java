@@ -34,6 +34,11 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+/**
+ * This class represents a dialog for creating or editing events in a calendar application. It
+ * contains fields that is required for event creation and editing. This dialog is also used to show
+ * the details of the event in the with all the fields disabled.
+ */
 public class EventDialog extends JDialog {
 
   private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -73,6 +78,15 @@ public class EventDialog extends JDialog {
   private final CalendarFeatures calendarFeatures;
   private LocalDate initialDate;
 
+  /**
+   * This constructor initializes the EventDialog with the specified owner frame, calendar features,
+   * and initial date. It is used for creating an event. It sets up the layout and components of the
+   * dialog.
+   *
+   * @param owner the owner frame of the dialog
+   * @param calendarFeatures the calendar features to be used for event management
+   * @param initialDate the initial date for the event
+   */
   public EventDialog(JDialog owner, CalendarFeatures calendarFeatures, LocalDate initialDate) {
     super(owner, "Create New Event", true);
     this.initialDate = initialDate;
@@ -88,6 +102,15 @@ public class EventDialog extends JDialog {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
   }
 
+  /**
+   * This constructor initializes the EventDialog with the specified owner frame, calendar features,
+   * and initial date. It is used for editing an event. It sets up the layout and components of the
+   * dialog.
+   *
+   * @param owner the owner frame of the dialog
+   * @param calendarFeatures the calendar features to be used for event management
+   * @param eventToEdit the event to be edited
+   */
   public EventDialog(JDialog owner, CalendarFeatures calendarFeatures, EventData eventToEdit) {
     super(owner, "Edit Event", true);
     this.isEditMode = true;
@@ -103,6 +126,15 @@ public class EventDialog extends JDialog {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
   }
 
+  /**
+   * This constructor initializes the EventDialog with the specified owner frame, calendar features,
+   * and initial date. It is used for creating an event. It sets up the layout and components of the
+   * dialog.
+   *
+   * @param owner the owner frame of the dialog
+   * @param calendarFeatures the calendar features to be used for event management
+   * @param initialDate the initial date for the event
+   */
   public EventDialog(JFrame owner, CalendarFeatures calendarFeatures, LocalDate initialDate) {
     super(owner, "Create New Event", true);
     this.initialDate = initialDate;
@@ -205,6 +237,9 @@ public class EventDialog extends JDialog {
               break;
             case U:
               sundayCheckBox.setSelected(true);
+              break;
+            default:
+              // flow will not reach this default case
               break;
           }
         }
@@ -673,7 +708,7 @@ public class EventDialog extends JDialog {
 
   }
 
-  private class IntegerFieldDocumentListener implements DocumentListener {
+  private static class IntegerFieldDocumentListener implements DocumentListener {
 
     JTextField intField;
 
