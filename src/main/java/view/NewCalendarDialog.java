@@ -17,6 +17,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * This class represents a dialog for creating or editing a calendar. The edit mode allows the user
+ * to modify an existing calendar's name and timezone which will be populated in the dialog fields.
+ */
 public class NewCalendarDialog extends JDialog {
 
   private JTextField calendarNameField;
@@ -34,6 +38,15 @@ public class NewCalendarDialog extends JDialog {
   private static final String[] TIMEZONES = ZoneId.getAvailableZoneIds().stream().sorted()
       .toArray(String[]::new);
 
+  /**
+   * This constructor initializes the NewCalendarDialog with the specified parent frame, calendar
+   * name, and timezone. If the calendar name is null, it indicates that a new calendar is being
+   * created.
+   *
+   * @param parent       the parent frame of the dialog
+   * @param calendarName the name of the calendar to be edited, or null for a new calendar
+   * @param timezone     the timezone of the calendar to be edited, or null for a new calendar
+   */
   public NewCalendarDialog(Frame parent, String calendarName, String timezone) {
     super(parent, calendarName == null ? "New Calendar" : "Edit Calendar", true);
 
@@ -128,11 +141,6 @@ public class NewCalendarDialog extends JDialog {
     });
   }
 
-  /**
-   * Validates the user input
-   *
-   * @return true if input is valid, false otherwise
-   */
   private boolean validateInput() {
     String calendarName = getCalendarName();
     if (calendarName == null || calendarName.trim().isEmpty()) {
@@ -146,7 +154,7 @@ public class NewCalendarDialog extends JDialog {
   }
 
   /**
-   * Returns whether the dialog was confirmed
+   * Returns whether the dialog was confirmed.
    *
    * @return true if confirmed, false if canceled
    */
@@ -155,7 +163,7 @@ public class NewCalendarDialog extends JDialog {
   }
 
   /**
-   * Gets the calendar name entered by the user
+   * Gets the calendar name entered by the user.
    *
    * @return the calendar name
    */
@@ -164,7 +172,7 @@ public class NewCalendarDialog extends JDialog {
   }
 
   /**
-   * Gets the selected timezone
+   * Gets the selected timezone.
    *
    * @return the selected timezone
    */
