@@ -1,3 +1,6 @@
+# cs5010-programmin-design-paradigm
+PDP at Northeastern University - Prof. Joydeep Mitra & Prof. Amit Shesh
+
 # Virtual Calendar Application
 
 This project implements a virtual calendar application with core features similar to popular calendar apps like Google Calendar. It supports creating, editing, querying, and exporting calendar events, both single and recurring. The application now supports multiple calendars with timezone capabilities, allowing users to organize events across different timezones and copy events between calendars.
