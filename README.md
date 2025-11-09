@@ -1,4 +1,4 @@
-# cs5010-programmin-design-paradigm
+# cs5010-programming-design-paradigm
 PDP at Northeastern University - Prof. Joydeep Mitra & Prof. Amit Shesh
 
 # Virtual Calendar Application
