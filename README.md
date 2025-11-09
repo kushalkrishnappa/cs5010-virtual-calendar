@@ -1,11 +1,8 @@
-# cs5010-programming-design-paradigm
-PDP at Northeastern University - Prof. Joydeep Mitra & Prof. Amit Shesh
-
 # Virtual Calendar Application
 
-This project implements a virtual calendar application with core features similar to popular calendar apps like Google Calendar. It supports creating, editing, querying, and exporting calendar events, both single and recurring. The application now supports multiple calendars with timezone capabilities, allowing users to organize events across different timezones and copy events between calendars.
+This project implements a virtual calendar application with core features similar to popular calendar apps like Google Calendar and Apple iCalendar. It supports creating, editing, querying, and exporting calendar events, both single and recurring. Multiple calendars with timezone capabilities has been implementaed, allowing users to organize events across different timezones and copy events between calendars.
 
-This application uses `Interval Tree` to store the Events for efficient conflict detection. For more details on the Interval Trees checkout this wikipedia page: [Interval tree](https://en.wikipedia.org/wiki/Interval_tree)
+It uses `Interval Tree` to store the Events for efficient conflict detection. For more details on the Interval Trees checkout this wikipedia page: [Interval tree](https://en.wikipedia.org/wiki/Interval_tree)
 
 ## Table of Contents
 
@@ -18,8 +15,7 @@ This application uses `Interval Tree` to store the Events for efficient conflict
 - [Additional Notes](#additional-notes)
 
 ## Introduction
-This application is designed to mimic the functionality of a calendar application.  
-It supports creating single and recurring events, handling conflicts, editing events, querying the calendar, and exporting the calendar to a CSV file compatible with Google Calendar.
+This application is designed to mimic the functionality of a calendar application. It supports creating single and recurring events, handling conflicts, editing events, querying the calendar, and exporting the calendar to a CSV file compatible with Google Calendar.
 
 The application can be run in interactive, headless, and GUI modes as explained later.
 
